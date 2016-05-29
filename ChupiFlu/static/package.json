@@ -1,0 +1,17 @@
+{
+  "name": "menu",
+  "version": "1.0.0",
+  "description": "menu chupi flu",
+  "main": "index.js",
+  "scripts": {
+    "server": "node index.js",
+    "stylus": "stylus -u nib -c -w -o public/css public/stylus/style.styl",
+    "bundle": "browserify public/index.js -o public/app.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.13.4",
+    "jquery-modal": "^0.7.0"
+  }
+}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<arrticle class="container_tabla_provee">
+  <div class="row">
+    <div class="col l12 m8 s5">
+      <table class="responsive-table striped">
+        <thead>
+          <tr>
+            <th data-field="nit">Nit</th>
+            <th data-field="nombre_empresa">Empresa</th>
+            <th data-field="direccion">Dirección</th>
+            <th data-field="telefono">Teléfono</th>
+            <th data-field="fax">Fax</th>
+            <th data-field="correo_empresa">Correo Empresa</th>
+            <th data-field="nombre_contacto">Nombre Contacto</th>
+            <th data-field="apellido_contacto">Apellido Contacto</th>
+            <th data-field="telefono_contacto">Teléfono Contacto</th>
+            <th data-field="correo_contacto">Correo Contacto</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for proveedor in object_list %}
+          <tr>
+            <td>{{ proveedor.nit }}</td>
+            <td>{{ proveedor.nombre_empresa }}</td>
+            <td>{{ proveedor.direccion }}</td>
+            <td>{{ proveedor.telefono }}</td>
+            <td>{{ proveedor.fax }}</td>
+            <td>{{ proveedor.correo_empresa }}</td>
+            <td>{{ proveedor.nombre_contacto }}</td>
+            <td>{{ proveedor.apellido_contacto }}</td>
+            <td>{{ proveedor.telefono_contacto }}</td>
+            <td>{{ proveedor.correo_contacto }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <ul class="pagination">
+        <li class="disabled"><a href="#!"><i class="material-icons">chevron_left</i></a></li>
+        <li class="active"><a href="#!">1</a></li>
+        <li class="waves-effect"><a href="#!">2</a></li>
+        <li class="waves-effect"><a href="#!">3</a></li>
+        <li class="waves-effect"><a href="#!">4</a></li>
+        <li class="waves-effect"><a href="#!">5</a></li>
+        <li class="waves-effect"><a href="#!"><i class="material-icons">chevron_right</i></a></li>
+      </ul>
+    </div>
+  </div>
+</arrticle>
+{% endblock %}

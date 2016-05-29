@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Lista Perfiles</title>
+</head>
+<body>
+    <h1>Perfiles</h1>
+
+    <ul>
+      {% for perfi in perfil %}
+        <li>
+          <p>{{ perfi.nombre }}</p>
+          <p>{{ perfi.descripcion }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+</body>
+</html>

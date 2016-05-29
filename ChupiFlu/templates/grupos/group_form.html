@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+  {% block content %}
+    <form action="{% url 'grupos:grupo' %}" method="POST">
+      <div class="inputs">
+        {% csrf_token %}
+        {{ form.management_form }}
+          {% for field in form %}
+              <div class="input">
+                {{ field.label_tag }}
+                <span class="icon">
+                  {{ field }}
+                </span>
+              </div>
+          {% endfor %}
+      </div>
+      <div class="butons">
+        <button id="guardar" name="guardar">Guardar</button>
+        <button id="buscar" name="buscar">Buscar</button>
+        <button id="modificar" name="modificar">Modificar</button>
+        <button id="eliminar" name="eliminar">Eliminar</button>
+        <button id="limpiar" name="limpiar">Limpiar</button>
+      </div>
+    </form>
+
+  {% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form action="{% url 'productos:crear' %}" method="POST">
+  <div class="row inputs">
+    {% csrf_token %}
+    {{ form.management_form }}
+    {% for field in form %}
+    <div class="input-field col s5">
+      {{ field }}
+      {{ field.label_tag }}
+    </div>
+    {% endfor %}
+  </div>
+  <div class="row butons">
+    <input type="submit" class="waves-effect waves-light btn" id="guardar" name="guardar" value="guardar">
+    <input type="submit" class="waves-effect waves-light btn" id="buscar" name="buscar" value="buscar">
+    <input type="submit" class="waves-effect waves-light btn" id="modificar" name="modificar" value="modificar">
+    <input type="submit" class="waves-effect waves-light btn" id="eliminar" name="eliminar" value="eliminar">
+    <input type="submit" class="waves-effect waves-light btn" id="limpiar" name="limpiar" value="limpiar">
+  </div>
+</form>
+
+{% endblock %}

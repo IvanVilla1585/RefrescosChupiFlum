@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<arrticle class="container_tabla_provee">
+  <div class="row">
+    <div class="col s12">
+      <table class="responsive-table striped">
+        <thead>
+          <tr>
+            <th>Nombre Producto</th>
+            <th>Descripción</th>
+            <th>Categoria</th>
+            <th>Costo Producción</th>
+            <th>Precio Venta</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for producto in object_list %}
+          <tr>
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.descripcion }}</td>
+            <td>{{ producto.categoria }}</td>
+            <td>{{ producto.costo }}</td>
+            <td>{{ producto.precio }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</arrticle>
+{% endblock %}
