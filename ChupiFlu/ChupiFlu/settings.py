@@ -32,21 +32,26 @@ OPTIONS = [
     'ChupiFlu.context_processors.tittles',
 ]
 
-GRAPPELLI_ADMIN_TITTLE = 'ChupiFlu'
+GRAPPELLI_ADMIN_TITLE = 'Refrescos Chupi Flum'
 # Application definition
 
 INSTALLED_APPS = [
-    'materializecssform',
-    'perfiles.apps.PerfilesConfig',
-    'categorias.apps.CategoriasConfig',
-    'proveedores.apps.ProveedoresConfig',
-    'productos.apps.ProductosConfig',
+    'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'materializecssform',
+    'categoriasmateriaprima.apps.CategoriasmateriaprimaConfig',
+    'materiaprima.apps.MateriaprimaConfig',
+    'maquina.apps.MaquinaConfig',
+    'unidadesmedida.apps.UnidadesmedidaConfig',
+    'perfiles.apps.PerfilesConfig',
+    'categorias.apps.CategoriasConfig',
+    'proveedores.apps.ProveedoresConfig',
+    'productos.apps.ProductosConfig',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -75,13 +80,13 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'ChupiFlu.context_processors.tittles',
             ],
         },
     },
 ]
 
 WSGI_APPLICATION = 'ChupiFlu.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases

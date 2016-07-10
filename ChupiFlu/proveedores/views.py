@@ -17,42 +17,62 @@ from django.views.generic.edit import (
     UpdateView,
     DeleteView
 )
+from django.views.generic import TemplateView
 
 from .models import Proveedore
 from .mixins import JSONResponseMixin
 from django.http import JsonResponse
+from loginusers.mixins import LoginRequiredMixin
 
 
-class ListarProveedores(ListView):
+class ListarProveedores(LoginRequiredMixin, ListView):
     model = Proveedore
+    template_name = 'proveedore_list.html'
+    paginate_by = 8
 
 
 
 
-class EliminarProveedor(JSONResponseMixin, DeleteView):
+class EliminarProveedor(LoginRequiredMixin, DeleteView):
     model = Proveedore
     slug_field = 'nit'
     slug_url_kwarg = 'nit'
     template_name_suffix = '_list'
     success_url = reverse_lazy('proveedores:listar')
 
+def eliminarProveedorAjax(request, nit):
+    proveedor = Proveedore.objects.get(nit=nit)
+    proveedor.estado = 'FALSE'
+
+    proveedor.save()
+    import ipdb; ipdb.set_trace()
+    form = ProveedoreForm()
+
+    template = loader.get_template('proveedores/proveedore_form.html')
+    context = {
+        'form': form
+    }
+    return HttpResponse(template.render(context, request))
 
 
-class CrearProveedor(CreateView):
+
+
+class CrearProveedor(LoginRequiredMixin, CreateView):
+    model = Proveedore
+    form_class = ProveedoreForm
+    success_url = reverse_lazy('proveedores:listar')
+
+
+class ActualizarProveedor(LoginRequiredMixin, UpdateView):
     model = Proveedore
     success_url = reverse_lazy('proveedores:listar')
-    fields = ['nit', 'nombre_empresa', 'direccion', 'telefono', 'fax', 'correo_empresa', 'nombre_contacto',
-              'apellido_contacto', 'telefono_contacto', 'correo_contacto']
+    slug_field = 'nit'
+    slug_url_kwarg = 'nit'
+    form_class = ProveedoreForm
 
 
-class ActualizarProveedor(UpdateView):
-    model = Proveedore
-    success_url = reverse_lazy('proveedores:listar')
-    fields = ['nombre_empresa', 'direccion', 'telefono', 'fax', 'correo_empresa', 'nombre_contacto',
-              'apellido_contacto', 'telefono_contacto', 'correo_contacto']
 
-
-class ConsultarProveedor(JSONResponseMixin, DetailView):
+class ConsultarProveedor(LoginRequiredMixin, JSONResponseMixin, DetailView):
     model = Proveedore
     slug_field = 'nit'
     slug_url_kwarg = 'nit'
@@ -77,11 +97,12 @@ class ConsultarProveedor(JSONResponseMixin, DetailView):
         return data
 
 
-@login_required()
-def proveedoresView(request):
-    form = ProveedoreForm()
-    template = loader.get_template('proveedores/proveedore_form.html')
-    contex = {
-        'form': form
-    }
-    return HttpResponse(template.render(contex, request))
+class ProveedoresView(LoginRequiredMixin, TemplateView):
+    template_name = 'proveedores/proveedore_form.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super(ProveedoresView, self).get_context_data(**kwargs)
+        context.update({'form': ProveedoreForm()})
+
+        return context

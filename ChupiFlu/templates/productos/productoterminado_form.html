@@ -1,24 +1,90 @@
 {% extends "base.html" %}
 
 {% block content %}
-<form action="{% url 'productos:crear' %}" method="POST">
+<form action="{% url 'productos:crear' %}" id="formulario_produ" method="POST">
   <div class="row inputs">
     {% csrf_token %}
-    {{ form.management_form }}
     {% for field in form %}
-    <div class="input-field col s5">
-      {{ field }}
-      {{ field.label_tag }}
-    </div>
+      {% ifequal field.name "nombre" %}
+        <div class="row">
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        {% else %}{% ifequal field.name "descripcion" %}
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        </div>
+        {% else %}{% ifequal field.name "categoria" %}
+        <div class="row">
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        {% else %}{% ifequal field.name "costo_produccion" %}
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        </div>
+        {% else %}{% ifequal field.name "precio_venta" %}
+        <div class="row">
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        {% else %}{% ifequal field.name "cantidad" %}
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        </div>
+      {% endifequal %}{% endifequal %}
+      {% endifequal %}{% endifequal %}
+      {% endifequal %}{% endifequal %}
     {% endfor %}
   </div>
   <div class="row butons">
-    <input type="submit" class="waves-effect waves-light btn" id="guardar" name="guardar" value="guardar">
-    <input type="submit" class="waves-effect waves-light btn" id="buscar" name="buscar" value="buscar">
-    <input type="submit" class="waves-effect waves-light btn" id="modificar" name="modificar" value="modificar">
-    <input type="submit" class="waves-effect waves-light btn" id="eliminar" name="eliminar" value="eliminar">
-    <input type="submit" class="waves-effect waves-light btn" id="limpiar" name="limpiar" value="limpiar">
+    <input type="submit" class="waves-effect waves-light btn" id="guardarP" name="guardarP" value="guardar">
+    <input type="submit" class="waves-effect waves-light btn" id="buscarP" name="buscarP" value="buscar">
+    <input type="submit" class="waves-effect waves-light btn" id="modificarP" name="modificarP" value="modificar">
+    <input type="submit" class="waves-effect waves-light btn" id="eliminarP" name="eliminarP" value="eliminar">
+    <a type="submit" href="/MenuPrincipal/Productos/Listar/" class="waves-effect waves-light btn" id="listarP" name="listarP" value="Listar">Listar</a>
+    <input type="submit" class="waves-effect waves-light btn" id="limpiarP" name="limpiarP" value="limpiar">
   </div>
 </form>
 
+{% endblock %}
+{% block content_modal %}
+
+<div id="modal-alert" class="modal">
+  <div class="modal-content">
+    <div class="logo">
+      <figure>
+        <img src="/static/images/logo.png" alt="">
+      </figure>
+    </div>
+    <h2 id="title_modal" class="title_modal"></h2>
+    <p id="text-modal" class="text-modal"></p>
+    <div class="errors" id="errors"></div>
+    <div class="row inputs input_consulta" id="input_consulta">
+      <div class="input-field col s10">
+        <input type="text" placeholder="" id="consulta_nom" name="consulta_nom">
+        <label for="consulta_nom">Nombre producto:</label>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button id="cancelar_pro" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancelar</button>
+    <button id="consultar_pro" class=" modal-action modal-close waves-effect waves-green btn-flat">Consultar</button>
+  </div>
+</div>
 {% endblock %}

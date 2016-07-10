@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  {% load staticfiles %}
+  <title>Login</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" >
+  <link rel="stylesheet" href="{% static 'css/materialize.css' %}">
+</head>
+<body>
+  <section class="container_login">
+    <div class="row logo">
+      <figure>
+        <img src="/static/images/logo.png" alt="">
+      </figure>
+      <h2>Ingreso al Sistema</h2>
+    </div>
+    <div class="row">
+      <form action="" method="post">
+        <div class="row inputs">
+          {% csrf_token %}
+          {{ form.management_form }}
+          {% for field in form %}
+            {% ifequal field.name "username" %}
+            <div class="row">
+              <div class="input-field col s6 offset-s2">
+                {{ field }}
+                {{ field.label_tag }}
+                {{ field.errors  }}
+              </div>
+            </div>
+            {% else %}{% ifequal field.name "password" %}
+            <div class="row">
+              <div class="input-field col s7 offset-s2">
+                {{ field }}
+                {{ field.label_tag }}
+                  {{ field.errors  }}
+              </div>
+            </div>
+            {% endifequal %}{% endifequal %}
+          {% endfor %}
+          <div class="row">
+            <input type="submit" value="Ingresar" class="waves-effect waves-light btn-large"/>
+          </div>
+          </div>
+      </form>
+      </div>
+    </div>
+
+  </section>
+  <script type="text/javascript" src="{% static 'js/materialize.js' %}"></script>
+</body>
+</html>

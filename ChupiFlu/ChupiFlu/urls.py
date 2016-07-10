@@ -17,10 +17,13 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 urlpatterns = [
+    url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^', include('loginusers.urls', namespace="loginusers")),
     url(r'^MenuPrincipal/', include('proveedores.urls', namespace="proveedores")),
     url(r'^MenuPrincipal/', include('productos.urls', namespace="productos")),
     url(r'^MenuPrincipal/', include('userprofiles.urls', namespace="usuarios")),
     url(r'^MenuPrincipal/', include('grupos.urls', namespace="grupos")),
+    url(r'^MenuPrincipal/', include('maquina.urls', namespace="maquinas")),
+    url(r'^MenuPrincipal/', include('materiaprima.urls', namespace="materiaprim")),
 ]

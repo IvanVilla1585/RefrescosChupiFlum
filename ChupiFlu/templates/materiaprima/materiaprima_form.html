@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form action="{% url 'materiaprim:crear' %}" id="formulario_materia" method="POST">
+  <div class="row inputs">
+    {% csrf_token %}
+    {% for field in form %}
+      {% ifequal field.name "nombre" %}
+        <div class="row">
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        {% else %}{% ifequal field.name "descripcion" %}
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        </div>
+        {% else %}{% ifequal field.name "unidad_medida" %}
+        <div class="row">
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        {% else %}{% ifequal field.name "categoria" %}
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        </div>
+        {% else %}{% ifequal field.name "cantidad_entrada" %}
+        <div class="row">
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        {% else %}{% ifequal field.name "cantidad" %}
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        </div>
+      {% endifequal %}{% endifequal %}
+      {% endifequal %}{% endifequal %}
+      {% endifequal %}{% endifequal %}
+    {% endfor %}
+  </div>
+  <div class="row butons">
+    <input type="submit" class="waves-effect waves-light btn" id="guardarMP" name="guardarMP" value="guardar">
+    <input type="submit" class="waves-effect waves-light btn" id="buscarMP" name="buscarMP" value="buscar">
+    <input type="submit" class="waves-effect waves-light btn" id="modificarMP" name="modificarMP" value="modificar">
+    <input type="submit" class="waves-effect waves-light btn" id="eliminarMP" name="eliminarMP" value="eliminar">
+    <a type="submit" href="{% url 'materiaprim:listar' %}" class="waves-effect waves-light btn" id="listarP" name="listarP" value="Listar">Listar</a>
+    <input type="submit" class="waves-effect waves-light btn" id="limpiarMP" name="limpiarMP" value="limpiar">
+  </div>
+</form>
+
+{% endblock %}
+{% block content_modal %}
+
+<div id="modal-alert" class="modal">
+  <div class="modal-content">
+    <div class="logo">
+      <figure>
+        <img src="/static/images/logo.png" alt="">
+      </figure>
+    </div>
+    <h2 id="title_modal" class="title_modal"></h2>
+    <p id="text-modal" class="text-modal"></p>
+    <div class="errors" id="errors"></div>
+    <div class="row inputs input_consulta" id="input_consulta">
+      <div class="input-field col s10">
+        <input type="text" placeholder="" id="consulta_mate" name="consulta_mate">
+        <label for="consulta_mate">Nombre materia prima:</label>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button id="cancelar_materia" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancelar</button>
+    <button id="consultar_materia" class=" modal-action modal-close waves-effect waves-green btn-flat">Consultar</button>
+  </div>
+</div>
+{% endblock %}

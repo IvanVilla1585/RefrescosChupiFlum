@@ -12,4 +12,16 @@ class ProductoTerminadoForm(forms.ModelForm):
             'descripcion': _(u'Descripción'),
             'categoria': _(u'*Categoria'),
             'costo_produccion': _(u'Costo Producción'),
+            'cantidad': _(u'*Cantidad'),
+        }
+        error_messages = {
+            'nombre': {
+                'required': _("El campo nombre es requerido"),
+            },
+            'categoria': {
+                'required': _("La categoria es requerida"),
+            },
+            'cantidad': {
+                'required': _("El campo cantidad es requerido"),
+            },
         }

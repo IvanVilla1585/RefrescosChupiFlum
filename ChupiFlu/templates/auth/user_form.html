@@ -2,24 +2,89 @@
 
   {% block content %}
     <form action="{% url 'usuarios:crear' %}" method="POST">
-      <div class="inputs">
+      <div class="row inputs">
         {% csrf_token %}
         {{ form.management_form }}
           {% for field in form %}
-              <div class="input">
-                {{ field.label_tag }}
-                <span class="icon">
+            {% ifequal field.name "first_name" %}
+              <div class="row">
+                <div class="input-field col s5">
                   {{ field }}
-                </span>
+                  {{ field.label_tag }}
+                    {{ field.errors  }}
+                </div>
+              {% else %}{% ifequal field.name "last_name" %}
+                <div class="input-field col s5">
+                  {{ field }}
+                  {{ field.label_tag }}
+                    {{ field.errors  }}
+                </div>
               </div>
+              {% else %}{% ifequal field.name "email" %}
+              <div class="row">
+                <div class="input-field col s5">
+                  {{ field }}
+                  {{ field.label_tag }}
+                    {{ field.errors  }}
+                </div>
+              {% else %}{% ifequal field.name "username" %}
+                <div class="input-field col s5">
+                  {{ field }}
+                  {{ field.label_tag }}
+                    {{ field.errors  }}
+                </div>
+              </div>
+              {% else %}{% ifequal field.name "is_superuser" %}
+              <div class="row">
+                <div class="input-field col s5">
+                  {{ field }}
+                  {{ field.label_tag }}
+                    {{ field.errors  }}
+                </div>
+              {% else %}{% ifequal field.name "is_active" %}
+                <div class="input-field col s5">
+                  {{ field }}
+                  {{ field.label_tag }}
+                    {{ field.errors  }}
+                </div>
+              </div>
+              {% else %}{% ifequal field.name "password1" %}
+                <div class="row">
+                  <div class="input-field col s5">
+                    {{ field }}
+                    {{ field.label_tag }}
+                      {{ field.errors  }}
+                  </div>
+              {% else %}{% ifequal field.name "password2" %}
+                <div class="row">
+                  <div class="input-field col s5">
+                    {{ field }}
+                    {{ field.label_tag }}
+                      {{ field.errors  }}
+                  </div>
+                </div>
+              {% else %}{% ifequal field.name "groups" %}
+                <div class="row">
+                  <div class="input-field col s10">
+                    {{ field }}
+                    {{ field.label_tag }}
+                      {{ field.errors  }}
+                  </div>
+                </div>
+            {% endifequal %}{% endifequal %}
+            {% endifequal %}{% endifequal %}
+            {% endifequal %}{% endifequal %}
+            {% endifequal %}{% endifequal %}
+            {% endifequal %}
           {% endfor %}
       </div>
-      <div class="butons">
-        <button id="guardar" name="guardar">Guardar</button>
-        <button id="buscar" name="buscar">Buscar</button>
-        <button id="modificar" name="modificar">Modificar</button>
-        <button id="eliminar" name="eliminar">Eliminar</button>
-        <button id="limpiar" name="limpiar">Limpiar</button>
+      <div class="row butons">
+        <input type="submit" class="waves-effect waves-light btn" id="guardarU" name="guardarU" value="guardar">
+        <input type="submit" class="waves-effect waves-light btn" id="buscarU" name="buscarU" value="buscar">
+        <input type="submit" class="waves-effect waves-light btn" id="modificarU" name="modificarU" value="modificar">
+        <input type="submit" class="waves-effect waves-light btn" id="eliminarU" name="eliminarU" value="eliminar">
+        <a type="submit" href="{% url 'usuarios:listar' %}" class="waves-effect waves-light btn" id="listarP" name="listarP" value="Listar">Listar</a>
+        <input type="submit" class="waves-effect waves-light btn" id="limpiarU" name="limpiarU" value="limpiar">
       </div>
     </form>
 

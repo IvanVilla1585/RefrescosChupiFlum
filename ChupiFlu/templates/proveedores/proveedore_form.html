@@ -1,25 +1,127 @@
 {% extends "base.html" %}
 
 {% block content %}
-<form action="{% url 'proveedores:crear' %}" method="POST">
+<form id="formulario_provee" action="{% url 'proveedores:crear' %}" method="POST">
   <div class="row inputs">
     {% csrf_token %}
     {{ form.management_form }}
     {% for field in form %}
-    <div class="input-field col s5">
-      {{ field }}
-      {{ field.label_tag }}
-    </div>
+      {% ifequal field.name "nit" %}
+      <div class="row">
+        <div class="input-field col s5">
+          {{ field }}
+          {{ field.label_tag }}
+            {{ field.errors  }}
+        </div>
+      {% else %}{% ifequal field.name "nombre_empresa" %}
+        <div class="input-field col s5">
+          {{ field }}
+          {{ field.label_tag }}
+            {{ field.errors  }}
+        </div>
+      </div>
+      {% else %}{% ifequal field.name "direccion" %}
+      <div class="row">
+        <div class="input-field col s5">
+          {{ field }}
+          {{ field.label_tag }}
+            {{ field.errors  }}
+        </div>
+      {% else %}{% ifequal field.name "telefono" %}
+        <div class="input-field col s5">
+          {{ field }}
+          {{ field.label_tag }}
+            {{ field.errors  }}
+        </div>
+      </div>
+      {% else %}{% ifequal field.name "fax" %}
+      <div class="row">
+        <div class="input-field col s5">
+          {{ field }}
+          {{ field.label_tag }}
+            {{ field.errors  }}
+        </div>
+      {% else %}{% ifequal field.name "correo_empresa" %}
+        <div class="input-field col s5">
+          {{ field }}
+          {{ field.label_tag }}
+            {{ field.errors  }}
+        </div>
+      </div>
+      {% else %}{% ifequal field.name "nombre_contacto" %}
+      <div class="row">
+        <div class="input-field col s5">
+          {{ field }}
+          {{ field.label_tag }}
+            {{ field.errors  }}
+        </div>
+      {% else %}{% ifequal field.name "apellido_contacto" %}
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        </div>
+      {% else %}{% ifequal field.name "telefono_contacto" %}
+        <div class="row">
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        {% else %}{% ifequal field.name "correo_contacto" %}
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        </div>
+        {% endifequal %}{% endifequal %}
+        {% endifequal %}{% endifequal %}
+        {% endifequal %}{% endifequal %}
+        {% endifequal %}{% endifequal %}
+        {% endifequal %}{% endifequal %}
     {% endfor %}
   </div>
   <div class="row butons">
-    <input type="submit" class="waves-effect waves-light btn" id="guardar" name="guardar" value="guardar">
+    {%  if  perms.proveedores.add_proveedore  %}
+      <input type="submit" class="waves-effect waves-light btn" id="guardar" name="guardar" value="guardar">
+    {%  endif  %}
+    {%  if  perms.proveedores.can_change  %}
+      <input type="submit" class="waves-effect waves-light btn" id="modificar" name="modificar" value="modificar">
+    {%  endif  %}
+    {%  if  perms.proveedores.can_delete  %}
+      <input type="submit" class="waves-effect waves-light btn" id="eliminar" name="eliminar" value="eliminar">
+    {%  endif  %}
     <input type="submit" class="waves-effect waves-light btn" id="buscar" name="buscar" value="buscar">
-    <input type="submit" class="waves-effect waves-light btn" id="modificar" name="modificar" value="modificar">
-    <input type="submit" class="waves-effect waves-light btn" id="eliminar" name="eliminar" value="eliminar">
-    <a type="submit" href="/MenuPrincipal/Proveedor/Listar" class="waves-effect waves-light btn" id="listar" name="listar" value="Listar">Listar</a>
+    <a type="submit" href="proveedores:listar" class="waves-effect waves-light btn" id="listar" name="listar" value="Listar">Listar</a>
     <input type="submit" class="waves-effect waves-light btn" id="limpiar" name="limpiar" value="limpiar">
   </div>
 </form>
 
+{% endblock %}
+{% block content_modal %}
+
+<div id="modal-alert" class="modal">
+  <div class="modal-content">
+    <div class="logo">
+      <figure>
+        <img src="/static/images/logo.png" alt="">
+      </figure>
+    </div>
+    <h2 id="title_modal" class="title_modal"></h2>
+    <p id="text-modal" class="text-modal"></p>
+    <div class="errors" id="errors"></div>
+    <div class="row inputs input_consulta" id="input_consulta">
+      <div class="input-field col s10">
+        <input type="text" placeholder="" id="consulta_nit" name="consulta_nit">
+        <label for="consulta_nit">Ingrese número del nit:</label>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button id="cancelar_prove" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancelar</button>
+    <button id="consultar_prove" class=" modal-action modal-close waves-effect waves-green btn-flat">Consultar</button>
+  </div>
+</div>
 {% endblock %}

@@ -22,28 +22,29 @@
           <li class="active"><a href="{% url 'loginusers:menu' %}"><i class="fa fa-home"></i> <span>Menú Principal</span></a></li>
           <li class="nav-parent" data-id="1" ><a href="#" id="collapse"><i class="fa fa-edit"></i> <span>Parametrización</span></a>
             <ul class="children">
-              <li><a href="{% url 'usuarios:usuario' %}"><i class="fa fa-caret-right"></i> Registro Usuarios</a></li>
-              <li><a href="{% url 'grupos:grupo' %}"><i class="fa fa-caret-right"></i> Registro Grupos</a></li>
-              <li><a href="{% url 'productos:producto' %}"><i class="fa fa-caret-right"></i> Registro Productos</a></li>
-              <li><a href="wysiwyg.html"><i class="fa fa-caret-right"></i> Modificar Contaseña</a></li>
+              {%  if  perms.proveedores  %}
+                <li><a href="{% url 'usuarios:usuario' %}"><i class="fa fa-caret-right"></i> Registro Usuarios</a></li>
+              {%  endif  %}
+              {%  if  perms.grupos  %}
+                <li><a href="{% url 'grupos:grupo' %}"><i class="fa fa-caret-right"></i> Registro Grupos</a></li>
+              {%  endif  %}
+              {%  if  perms.proveedores.form_view_proveedor  %}
+                <li><a href="{% url 'proveedores:proveedor' %}"><i class="fa fa-caret-right"></i> Registro Proveedores</a></li>
+              {%  endif  %}
+              {%  if  perms.productos.form_view_producto  %}
+                <li><a href="{% url 'productos:producto' %}"><i class="fa fa-caret-right"></i> Registro Productos</a></li>
+              {%  endif  %}
+              {%  if  perms.maquina.form_view_maquina  %}
+                <li><a href="{% url 'maquinas:maquinaForm' %}"><i class="fa fa-caret-right"></i> Registro Maquinas</a></li>
+              {%  endif  %}
+              {%  if  perms.materiaprima.form_view_materiaprima  %}
+                <li><a href="{% url 'materiaprim:materiaPrimaForm' %}"><i class="fa fa-caret-right"></i> Registro Materia Prima</a></li>
+              {%  endif  %}
+              {%  if  perms.proveedores  %}
+                <li><a href="wysiwyg.html"><i class="fa fa-caret-right"></i> Modificar Contaseña</a></li>
+              {%  endif  %}
             </ul>
           </li>
-          <li class="nav-parent" data-id="2" ><a href="#" id="collapse"><i class="fa fa-edit"></i> <span>Inventarios</span></a>
-            <ul class="children">
-              <li><a href="general-forms.html"><i class="fa fa-caret-right"></i> Materia Prima</a></li>
-              <li><a href="{% url 'proveedores:proveedor' %}"><i class="fa fa-caret-right"></i> Registro Proveedores</a></li>
-              <li><a href="form-layouts.html"><i class="fa fa-caret-right"></i> Productos Terminados</a></li>
-              <li><a href="form-layouts.html"><i class="fa fa-caret-right"></i> Compras</a></li>
-              <li><a href="{% url 'proveedores:proveedor' %}"><i class="fa fa-caret-right"></i> Registro Proveedores</a></li>
-            </ul>
-          </li>
-          <li class="nav-parent" data-id="3" ><a href="#" id="collapse"><i class="fa fa-edit"></i> <span>Operaciones</span></a>
-            <ul class="children">
-              <li><a href="general-forms.html"><i class="fa fa-caret-right"></i> Maquinas</a></li>
-              <li><a href="form-layouts.html"><i class="fa fa-caret-right"></i> Productos Despachados</a></li>
-            </ul>
-          </li>
-
           <li class="active"><a href="{% url 'loginusers:logout' %}"><i class="fa fa-home"></i> <span> Salir</span></a></li>
         </ul>
 
@@ -51,7 +52,7 @@
       <div class="col s12 m8 l10"> <!-- Note that "m8 l9" was added -->
         <div class="row">
           <div class="pageheader">
-            <h2><i class="fa fa-home"></i> {{tittle}} <span>Subtitle goes here...</span></h2>
+            <h3><i class="fa fa-home"></i>{{tittle}}</h3>
             <span class="usernaame">Ivan</span>
           </div>
           <div class="container_info">
@@ -63,36 +64,15 @@
       </div>
     </div>
   </section>
-  <div id="modal-alert" class="jquery-modal blocker current">
-    <div style="" id="ex3" class="modal">
-      <div class="logo">
-        <figure>
-          <img src="/static/images/logo.png" alt="">
-        </figure>
-      </div>
-      <div class="title_modal">
-        <h2 class="color_verde" id="title_modal">Alerta!</h2>
-      </div>
-      <p id="text-modal"></p>
-      <div class="inputs" class="input_consulta">
-        <input type="text" placeholder="Ingrese número del nit" id="consulta_nit">
-        <div class="boton">
-          <button id="cancelar_prove">Cancelar</button>
-          <button id="consultar_prove">Consultar</button>
-        </div>
-      </div>
-      <div class="boton_modal" id="modal_boton">
-        <button id="cancelar_modal">Cancelar</button>
-      </div>
-      <a href="#close-modal" id="more" rel="modal:close" class="close-modal ">Close</a>
-    </div>
-  </div>
-  <script type="text/javascript" src="{% static 'js/app.js' %}"></script>
-  <script type="text/javascript" src="{% static 'js/materialize.js' %}"></script>
-  <script>
-  $(document).ready(function() {
-    $('select').material_select();
-  });
-  </script>
+  {% block content_modal %}
+
+  {% endblock %}
+<script type="text/javascript" src="{% static 'js/app.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/materialize.js' %}"></script>
+<script>
+$(document).ready(function() {
+  $('select').material_select();
+});
+</script>
 </body>
 </html>

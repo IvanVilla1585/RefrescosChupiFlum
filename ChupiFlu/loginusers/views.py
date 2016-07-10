@@ -4,7 +4,22 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, login
 from django.template import loader
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import AuthenticationForm
+from django.views.generic import TemplateView, RedirectView, FormView
+from .forms import LoginForm
 
+
+class LoginView(FormView):
+    form_class = LoginForm
+    template_name = 'loginusers/login.html'
+    success_url = '/MenuPrincipal/'
+
+    def form_valid(self, form):
+
+        login(self.request, form.user_cache)
+
+        return super(LoginView, self).form_valid(form)
 
 def authentication(request):
     if request.method == 'POST':
@@ -21,4 +36,8 @@ def authentication(request):
 @login_required()
 def menuView(request):
     template = loader.get_template('base.html')
+    return HttpResponse(template.render({}, request))
+
+def homeView(request):
+    template = loader.get_template('loginusers/home.html')
     return HttpResponse(template.render({}, request))

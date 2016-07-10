@@ -1,3 +1,3 @@
-
+# -*- coding: utf-8 -*-
 def tittles(request):
-    return {'tittle': 'Menú'}
+    return {'tittle': u'Menú Principal'}

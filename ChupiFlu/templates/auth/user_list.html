@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+<arrticle class="container_tabla_provee">
+  <div class="row">
+    <div class="col s12">
+      <table class="responsive-table striped">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Usario</th>
+            <th>Activo</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for usuario in object_list %}
+          <tr>
+            <td>{{ usuario.first_name }}</td>
+            <td>{{ usuario.email }}</td>
+            <td>{{ usuario.username }}</td>
+            <td>{{ usuario.is_active }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</arrticle>
+{% endblock %}

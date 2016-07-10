@@ -17,14 +17,14 @@ from django.views.generic.edit import (
 from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required
 from .forms import GroupForm
 
 class CrearGrupo(CreateView):
-    model = User
-    fields = ['first_name', 'last_name', 'email', 'username', 'is_superuser', 'is_active']
-    success_url = reverse_lazy('usuarios:usuario')
+    model = Group
+    form_class = GroupForm
+    success_url = reverse_lazy('grupos:grupo')
 
 @login_required()
 def GrupoView(request):
