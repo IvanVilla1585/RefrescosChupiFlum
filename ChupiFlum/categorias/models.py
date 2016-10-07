@@ -8,3 +8,7 @@ class Categoria(models.Model):
 
     def __str__(self):
         return self.nombre
+
+    class Meta:
+        ordering = ('id',)
+        db_table = 'categorias_productos_terminados'

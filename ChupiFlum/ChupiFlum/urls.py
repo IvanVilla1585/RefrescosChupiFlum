@@ -26,4 +26,6 @@ urlpatterns = [
     url(r'^MenuPrincipal/', include('grupos.urls', namespace="grupos")),
     url(r'^MenuPrincipal/', include('maquina.urls', namespace="maquinas")),
     url(r'^MenuPrincipal/', include('materiaprima.urls', namespace="materiaprim")),
+    url(r'^MenuPrincipal/', include('pedido.urls', namespace="pedidos")),
+    url(r'^MenuPrincipal/', include('kardex_materia_prima.urls', namespace="kardexmateria")),
 ]

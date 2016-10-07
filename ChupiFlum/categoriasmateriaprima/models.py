@@ -8,3 +8,7 @@ class CategoriaMateriaPrima(models.Model):
 
     def __str__(self):
         return self.nombre
+
+    class Meta:
+        ordering = ('id',)
+        db_table='categorias_materias_primas'

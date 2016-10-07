@@ -3,6 +3,8 @@
 {% block content %}
 <form action="{% url 'materiaprim:crear' %}" id="formulario_materia" method="POST">
   <div class="row inputs">
+    <div class="col s12 m10">
+
     {% csrf_token %}
     {% for field in form %}
       {% ifequal field.name "nombre" %}
@@ -33,14 +35,8 @@
               {{ field.errors  }}
           </div>
         </div>
-        {% else %}{% ifequal field.name "cantidad_entrada" %}
-        <div class="row">
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
         {% else %}{% ifequal field.name "cantidad" %}
+        <div class="row">
           <div class="input-field col s5">
             {{ field }}
             {{ field.label_tag }}
@@ -49,17 +45,30 @@
         </div>
       {% endifequal %}{% endifequal %}
       {% endifequal %}{% endifequal %}
-      {% endifequal %}{% endifequal %}
+      {% endifequal %}
     {% endfor %}
   </div>
-  <div class="row butons">
-    <input type="submit" class="waves-effect waves-light btn" id="guardarMP" name="guardarMP" value="guardar">
-    <input type="submit" class="waves-effect waves-light btn" id="buscarMP" name="buscarMP" value="buscar">
-    <input type="submit" class="waves-effect waves-light btn" id="modificarMP" name="modificarMP" value="modificar">
-    <input type="submit" class="waves-effect waves-light btn" id="eliminarMP" name="eliminarMP" value="eliminar">
-    <a type="submit" href="{% url 'materiaprim:listar' %}" class="waves-effect waves-light btn" id="listarP" name="listarP" value="Listar">Listar</a>
-    <input type="submit" class="waves-effect waves-light btn" id="limpiarMP" name="limpiarMP" value="limpiar">
+  <div class="col m2">
+    <div class="center">
+      <button type="submit" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="guardarMP" name="guardarMP" data-position="bottom" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
+    </div>
+    <div class="center">
+      <button type="submit" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="buscarMP" name="buscarMP" ><i class="material-icons">search</i></button>
+    </div>
+    <div class="center">
+      <button type="submit" class="btn-floating btn-large waves-effect waves-light red" id="modificarMP" name="modificarMP" ><i class="material-icons">add</i></button>
+    </div>
+    <div class="center">
+      <button type="submit" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="eliminarMP" name="eliminarMP" ><i class="material-icons">cancel</i></button>
+    </div>
+    <div class="center">
+      <a type="submit" href="{% url 'materiaprim:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="listarP" name="listarP" ><i class="material-icons">assignment</i></a>
+    </div>
+    <div class="center">
+      <button type="submit" class="btn-floating btn-large waves-effect waves-light red" id="limpiarMP" name="limpiarMP" ><i class="material-icons">add</i></button>
+    </div>
   </div>
+</div>
 </form>
 
 {% endblock %}

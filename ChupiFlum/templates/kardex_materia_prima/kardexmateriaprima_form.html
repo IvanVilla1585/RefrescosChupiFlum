@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form action="{% url 'kardexmateria:crear' %}" id="formulario_materia" method="POST">
+  <div class="row inputs">
+    <div class="col s12 m10">
+
+    {% csrf_token %}
+    {% for field in form %}
+      {% ifequal field.name "pedido" %}
+        <div class="row">
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        {% else %}{% ifequal field.name "fecha_movimiento" %}
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        </div>
+        {% else %}{% ifequal field.name "tipo_movimiento" %}
+        <div class="row">
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        {% else %}{% ifequal field.name "materiaprima" %}
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        </div>
+        {% else %}{% ifequal field.name "cantidad" %}
+        <div class="row">
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+          {% else %}{% ifequal field.name "valor_unitario" %}
+            <div class="input-field col s5">
+              {{ field }}
+              {{ field.label_tag }}
+                {{ field.errors  }}
+            </div>
+        </div>
+        {% else %}{% ifequal field.name "total" %}
+        <div class="row">
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+          {% else %}{% ifequal field.name "lote" %}
+            <div class="input-field col s5">
+              {{ field }}
+              {{ field.label_tag }}
+                {{ field.errors  }}
+            </div>
+        </div>
+        {% else %}{% ifequal field.name "fecha_vencimiento" %}
+        <div class="row">
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        </div>
+      {% endifequal %}{% endifequal %}
+      {% endifequal %}{% endifequal %}
+      {% endifequal %}{% endifequal %}
+      {% endifequal %}{% endifequal %}
+      {% endifequal %}
+    {% endfor %}
+  </div>
+  <div class="col m2">
+    <div class="center">
+      <button type="submit" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="" name="guardarMP" data-position="bottom" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
+    </div>
+    <div class="center">
+      <button type="submit" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="buscarMP" name="buscarMP" ><i class="material-icons">search</i></button>
+    </div>
+    <div class="center">
+      <button type="submit" class="btn-floating btn-large waves-effect waves-light red" id="modificarMP" name="modificarMP" ><i class="material-icons">add</i></button>
+    </div>
+    <div class="center">
+      <button type="submit" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="eliminarMP" name="eliminarMP" ><i class="material-icons">cancel</i></button>
+    </div>
+    <div class="center">
+      <a type="submit" href="{% url 'materiaprim:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="listarP" name="listarP" ><i class="material-icons">assignment</i></a>
+    </div>
+    <div class="center">
+      <button type="submit" class="btn-floating btn-large waves-effect waves-light red" id="limpiarMP" name="limpiarMP" ><i class="material-icons">add</i></button>
+    </div>
+  </div>
+</div>
+</form>
+
+{% endblock %}
+{% block content_modal %}
+
+<div id="modal-alert" class="modal">
+  <div class="modal-content">
+    <div class="logo">
+      <figure>
+        <img src="/static/images/logo.png" alt="">
+      </figure>
+    </div>
+    <h2 id="title_modal" class="title_modal"></h2>
+    <p id="text-modal" class="text-modal"></p>
+    <div class="errors" id="errors"></div>
+    <div class="row inputs input_consulta" id="input_consulta">
+      <div class="input-field col s10">
+        <input type="text" placeholder="" id="consulta_mate" name="consulta_mate">
+        <label for="consulta_mate">Nombre materia prima:</label>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button id="cancelar_materia" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancelar</button>
+    <button id="consultar_materia" class=" modal-action modal-close waves-effect waves-green btn-flat">Consultar</button>
+  </div>
+</div>
+{% endblock %}

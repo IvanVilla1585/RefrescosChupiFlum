@@ -16,9 +16,7 @@ class LoginView(FormView):
     success_url = '/MenuPrincipal/'
 
     def form_valid(self, form):
-
         login(self.request, form.user_cache)
-
         return super(LoginView, self).form_valid(form)
 
 def authentication(request):

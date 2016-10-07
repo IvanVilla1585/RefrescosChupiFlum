@@ -25,14 +25,35 @@ from .forms import MateriaPrimaForm
 from loginusers.mixins import LoginRequiredMixin
 
 
-class ListarMateriaPrima(LoginRequiredMixin, ListView):
+class ListarMateriaPrima(LoginRequiredMixin, JSONResponseMixin, ListView):
     model = MateriaPrima
     template_name = 'materiaprima_list.html'
     paginate_by = 5
 
+    def get(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        return self.render_to_json_response()
+
+    def get_data(self):
+        data = [{
+            'id': materiaprima.id,
+            'value': materiaprima.nombre,
+        } for materiaprima in self.object_list]
+
+        return data
+
+    def get_queryset(self):
+        nom = self.request.GET.get('term', None)
+        if nom:
+            queryset = self.model.objects.filter(nombre__icontains=nom)
+        else:
+            queryset = super(ListarMateriaPrima, self).get_queryset()
+
+        return queryset
+
 class CrearMateriaPrima(LoginRequiredMixin, CreateView):
     model = MateriaPrima
-    success_url = reverse_lazy('materiaprim:listar')
+    success_url = reverse_lazy('materiaprim:crear')
     form_class = MateriaPrimaForm
 
 class ModificarMateriaPrima(LoginRequiredMixin, UpdateView):

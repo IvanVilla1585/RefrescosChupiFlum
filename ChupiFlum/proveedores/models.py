@@ -20,6 +20,7 @@ class Proveedore(models.Model):
 
     class Meta:
         ordering = ('id',)
+        db_table = 'proveedores'
         permissions = (
-            ("form_view_proveedor", "puede ver el formulario"),
+            ("form_view_proveedor", "Puede ver el formulario de proveedores"),
         )

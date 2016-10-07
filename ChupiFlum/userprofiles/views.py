@@ -30,7 +30,6 @@ class CrearUsuario(LoginRequiredMixin, CreateView):
     form_class = UserCreationForm
 
     def form_valid(self, form):
-
         self.object = form.save()
         grup = form.cleaned_data['groups']
         grupo = Group.objects.get(id=grup)

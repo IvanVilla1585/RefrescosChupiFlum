@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <form action="{% url 'pedidos:crear' %}" id="formulario_pedido" method="POST">
+  <div class="row inputs">
+    <div class="col s12 m10">
+    {% csrf_token %}
+    {% for field in form %}
+      {% ifequal field.name "descripcion" %}
+        <div class="row">
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        {% else %}{% ifequal field.name "fecha" %}
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        </div>
+        {% else %}{% ifequal field.name "proveedor" %}
+        <div class="row">
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        {% else %}{% ifequal field.name "usuario" %}
+          <div class="input-field col s5">
+            {{ field }}
+            {{ field.label_tag }}
+              {{ field.errors  }}
+          </div>
+        </div>
+        {% endifequal %}{% endifequal %}
+        {% endifequal %}{% endifequal %}
+        {% ifequal field.name "total" %}
+        <div class="row">
+          <div class="col s12 m10">
+            <table>
+              <thead>
+                <tr>
+                  <th>
+                    Producto
+                  </th>
+                  <th>
+                    Cantidad
+                  </th>
+                  <th>
+                    Valor Unitario
+                  </th>
+                </tr>
+              </thead>
+              <tbody id='table_productos'>
+                <input type="hidden" name="productos" id="productos">
+                <input type="hidden" name="cantidades" id="cantidades">
+                <input type="hidden" name="valores" id="valores">
+                <tr>
+                  <td>
+                    <div class="ui-widget">
+                      <input type='text' id='producto0' name='producto0'>
+                    </div>
+                  </td>
+                  <td><input type='text' id='cantidad0' name='cantidad0'></td>
+                  <td><input type='text' id='valor0' name='valor0'></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        {% endifequal %}
+        {% ifequal field.name "total" %}
+        <div class="row">
+          <div class="input-field col s5">
+              <button type='button' name='button' id='agregarProducto' class='btn waves-effect waves-light'>Agregar Producto</button>
+          </div>
+          <div class="input-field col s5">
+              {{ field }}
+              {{ field.label_tag }}
+                {{ field.errors  }}
+            </div>
+          </div>
+      {% endifequal %}
+    {% endfor %}
+  </div>
+</div>
+<div class="col m2">
+    <div class="center">
+      <button type="submit" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="guardarP" name="guardarMP" data-position="bottom" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
+    </div>
+    <div class="center">
+      <button type="submit" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="buscarMP" name="buscarMP" ><i class="material-icons">search</i></button>
+    </div>
+    <div class="center">
+      <button type="submit" class="btn-floating btn-large waves-effect waves-light red" id="modificarMP" name="modificarMP" ><i class="material-icons">add</i></button>
+    </div>
+    <div class="center">
+      <button type="submit" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="eliminarMP" name="eliminarMP" ><i class="material-icons">cancel</i></button>
+    </div>
+    <div class="center">
+    </div>
+    <div class="center">
+      <button type="submit" class="btn-floating btn-large waves-effect waves-light red" id="limpiarMP" name="limpiarMP" ><i class="material-icons">add</i></button>
+    </div>
+
+</div>
+</div>
+
+</form>
+{% endblock %}
+{% block content_modal %}
+
+<div id="modal-alert" class="modal">
+  <div class="modal-content">
+    <div class="logo">
+      <figure>
+        <img src="/static/images/logo.png" alt="">
+      </figure>
+    </div>
+    <h2 id="title_modal" class="title_modal"></h2>
+    <p id="text-modal" class="text-modal"></p>
+    <div class="errors" id="errors"></div>
+    <div class="row inputs input_consulta" id="input_consulta">
+      <div class="input-field col s10">
+        <input type="text" placeholder="" id="consulta_nom" name="consulta_nom">
+        <label for="consulta_nom">Nombre producto:</label>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button id="cancelar_pro" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancelar</button>
+    <button id="consultar_pro" class=" modal-action modal-close waves-effect waves-green btn-flat">Consultar</button>
+  </div>
+</div>
+{% endblock %}

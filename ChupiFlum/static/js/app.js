@@ -230,6 +230,741 @@
 
 },{}],2:[function(require,module,exports){
 /*!
+ * jQuery UI Widget 1.12.1
+ * http://jqueryui.com
+ *
+ * Copyright jQuery Foundation and other contributors
+ * Released under the MIT license.
+ * http://jquery.org/license
+ */
+
+//>>label: Widget
+//>>group: Core
+//>>description: Provides a factory for creating stateful widgets with a common API.
+//>>docs: http://api.jqueryui.com/jQuery.widget/
+//>>demos: http://jqueryui.com/widget/
+
+( function( factory ) {
+	if ( typeof define === "function" && define.amd ) {
+
+		// AMD. Register as an anonymous module.
+		define( [ "jquery", "./version" ], factory );
+	} else {
+
+		// Browser globals
+		factory( jQuery );
+	}
+}( function( $ ) {
+
+var widgetUuid = 0;
+var widgetSlice = Array.prototype.slice;
+
+$.cleanData = ( function( orig ) {
+	return function( elems ) {
+		var events, elem, i;
+		for ( i = 0; ( elem = elems[ i ] ) != null; i++ ) {
+			try {
+
+				// Only trigger remove when necessary to save time
+				events = $._data( elem, "events" );
+				if ( events && events.remove ) {
+					$( elem ).triggerHandler( "remove" );
+				}
+
+			// Http://bugs.jquery.com/ticket/8235
+			} catch ( e ) {}
+		}
+		orig( elems );
+	};
+} )( $.cleanData );
+
+$.widget = function( name, base, prototype ) {
+	var existingConstructor, constructor, basePrototype;
+
+	// ProxiedPrototype allows the provided prototype to remain unmodified
+	// so that it can be used as a mixin for multiple widgets (#8876)
+	var proxiedPrototype = {};
+
+	var namespace = name.split( "." )[ 0 ];
+	name = name.split( "." )[ 1 ];
+	var fullName = namespace + "-" + name;
+
+	if ( !prototype ) {
+		prototype = base;
+		base = $.Widget;
+	}
+
+	if ( $.isArray( prototype ) ) {
+		prototype = $.extend.apply( null, [ {} ].concat( prototype ) );
+	}
+
+	// Create selector for plugin
+	$.expr[ ":" ][ fullName.toLowerCase() ] = function( elem ) {
+		return !!$.data( elem, fullName );
+	};
+
+	$[ namespace ] = $[ namespace ] || {};
+	existingConstructor = $[ namespace ][ name ];
+	constructor = $[ namespace ][ name ] = function( options, element ) {
+
+		// Allow instantiation without "new" keyword
+		if ( !this._createWidget ) {
+			return new constructor( options, element );
+		}
+
+		// Allow instantiation without initializing for simple inheritance
+		// must use "new" keyword (the code above always passes args)
+		if ( arguments.length ) {
+			this._createWidget( options, element );
+		}
+	};
+
+	// Extend with the existing constructor to carry over any static properties
+	$.extend( constructor, existingConstructor, {
+		version: prototype.version,
+
+		// Copy the object used to create the prototype in case we need to
+		// redefine the widget later
+		_proto: $.extend( {}, prototype ),
+
+		// Track widgets that inherit from this widget in case this widget is
+		// redefined after a widget inherits from it
+		_childConstructors: []
+	} );
+
+	basePrototype = new base();
+
+	// We need to make the options hash a property directly on the new instance
+	// otherwise we'll modify the options hash on the prototype that we're
+	// inheriting from
+	basePrototype.options = $.widget.extend( {}, basePrototype.options );
+	$.each( prototype, function( prop, value ) {
+		if ( !$.isFunction( value ) ) {
+			proxiedPrototype[ prop ] = value;
+			return;
+		}
+		proxiedPrototype[ prop ] = ( function() {
+			function _super() {
+				return base.prototype[ prop ].apply( this, arguments );
+			}
+
+			function _superApply( args ) {
+				return base.prototype[ prop ].apply( this, args );
+			}
+
+			return function() {
+				var __super = this._super;
+				var __superApply = this._superApply;
+				var returnValue;
+
+				this._super = _super;
+				this._superApply = _superApply;
+
+				returnValue = value.apply( this, arguments );
+
+				this._super = __super;
+				this._superApply = __superApply;
+
+				return returnValue;
+			};
+		} )();
+	} );
+	constructor.prototype = $.widget.extend( basePrototype, {
+
+		// TODO: remove support for widgetEventPrefix
+		// always use the name + a colon as the prefix, e.g., draggable:start
+		// don't prefix for widgets that aren't DOM-based
+		widgetEventPrefix: existingConstructor ? ( basePrototype.widgetEventPrefix || name ) : name
+	}, proxiedPrototype, {
+		constructor: constructor,
+		namespace: namespace,
+		widgetName: name,
+		widgetFullName: fullName
+	} );
+
+	// If this widget is being redefined then we need to find all widgets that
+	// are inheriting from it and redefine all of them so that they inherit from
+	// the new version of this widget. We're essentially trying to replace one
+	// level in the prototype chain.
+	if ( existingConstructor ) {
+		$.each( existingConstructor._childConstructors, function( i, child ) {
+			var childPrototype = child.prototype;
+
+			// Redefine the child widget using the same prototype that was
+			// originally used, but inherit from the new version of the base
+			$.widget( childPrototype.namespace + "." + childPrototype.widgetName, constructor,
+				child._proto );
+		} );
+
+		// Remove the list of existing child constructors from the old constructor
+		// so the old child constructors can be garbage collected
+		delete existingConstructor._childConstructors;
+	} else {
+		base._childConstructors.push( constructor );
+	}
+
+	$.widget.bridge( name, constructor );
+
+	return constructor;
+};
+
+$.widget.extend = function( target ) {
+	var input = widgetSlice.call( arguments, 1 );
+	var inputIndex = 0;
+	var inputLength = input.length;
+	var key;
+	var value;
+
+	for ( ; inputIndex < inputLength; inputIndex++ ) {
+		for ( key in input[ inputIndex ] ) {
+			value = input[ inputIndex ][ key ];
+			if ( input[ inputIndex ].hasOwnProperty( key ) && value !== undefined ) {
+
+				// Clone objects
+				if ( $.isPlainObject( value ) ) {
+					target[ key ] = $.isPlainObject( target[ key ] ) ?
+						$.widget.extend( {}, target[ key ], value ) :
+
+						// Don't extend strings, arrays, etc. with objects
+						$.widget.extend( {}, value );
+
+				// Copy everything else by reference
+				} else {
+					target[ key ] = value;
+				}
+			}
+		}
+	}
+	return target;
+};
+
+$.widget.bridge = function( name, object ) {
+	var fullName = object.prototype.widgetFullName || name;
+	$.fn[ name ] = function( options ) {
+		var isMethodCall = typeof options === "string";
+		var args = widgetSlice.call( arguments, 1 );
+		var returnValue = this;
+
+		if ( isMethodCall ) {
+
+			// If this is an empty collection, we need to have the instance method
+			// return undefined instead of the jQuery instance
+			if ( !this.length && options === "instance" ) {
+				returnValue = undefined;
+			} else {
+				this.each( function() {
+					var methodValue;
+					var instance = $.data( this, fullName );
+
+					if ( options === "instance" ) {
+						returnValue = instance;
+						return false;
+					}
+
+					if ( !instance ) {
+						return $.error( "cannot call methods on " + name +
+							" prior to initialization; " +
+							"attempted to call method '" + options + "'" );
+					}
+
+					if ( !$.isFunction( instance[ options ] ) || options.charAt( 0 ) === "_" ) {
+						return $.error( "no such method '" + options + "' for " + name +
+							" widget instance" );
+					}
+
+					methodValue = instance[ options ].apply( instance, args );
+
+					if ( methodValue !== instance && methodValue !== undefined ) {
+						returnValue = methodValue && methodValue.jquery ?
+							returnValue.pushStack( methodValue.get() ) :
+							methodValue;
+						return false;
+					}
+				} );
+			}
+		} else {
+
+			// Allow multiple hashes to be passed on init
+			if ( args.length ) {
+				options = $.widget.extend.apply( null, [ options ].concat( args ) );
+			}
+
+			this.each( function() {
+				var instance = $.data( this, fullName );
+				if ( instance ) {
+					instance.option( options || {} );
+					if ( instance._init ) {
+						instance._init();
+					}
+				} else {
+					$.data( this, fullName, new object( options, this ) );
+				}
+			} );
+		}
+
+		return returnValue;
+	};
+};
+
+$.Widget = function( /* options, element */ ) {};
+$.Widget._childConstructors = [];
+
+$.Widget.prototype = {
+	widgetName: "widget",
+	widgetEventPrefix: "",
+	defaultElement: "<div>",
+
+	options: {
+		classes: {},
+		disabled: false,
+
+		// Callbacks
+		create: null
+	},
+
+	_createWidget: function( options, element ) {
+		element = $( element || this.defaultElement || this )[ 0 ];
+		this.element = $( element );
+		this.uuid = widgetUuid++;
+		this.eventNamespace = "." + this.widgetName + this.uuid;
+
+		this.bindings = $();
+		this.hoverable = $();
+		this.focusable = $();
+		this.classesElementLookup = {};
+
+		if ( element !== this ) {
+			$.data( element, this.widgetFullName, this );
+			this._on( true, this.element, {
+				remove: function( event ) {
+					if ( event.target === element ) {
+						this.destroy();
+					}
+				}
+			} );
+			this.document = $( element.style ?
+
+				// Element within the document
+				element.ownerDocument :
+
+				// Element is window or document
+				element.document || element );
+			this.window = $( this.document[ 0 ].defaultView || this.document[ 0 ].parentWindow );
+		}
+
+		this.options = $.widget.extend( {},
+			this.options,
+			this._getCreateOptions(),
+			options );
+
+		this._create();
+
+		if ( this.options.disabled ) {
+			this._setOptionDisabled( this.options.disabled );
+		}
+
+		this._trigger( "create", null, this._getCreateEventData() );
+		this._init();
+	},
+
+	_getCreateOptions: function() {
+		return {};
+	},
+
+	_getCreateEventData: $.noop,
+
+	_create: $.noop,
+
+	_init: $.noop,
+
+	destroy: function() {
+		var that = this;
+
+		this._destroy();
+		$.each( this.classesElementLookup, function( key, value ) {
+			that._removeClass( value, key );
+		} );
+
+		// We can probably remove the unbind calls in 2.0
+		// all event bindings should go through this._on()
+		this.element
+			.off( this.eventNamespace )
+			.removeData( this.widgetFullName );
+		this.widget()
+			.off( this.eventNamespace )
+			.removeAttr( "aria-disabled" );
+
+		// Clean up events and states
+		this.bindings.off( this.eventNamespace );
+	},
+
+	_destroy: $.noop,
+
+	widget: function() {
+		return this.element;
+	},
+
+	option: function( key, value ) {
+		var options = key;
+		var parts;
+		var curOption;
+		var i;
+
+		if ( arguments.length === 0 ) {
+
+			// Don't return a reference to the internal hash
+			return $.widget.extend( {}, this.options );
+		}
+
+		if ( typeof key === "string" ) {
+
+			// Handle nested keys, e.g., "foo.bar" => { foo: { bar: ___ } }
+			options = {};
+			parts = key.split( "." );
+			key = parts.shift();
+			if ( parts.length ) {
+				curOption = options[ key ] = $.widget.extend( {}, this.options[ key ] );
+				for ( i = 0; i < parts.length - 1; i++ ) {
+					curOption[ parts[ i ] ] = curOption[ parts[ i ] ] || {};
+					curOption = curOption[ parts[ i ] ];
+				}
+				key = parts.pop();
+				if ( arguments.length === 1 ) {
+					return curOption[ key ] === undefined ? null : curOption[ key ];
+				}
+				curOption[ key ] = value;
+			} else {
+				if ( arguments.length === 1 ) {
+					return this.options[ key ] === undefined ? null : this.options[ key ];
+				}
+				options[ key ] = value;
+			}
+		}
+
+		this._setOptions( options );
+
+		return this;
+	},
+
+	_setOptions: function( options ) {
+		var key;
+
+		for ( key in options ) {
+			this._setOption( key, options[ key ] );
+		}
+
+		return this;
+	},
+
+	_setOption: function( key, value ) {
+		if ( key === "classes" ) {
+			this._setOptionClasses( value );
+		}
+
+		this.options[ key ] = value;
+
+		if ( key === "disabled" ) {
+			this._setOptionDisabled( value );
+		}
+
+		return this;
+	},
+
+	_setOptionClasses: function( value ) {
+		var classKey, elements, currentElements;
+
+		for ( classKey in value ) {
+			currentElements = this.classesElementLookup[ classKey ];
+			if ( value[ classKey ] === this.options.classes[ classKey ] ||
+					!currentElements ||
+					!currentElements.length ) {
+				continue;
+			}
+
+			// We are doing this to create a new jQuery object because the _removeClass() call
+			// on the next line is going to destroy the reference to the current elements being
+			// tracked. We need to save a copy of this collection so that we can add the new classes
+			// below.
+			elements = $( currentElements.get() );
+			this._removeClass( currentElements, classKey );
+
+			// We don't use _addClass() here, because that uses this.options.classes
+			// for generating the string of classes. We want to use the value passed in from
+			// _setOption(), this is the new value of the classes option which was passed to
+			// _setOption(). We pass this value directly to _classes().
+			elements.addClass( this._classes( {
+				element: elements,
+				keys: classKey,
+				classes: value,
+				add: true
+			} ) );
+		}
+	},
+
+	_setOptionDisabled: function( value ) {
+		this._toggleClass( this.widget(), this.widgetFullName + "-disabled", null, !!value );
+
+		// If the widget is becoming disabled, then nothing is interactive
+		if ( value ) {
+			this._removeClass( this.hoverable, null, "ui-state-hover" );
+			this._removeClass( this.focusable, null, "ui-state-focus" );
+		}
+	},
+
+	enable: function() {
+		return this._setOptions( { disabled: false } );
+	},
+
+	disable: function() {
+		return this._setOptions( { disabled: true } );
+	},
+
+	_classes: function( options ) {
+		var full = [];
+		var that = this;
+
+		options = $.extend( {
+			element: this.element,
+			classes: this.options.classes || {}
+		}, options );
+
+		function processClassString( classes, checkOption ) {
+			var current, i;
+			for ( i = 0; i < classes.length; i++ ) {
+				current = that.classesElementLookup[ classes[ i ] ] || $();
+				if ( options.add ) {
+					current = $( $.unique( current.get().concat( options.element.get() ) ) );
+				} else {
+					current = $( current.not( options.element ).get() );
+				}
+				that.classesElementLookup[ classes[ i ] ] = current;
+				full.push( classes[ i ] );
+				if ( checkOption && options.classes[ classes[ i ] ] ) {
+					full.push( options.classes[ classes[ i ] ] );
+				}
+			}
+		}
+
+		this._on( options.element, {
+			"remove": "_untrackClassesElement"
+		} );
+
+		if ( options.keys ) {
+			processClassString( options.keys.match( /\S+/g ) || [], true );
+		}
+		if ( options.extra ) {
+			processClassString( options.extra.match( /\S+/g ) || [] );
+		}
+
+		return full.join( " " );
+	},
+
+	_untrackClassesElement: function( event ) {
+		var that = this;
+		$.each( that.classesElementLookup, function( key, value ) {
+			if ( $.inArray( event.target, value ) !== -1 ) {
+				that.classesElementLookup[ key ] = $( value.not( event.target ).get() );
+			}
+		} );
+	},
+
+	_removeClass: function( element, keys, extra ) {
+		return this._toggleClass( element, keys, extra, false );
+	},
+
+	_addClass: function( element, keys, extra ) {
+		return this._toggleClass( element, keys, extra, true );
+	},
+
+	_toggleClass: function( element, keys, extra, add ) {
+		add = ( typeof add === "boolean" ) ? add : extra;
+		var shift = ( typeof element === "string" || element === null ),
+			options = {
+				extra: shift ? keys : extra,
+				keys: shift ? element : keys,
+				element: shift ? this.element : element,
+				add: add
+			};
+		options.element.toggleClass( this._classes( options ), add );
+		return this;
+	},
+
+	_on: function( suppressDisabledCheck, element, handlers ) {
+		var delegateElement;
+		var instance = this;
+
+		// No suppressDisabledCheck flag, shuffle arguments
+		if ( typeof suppressDisabledCheck !== "boolean" ) {
+			handlers = element;
+			element = suppressDisabledCheck;
+			suppressDisabledCheck = false;
+		}
+
+		// No element argument, shuffle and use this.element
+		if ( !handlers ) {
+			handlers = element;
+			element = this.element;
+			delegateElement = this.widget();
+		} else {
+			element = delegateElement = $( element );
+			this.bindings = this.bindings.add( element );
+		}
+
+		$.each( handlers, function( event, handler ) {
+			function handlerProxy() {
+
+				// Allow widgets to customize the disabled handling
+				// - disabled as an array instead of boolean
+				// - disabled class as method for disabling individual parts
+				if ( !suppressDisabledCheck &&
+						( instance.options.disabled === true ||
+						$( this ).hasClass( "ui-state-disabled" ) ) ) {
+					return;
+				}
+				return ( typeof handler === "string" ? instance[ handler ] : handler )
+					.apply( instance, arguments );
+			}
+
+			// Copy the guid so direct unbinding works
+			if ( typeof handler !== "string" ) {
+				handlerProxy.guid = handler.guid =
+					handler.guid || handlerProxy.guid || $.guid++;
+			}
+
+			var match = event.match( /^([\w:-]*)\s*(.*)$/ );
+			var eventName = match[ 1 ] + instance.eventNamespace;
+			var selector = match[ 2 ];
+
+			if ( selector ) {
+				delegateElement.on( eventName, selector, handlerProxy );
+			} else {
+				element.on( eventName, handlerProxy );
+			}
+		} );
+	},
+
+	_off: function( element, eventName ) {
+		eventName = ( eventName || "" ).split( " " ).join( this.eventNamespace + " " ) +
+			this.eventNamespace;
+		element.off( eventName ).off( eventName );
+
+		// Clear the stack to avoid memory leaks (#10056)
+		this.bindings = $( this.bindings.not( element ).get() );
+		this.focusable = $( this.focusable.not( element ).get() );
+		this.hoverable = $( this.hoverable.not( element ).get() );
+	},
+
+	_delay: function( handler, delay ) {
+		function handlerProxy() {
+			return ( typeof handler === "string" ? instance[ handler ] : handler )
+				.apply( instance, arguments );
+		}
+		var instance = this;
+		return setTimeout( handlerProxy, delay || 0 );
+	},
+
+	_hoverable: function( element ) {
+		this.hoverable = this.hoverable.add( element );
+		this._on( element, {
+			mouseenter: function( event ) {
+				this._addClass( $( event.currentTarget ), null, "ui-state-hover" );
+			},
+			mouseleave: function( event ) {
+				this._removeClass( $( event.currentTarget ), null, "ui-state-hover" );
+			}
+		} );
+	},
+
+	_focusable: function( element ) {
+		this.focusable = this.focusable.add( element );
+		this._on( element, {
+			focusin: function( event ) {
+				this._addClass( $( event.currentTarget ), null, "ui-state-focus" );
+			},
+			focusout: function( event ) {
+				this._removeClass( $( event.currentTarget ), null, "ui-state-focus" );
+			}
+		} );
+	},
+
+	_trigger: function( type, event, data ) {
+		var prop, orig;
+		var callback = this.options[ type ];
+
+		data = data || {};
+		event = $.Event( event );
+		event.type = ( type === this.widgetEventPrefix ?
+			type :
+			this.widgetEventPrefix + type ).toLowerCase();
+
+		// The original event may come from any element
+		// so we need to reset the target on the new event
+		event.target = this.element[ 0 ];
+
+		// Copy original event properties over to the new event
+		orig = event.originalEvent;
+		if ( orig ) {
+			for ( prop in orig ) {
+				if ( !( prop in event ) ) {
+					event[ prop ] = orig[ prop ];
+				}
+			}
+		}
+
+		this.element.trigger( event, data );
+		return !( $.isFunction( callback ) &&
+			callback.apply( this.element[ 0 ], [ event ].concat( data ) ) === false ||
+			event.isDefaultPrevented() );
+	}
+};
+
+$.each( { show: "fadeIn", hide: "fadeOut" }, function( method, defaultEffect ) {
+	$.Widget.prototype[ "_" + method ] = function( element, options, callback ) {
+		if ( typeof options === "string" ) {
+			options = { effect: options };
+		}
+
+		var hasOptions;
+		var effectName = !options ?
+			method :
+			options === true || typeof options === "number" ?
+				defaultEffect :
+				options.effect || defaultEffect;
+
+		options = options || {};
+		if ( typeof options === "number" ) {
+			options = { duration: options };
+		}
+
+		hasOptions = !$.isEmptyObject( options );
+		options.complete = callback;
+
+		if ( options.delay ) {
+			element.delay( options.delay );
+		}
+
+		if ( hasOptions && $.effects && $.effects.effect[ effectName ] ) {
+			element[ method ]( options );
+		} else if ( effectName !== method && element[ effectName ] ) {
+			element[ effectName ]( options.duration, options.easing, callback );
+		} else {
+			element.queue( function( next ) {
+				$( this )[ method ]();
+				if ( callback ) {
+					callback.call( element[ 0 ] );
+				}
+				next();
+			} );
+		}
+	};
+} );
+
+return $.widget;
+
+} ) );
+
+},{}],3:[function(require,module,exports){
+/*!
  * jQuery JavaScript Library v2.2.3
  * http://jquery.com/
  *
@@ -10072,7 +10807,7 @@ if ( !noGlobal ) {
 return jQuery;
 }));
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -10128,8 +10863,6 @@ var ProductoTer = function () {
     this.escucharEliminar();
     this.escucharModificar();
     this.escucharNuevo();
-    this.escucharSoloNumeros(this.$precio_venta);
-    this.escucharSoloNumeros(this.$cantidad);
   }
 
   _createClass(ProductoTer, [{
@@ -10154,6 +10887,8 @@ var ProductoTer = function () {
         _this.limpiarFormulario();
         _this.activarFormulario();
       });
+      this.escucharSoloNumeros(this.$precio_venta);
+      this.escucharSoloNumeros(this.$cantidad);
     }
   }, {
     key: 'closeModal',
@@ -10268,16 +11003,6 @@ var ProductoTer = function () {
       this.$cantidad.val("");
     }
   }, {
-    key: 'desactivarFormulario',
-    value: function desactivarFormulario() {
-      this.$nombre.attr('disabled', 'disabled');
-      this.$descripcion.attr('disabled', 'disabled');
-      this.$categoria.attr('disabled', 'disabled');
-      this.$costo_produccion.attr('disabled', 'disabled');
-      this.$precio_venta.attr('disabled', 'disabled');
-      this.$cantidad.attr('disabled', 'disabled');
-    }
-  }, {
     key: 'activarFormulario',
     value: function activarFormulario() {
       this.$nombre.removeAttr("disabled");
@@ -10336,7 +11061,7 @@ var ProductoTer = function () {
 
 exports.default = ProductoTer;
 
-},{"jquery":2,"jquery-modal":1}],4:[function(require,module,exports){
+},{"jquery":3,"jquery-modal":1}],5:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); //import $ from 'jquery'
@@ -10365,6 +11090,10 @@ var _index6 = _interopRequireDefault(_index5);
 var _index7 = require('./maquinas/index.js');
 
 var _index8 = _interopRequireDefault(_index7);
+
+var _index9 = require('./pedidos/index.js');
+
+var _index10 = _interopRequireDefault(_index9);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10423,8 +11152,57 @@ var proveedor = new _index2.default();
 var producto = new _index4.default();
 var materiaprima = new _index6.default();
 var maquina = new _index8.default();
+var pedidos = new _index10.default();
 
-},{"./ProductoTer/index.js":3,"./maquinas/index.js":5,"./materiaprima/index.js":6,"./proveedores/index.js":7,"jquery":2,"jquery-modal":1}],5:[function(require,module,exports){
+},{"./ProductoTer/index.js":4,"./maquinas/index.js":7,"./materiaprima/index.js":8,"./pedidos/index.js":9,"./proveedores/index.js":10,"jquery":3,"jquery-modal":1}],6:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = require('jquery');
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+require('jquery-ui');
+
+var Atocompletar = function () {
+  function Atocompletar() {
+    _classCallCheck(this, Atocompletar);
+  }
+
+  _createClass(Atocompletar, [{
+    key: 'autocompletarMateria',
+    value: function autocompletarMateria(configurations) {
+      var options = {
+
+        source: configurations.url,
+
+        minLength: 3,
+
+        select: function select(event, ui) {
+          configurations.productos.val(ui.item.id);
+        }
+
+      };
+
+      configurations.input.autocomplete(options);
+    }
+  }]);
+
+  return Atocompletar;
+}();
+
+exports.default = Atocompletar;
+
+},{"jquery":3,"jquery-ui":2}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -10467,16 +11245,53 @@ var Maquina = function () {
     this.$modificarMa = $('#modificarMa');
     this.$eliminarMa = $('#eliminarMa');
     this.$formulario_maqui = $('#formulario_maqui');
+    this.$nombre = $("#id_nombre");
     this.accion = '';
     this.id = '';
+    this.options = {
+      field: "name",
+      input: this.$nombre
+    };
     this.escucharBuscar();
     this.escucharConsulta();
     this.escucharLimpiar();
     this.escucharEliminar();
     this.escucharModificar();
+
+    //this.autocompletar()
   }
 
   _createClass(Maquina, [{
+    key: 'autocompletar',
+    value: function autocompletar() {
+
+      var self = this;
+      this.$nombre.on('keypress', function (evt) {
+        var numCaracteres = self.$nombre.val().length;
+        if (numCaracteres >= 3) {
+          self.$nombre.autocomplete({
+            serviceUrl: "/MenuPrincipal/MateriaPrima/Listar/" + self.$nombre.val() + "/?format=json",
+            onSelect: function onSelect(suggestion) {
+              alert('You selected: ' + suggestion.code + ', ' + suggestion.name);
+            }
+          }); /*;autocomplete({
+              source: function( request, response ) {
+              $.ajax({
+                url: "/MenuPrincipal/MateriaPrima/Listar/" + self.$nombre.val() + "/?format=json",
+                type: "GET",
+                dataType: "json",
+                success: function(data) {
+                 response(data);
+                }
+              });
+              },
+              minLength: 3
+              })*/
+        }
+        return true;
+      });
+    }
+  }, {
     key: 'escucharSoloNumeros',
     value: function escucharSoloNumeros(elemento) {
       elemento.on('keypress', function (evt) {
@@ -10672,7 +11487,7 @@ var Maquina = function () {
 
 exports.default = Maquina;
 
-},{"jquery":2,"jquery-modal":1}],6:[function(require,module,exports){
+},{"jquery":3,"jquery-modal":1}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -10717,9 +11532,9 @@ var MateriaPrima = function () {
     this.$limpiarMP = $('#limpiarMP');
     this.$modificarMP = $('#modificarMP');
     this.$eliminarMP = $('#eliminarMP');
-    this.$guardarMP = $('#guardarMP');
     this.$nuevo = $('#nuevo');
     this.$formulario_materia = $('#formulario_materia');
+    this.$consulta_mate = $("#consulta_mate");
     this.accion = '';
     this.id = 0;
     this.escucharBuscar();
@@ -10727,6 +11542,11 @@ var MateriaPrima = function () {
     this.escucharLimpiar();
     this.escucharEliminar();
     this.escucharModificar();
+    //this.escucharConsultaMateria()
+    this.options = {
+      field: "name",
+      input: this.$consulta_mate
+    };
   }
 
   _createClass(MateriaPrima, [{
@@ -10847,12 +11667,12 @@ var MateriaPrima = function () {
       this.$cantidad.focus();
       this.$cantidad.val(data.materia.cantidad);
       if (this.accion == 'Consultar') {
-        this.desactivarFormulario();
+        //this.desactivarFormulario()
       } else {
-        this.id = data.materia.id;
-        this.activarFormulario();
-        this.$nombre.attr('readonly', 'readonly');
-      }
+          this.id = data.materia.id;
+          this.activarFormulario();
+          this.$nombre.attr('readonly', 'readonly');
+        }
     }
   }, {
     key: 'limpiarFormulario',
@@ -10864,26 +11684,25 @@ var MateriaPrima = function () {
       this.$unidad_medida.val("");
       this.$cantidad.val("");
     }
-  }, {
-    key: 'desactivarFormulario',
-    value: function desactivarFormulario() {
-      this.$nombre.attr('disabled', 'disabled');
-      this.$descripcion.attr('disabled', 'disabled');
-      this.$categoria.attr('disabled', 'disabled');
-      this.$cantidad_entrada.attr('disabled', 'disabled');
-      this.$unidad_medida.attr('disabled', 'disabled');
-      this.$cantidad.attr('disabled', 'disabled');
-    }
-  }, {
-    key: 'activarFormulario',
-    value: function activarFormulario() {
-      this.$nombre.removeAttr("disabled");
-      this.$descripcion.removeAttr("disabled");
-      this.$categoria.removeAttr("disabled");
-      this.$cantidad_entrada.removeAttr("disabled");
-      this.$unidad_medida.removeAttr("disabled");
-      this.$cantidad.removeAttr("disabled");
-    }
+
+    /*  desactivarFormulario () {
+        this.$nombre.attr('disabled', 'disabled')
+        this.$descripcion.attr('disabled', 'disabled')
+        this.$categoria.attr('disabled', 'disabled')
+        this.$cantidad_entrada.attr('disabled', 'disabled')
+        this.$unidad_medida.attr('disabled', 'disabled')
+        this.$cantidad.attr('disabled', 'disabled')
+      }
+    
+      activarFormulario () {
+        this.$nombre.removeAttr("disabled")
+        this.$descripcion.removeAttr("disabled")
+        this.$categoria.removeAttr("disabled")
+        this.$cantidad_entrada.removeAttr("disabled")
+        this.$unidad_medida.removeAttr("disabled")
+        this.$cantidad.removeAttr("disabled")
+      }*/
+
   }, {
     key: 'escucharLimpiar',
     value: function escucharLimpiar() {
@@ -10933,7 +11752,189 @@ var MateriaPrima = function () {
 
 exports.default = MateriaPrima;
 
-},{"jquery":2,"jquery-modal":1}],7:[function(require,module,exports){
+},{"jquery":3,"jquery-modal":1}],9:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = require('jquery');
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _jqueryModal = require('jquery-modal');
+
+var _jqueryModal2 = _interopRequireDefault(_jqueryModal);
+
+var _autocompletar = require('../lib/autocompletar.js');
+
+var _autocompletar2 = _interopRequireDefault(_autocompletar);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var autocompletar = new _autocompletar2.default();
+
+var Pedidos = function () {
+  function Pedidos() {
+    _classCallCheck(this, Pedidos);
+
+    this.$agregarProducto = $("#agregarProducto");
+    this.$table_productos = $("#table_productos");
+    this.$modal_alert = $("#modal-alert");
+    this.$text_modal = $("#text-modal");
+    this.$title_modal = $('#title_modal');
+    this.$input_consulta = $('#input_consulta');
+    this.$consultar_materia = $('#consultar_materia');
+    this.$errors = $('#errors');
+    this.agregarFila();
+    this.cantProducto = 0;
+    this.$producto0 = $("#producto0");
+    this.$cantidad0 = $("#cantidad0");
+    this.$valor0 = $("#valor0");
+    this.$productos = $("#productos");
+    this.$cantidades = $("#cantidades");
+    this.$valores = $("#valores");
+    this.$id_total = $("#id_total");
+    this.$guardarP = $("#guardarP");
+    this.diccionarioProductos = '[';
+    this.total = 0;
+    this.options = {
+      field: "name",
+      input: this.$producto0,
+      productos: this.$productos
+    };
+    this.escucharConsultaMateria(this.$producto0);
+    this.escucharGuardar();
+    this.perderFoco(this.$producto0, 'producto');
+    this.perderFoco(this.$cantidad0, 'cantidad');
+    this.perderFoco(this.$valor0, 'valor');
+    this.$id_total.attr('readonly');
+  }
+
+  _createClass(Pedidos, [{
+    key: 'escucharGuardar',
+    value: function escucharGuardar() {
+      var self = this;
+      this.$guardarP.on('click', function (evt) {
+        if (self.diccionarioProductos.length > 1) {
+          self.diccionarioProductos += ']';
+          self.$productos.val(self.diccionarioProductos);
+          console.log(self.diccionarioProductos);
+        } else {
+          evt.preventDefault();
+          Materialize.toast('Se debe ingresar al menos un producto al pedido', 5000);
+        }
+      });
+    }
+  }, {
+    key: 'activarInputConsulta',
+    value: function activarInputConsulta() {
+      this.$input_consulta.css('display', 'block');
+      this.$consultar_materia.css('display', 'block');
+      this.$errors.empty();
+    }
+  }, {
+    key: 'desactivarInputConsulta',
+    value: function desactivarInputConsulta() {
+      this.$input_consulta.css('display', 'none');
+      this.$consultar_materia.css('display', 'none');
+      this.$errors.empty();
+    }
+  }, {
+    key: 'escucharConsultaMateria',
+    value: function escucharConsultaMateria(element, tipo) {
+      var self = this;
+      if (tipo === 'agregar') {
+        this.options.input = element;
+      }
+      this.options.url = "/MenuPrincipal/MateriaPrima/Listar/?format=json";
+      autocompletar.autocompletarMateria(this.options);
+    }
+  }, {
+    key: 'perderFoco',
+    value: function perderFoco(element, inputName) {
+      var self = this;
+      element.bind('blur', function (evt) {
+        if (element.val() === '') {
+          element.focus();
+          element.select();
+          Materialize.toast('Este campo es obligatorio', 5000);
+        } else {
+          if (inputName === 'cantidad' || inputName === 'valor') {
+            self.agregarCantidadValor(element, inputName);
+          }
+          self.calcularTotal();
+        }
+      });
+    }
+  }, {
+    key: 'agregarCantidadValor',
+    value: function agregarCantidadValor(element, inputName) {
+      if (inputName === 'cantidad') {
+        this.$cantidades.val(element.val());
+      } else {
+        if (this.$valores.val() === '') {
+          this.$valores.val(element.val());
+        }
+      }
+    }
+  }, {
+    key: 'agregarFila',
+    value: function agregarFila() {
+      var self = this;
+      this.$agregarProducto.on('click', function (evt) {
+        evt.preventDefault();
+        self.cantProducto += 1;
+        self.$table_productos.append(self.fila());
+        self.escucharConsultaMateria($("#producto" + self.cantProducto), 'agregar');
+        self.perderFoco($("#producto" + self.cantProducto), 'producto');
+        self.perderFoco($("#cantidad" + self.cantProducto), 'cantidad');
+        self.perderFoco($("#valor" + self.cantProducto), 'valor');
+      });
+    }
+  }, {
+    key: 'calcularTotal',
+    value: function calcularTotal() {
+      var producto = $("#productos");
+      var cantidad = $("#cantidad" + this.cantProducto);
+      var valor = $("#valor" + this.cantProducto);
+      if (producto.val() != '' && cantidad.val() != '' && valor.val() != '') {
+        var produ = parseInt(producto.val());
+        var cant = parseFloat(cantidad.val());
+        var val = parseFloat(valor.val());
+        if (this.cantProducto == 0) {
+          var diccionario = '{"productoId": ' + produ + ', "cantidad": ' + cant + ', "valor": ' + val + '}';
+          this.diccionarioProductos += diccionario;
+        } else {
+          var _diccionario = ',{"productoId": ' + produ + ', "cantidad": ' + cant + ', "valor": ' + val + '}';
+          this.diccionarioProductos += _diccionario;
+        }
+        this.$id_total.focus();
+        var canti = cantidad.val();
+        var valo = valor.val();
+        this.total += this.total + parseFloat(canti) * parseFloat(valo);
+        this.$id_total.val(this.total);
+        this.$id_total.blur();
+      }
+    }
+  }, {
+    key: 'fila',
+    value: function fila() {
+      return '<tr>\n          <td><input type=\'text\' id=\'producto' + this.cantProducto + '\' name=\'producto' + this.cantProducto + '\'></td>\n          <td><input type=\'text\' id=\'cantidad' + this.cantProducto + '\' name=\'cantidad' + this.cantProducto + '\'></td>\n          <td><input type=\'text\' id=\'valor' + this.cantProducto + '\' name=\'valor' + this.cantProducto + '\'></td>\n        </tr>';
+    }
+  }]);
+
+  return Pedidos;
+}();
+
+exports.default = Pedidos;
+
+},{"../lib/autocompletar.js":6,"jquery":3,"jquery-modal":1}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11283,4 +12284,4 @@ var Proveedor = function () {
 
 exports.default = Proveedor;
 
-},{"jquery":2,"jquery-modal":1}]},{},[4]);
+},{"jquery":3,"jquery-modal":1}]},{},[5]);
