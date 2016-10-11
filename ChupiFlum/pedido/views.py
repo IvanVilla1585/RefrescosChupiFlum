@@ -20,6 +20,7 @@ from django.views.generic import TemplateView
 from .forms import PedidoForm
 from .models import Pedido
 from .models import Detalle_Pedido
+from estado_orden.models import EstadosOrdenes
 from materiaprima.models import MateriaPrima
 from proveedores.mixins import JSONResponseMixin
 from loginusers.mixins import LoginRequiredMixin
@@ -31,7 +32,7 @@ class PedidoView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(PedidoView, self).get_context_data(**kwargs)
-        context.update({'form': PedidoForm()})
+        context.update({'form': PedidoForm(), 'title': 'Pedidos'})
         return context
 
 class CrearPedido(LoginRequiredMixin, CreateView):
@@ -40,16 +41,26 @@ class CrearPedido(LoginRequiredMixin, CreateView):
     form_class = PedidoForm
 
     def form_valid(self, form):
-        self.object = form.save()
+        self.object = form.save(commit=False)
+        estado = EstadosOrdenes.objects.get(id=1)
+        self.object.id_etado = estado
+        self.object.save()
         pedido = self.model.objects.get(id=self.object.id)
         productos = ast.literal_eval(self.request.POST.get('productos', None))
         for producto in productos:
             materia = MateriaPrima.objects.get(id=producto['productoId'])
+            materia.cantidad = materia.cantidad + producto['cantidad']
+            materia.save()
             detalle = Detalle_Pedido.objects.create(id_pedido=pedido, id_materia_prima=materia, cantidad=producto['cantidad'], valor_unitario=Decimal(producto['valor']))
         return super(CrearPedido, self).form_valid(form)
 
 class ListarPedido(LoginRequiredMixin, ListView):
     model = Pedido
+
+    def get_context_data(self, **kwargs):
+        context = super(ListarPedido, self).get_context_data(**kwargs)
+        context.update({'title': 'Pedidos'})
+        return context
 
 class ModificarPedido(LoginRequiredMixin, UpdateView):
     model = Pedido
@@ -82,3 +93,13 @@ class ConsultarPedido(LoginRequiredMixin, JSONResponseMixin, DetailView):
             }
         }
         return data
+
+class ProductoTerminadoView(LoginRequiredMixin, TemplateView):
+    template_name = 'productos/productoterminado_form.html'
+
+
+    def get_context_data(self, **kwargs):
+        context = super(ProductoTerminadoView, self).get_context_data(**kwargs)
+        context.update({'form': ProductoTerminadoForm()})
+
+        return context

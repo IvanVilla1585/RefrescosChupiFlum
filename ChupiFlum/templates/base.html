@@ -12,9 +12,9 @@
 </head>
 <body>
   <section>
-    <div class="row menu_lateral">
+    <div class="row menu_lateral" style="min-heigth: 600px;">
 
-      <div class="col s12 m4 l2"> <!-- Note that "m4 l3" was added -->
+      <div class="col s12 m4 l2" style="background: #1D2939; padding-bottom: 12em;"> <!-- Note that "m4 l3" was added -->
         <div class="row">
           <figure>
             <img src="/static/images/logo.png" alt="">
@@ -22,41 +22,48 @@
         </div>
         <ul class="nav nav-pills nav-stacked nav-bracket">
           <li class="active"><a href="{% url 'loginusers:menu' %}"><i class="fa fa-home"></i> <span>Menú Principal</span></a></li>
-          <li class="nav-parent" data-id="1" ><a href="#" id="collapse"><i class="fa fa-edit"></i> <span>Parametrización</span></a>
+          <li class="nav-parent" data-id="1" ><a href="#" id="collapse"><i class="fa fa-edit"></i> <span>Permisos</span></a>
             <ul class="children">
-              {%  if  perms.proveedores  %}
                 <li><a href="{% url 'usuarios:usuario' %}"><i class="fa fa-caret-right"></i> Registro Usuarios</a></li>
-              {%  endif  %}
               {%  if  perms.grupos  %}
                 <li><a href="{% url 'grupos:grupo' %}"><i class="fa fa-caret-right"></i> Registro Grupos</a></li>
               {%  endif  %}
+            </ul>
+          </li>
+          <li class="nav-parent" data-id="2" ><a href="#" id="collapse"><i class="fa fa-edit"></i> <span>Compras</span></a>
+            <ul class="children">
               {%  if  perms.proveedores.form_view_proveedor  %}
                 <li><a href="{% url 'proveedores:proveedor' %}"><i class="fa fa-caret-right"></i> Registro Proveedores</a></li>
               {%  endif  %}
-              {%  if  perms.productos.form_view_producto  %}
-                <li><a href="{% url 'productos:producto' %}"><i class="fa fa-caret-right"></i> Registro Productos</a></li>
-              {%  endif  %}
+              <li><a href="{% url 'pedidos:pedidosForm' %}"><i class="fa fa-caret-right"></i> Pedidos</a></li>
+                <li><a href="{% url 'kardexmateria:form' %}"><i class="fa fa-caret-right"></i> Entrada Mteria Prima</a></li>
+            </ul>
+          </li>
+          <li class="nav-parent" data-id="3" ><a href="#" id="collapse"><i class="fa fa-edit"></i> <span>Producción</span></a>
+            <ul class="children">
               {%  if  perms.maquina.form_view_maquina  %}
                 <li><a href="{% url 'maquinas:maquinaForm' %}"><i class="fa fa-caret-right"></i> Registro Maquinas</a></li>
+              {%  endif  %}
+            </ul>
+          </li>
+          <li class="nav-parent" data-id="4" ><a href="#" id="collapse"><i class="fa fa-edit"></i> <span>Inventarios</span></a>
+            <ul class="children">
+              {%  if  perms.productos.form_view_producto  %}
+                <li><a href=""><i class="fa fa-caret-right"></i> Registro Productos</a></li>
               {%  endif  %}
               {%  if  perms.materiaprima.form_view_materiaprima  %}
                 <li><a href="{% url 'materiaprim:materiaPrimaForm' %}"><i class="fa fa-caret-right"></i> Registro Materia Prima</a></li>
               {%  endif  %}
-              {%  if  perms.proveedores  %}
-                <li><a href="wysiwyg.html"><i class="fa fa-caret-right"></i> Modificar Contaseña</a></li>
-              {%  endif  %}
-                <li><a href="{% url 'pedidos:pedidosForm' %}"><i class="fa fa-caret-right"></i> Pedidos</a></li>
-                <li><a href="{% url 'kardexmateria:form' %}"><i class="fa fa-caret-right"></i> Entrada Mteria Prima</a></li>
             </ul>
           </li>
           <li class="active"><a href="{% url 'loginusers:logout' %}"><i class="fa fa-home"></i> <span> Salir</span></a></li>
         </ul>
 
       </div>
-      <div class="col s12 m8 l10"> <!-- Note that "m8 l9" was added -->
+      <div class="col s12 m8 l10" > <!-- Note that "m8 l9" was added -->
         <div class="row">
-          <div class="pageheader">
-            <h3><i class="fa fa-home"></i>{{tittle}}</h3>
+          <div class="pageheader" >
+            <h3><i class="fa fa-home"></i>{{title}}</h3>
             <span class="usernaame">Ivan</span>
           </div>
           <div class="container_info">

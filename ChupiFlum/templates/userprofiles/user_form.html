@@ -3,6 +3,8 @@
   {% block content %}
     <form action="{% url 'usuarios:crear' %}" method="POST">
       <div class="row inputs">
+        <div class="col m10">
+
         {% csrf_token %}
         {{ form.management_form }}
           {% for field in form %}
@@ -62,13 +64,24 @@
             {% endifequal %}
           {% endfor %}
       </div>
-      <div class="row butons">
-        <input type="submit" class="waves-effect waves-light btn" id="guardarU" name="guardarU" value="guardar">
-        <input type="submit" class="waves-effect waves-light btn" id="buscarU" name="buscarU" value="buscar">
-        <input type="submit" class="waves-effect waves-light btn" id="modificarU" name="modificarU" value="modificar">
-        <input type="submit" class="waves-effect waves-light btn" id="eliminarU" name="eliminarU" value="eliminar">
-        <a type="submit" href="{% url 'materiaprim:listar' %}" class="waves-effect waves-light btn" id="listarP" name="listarP" value="Listar">Listar</a>
-        <input type="submit" class="waves-effect waves-light btn" id="limpiarU" name="limpiarU" value="limpiar">
+    </div>
+      <div class="col m2">
+          <div class="center">
+            <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" name="guardarMP" data-position="left" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
+          </div>
+          <div class="center">
+            <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="buscarMP" name="buscarMP" data-position="left" data-delay="50" data-tooltip="Buscar"><i class="material-icons">search</i>Left</button>
+          </div>
+          <div class="center">
+            <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red" id="modificarMP" name="modificarMP" data-position="left" data-delay="50" data-tooltip="Modificar"><i class="material-icons">add</i>Left</button>
+          </div>
+          <div class="center">
+            <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="eliminarMP" name="eliminarMP" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
+          </div>
+          <div class="center">
+            <a type="submit" style="margin: 1em 0;" href="{% url 'usuarios:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="listarP" name="listarP" data-position="left" data-delay="50" data-tooltip="Listar"><i class="material-icons">assignment</i>Left</a>
+          </div>
+
       </div>
     </form>
 

@@ -51,6 +51,11 @@ class ListarMateriaPrima(LoginRequiredMixin, JSONResponseMixin, ListView):
 
         return queryset
 
+    def get_context_data(self, **kwargs):
+        context = super(ListarMateriaPrima, self).get_context_data(**kwargs)
+        context.update({'title': 'Materia Prima'})
+        return context
+
 class CrearMateriaPrima(LoginRequiredMixin, CreateView):
     model = MateriaPrima
     success_url = reverse_lazy('materiaprim:crear')
@@ -88,6 +93,6 @@ class MateriaPrimaView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(MateriaPrimaView, self).get_context_data(**kwargs)
-        context.update({'form': MateriaPrimaForm()})
+        context.update({'form': MateriaPrimaForm(), 'title': 'Materia Prima'})
 
         return context

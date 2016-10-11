@@ -4,7 +4,7 @@ from django.db import models
 
 class Proveedore(models.Model):
     nit = models.CharField(max_length=20, unique=True)
-    nombre_empresa = models.CharField(max_length=120)
+    empresa = models.CharField(max_length=120)
     direccion = models.CharField(max_length=100)
     telefono = models.CharField(max_length=15)
     fax = models.CharField(max_length=15, blank=True, null=True)
@@ -16,7 +16,7 @@ class Proveedore(models.Model):
     estado = models.BooleanField(default=True, blank=True)
 
     def __str__(self):
-        return self.nombre_empresa
+        return self.empresa
 
     class Meta:
         ordering = ('id',)

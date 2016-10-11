@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<arrticle class="container_tabla_provee">
+  <div class="row">
+    <div class="col s12">
+      <table class="responsive-table striped">
+        <thead>
+          <tr>
+            <th>Descripción</th>
+            <th>Fecha</th>
+            <th>Proveedor</th>
+            <th>Usuario</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for pedido in object_list %}
+          <tr>
+            <td>{{ pedido.descripcion }}</td>
+            <td>{{ pedido.fecha }}</td>
+            <td>{{ pedido.proveedor.empresa }}</td>
+            <td>{{ pedido.usuario.username }}</td>
+            <td>{{ pedido.total }}</td>
+
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</arrticle>
+{% endblock %}

@@ -49,24 +49,22 @@
     {% endfor %}
   </div>
   <div class="col m2">
-    <div class="center">
-      <button type="submit" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="guardarMP" name="guardarMP" data-position="bottom" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
-    </div>
-    <div class="center">
-      <button type="submit" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="buscarMP" name="buscarMP" ><i class="material-icons">search</i></button>
-    </div>
-    <div class="center">
-      <button type="submit" class="btn-floating btn-large waves-effect waves-light red" id="modificarMP" name="modificarMP" ><i class="material-icons">add</i></button>
-    </div>
-    <div class="center">
-      <button type="submit" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="eliminarMP" name="eliminarMP" ><i class="material-icons">cancel</i></button>
-    </div>
-    <div class="center">
-      <a type="submit" href="{% url 'materiaprim:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="listarP" name="listarP" ><i class="material-icons">assignment</i></a>
-    </div>
-    <div class="center">
-      <button type="submit" class="btn-floating btn-large waves-effect waves-light red" id="limpiarMP" name="limpiarMP" ><i class="material-icons">add</i></button>
-    </div>
+      <div class="center">
+        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" name="guardarMP" data-position="left" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
+      </div>
+      <div class="center">
+        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="buscarMP" name="buscarMP" data-position="left" data-delay="50" data-tooltip="Buscar"><i class="material-icons">search</i>Left</button>
+      </div>
+      <div class="center">
+        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red" id="modificarMP" name="modificarMP" data-position="left" data-delay="50" data-tooltip="Modificar"><i class="material-icons">add</i>Left</button>
+      </div>
+      <div class="center">
+        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="eliminarMP" name="eliminarMP" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
+      </div>
+      <div class="center">
+        <a type="submit" href="{% url 'materiaprim:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="listarP" name="listarP" ><i class="material-icons">assignment</i></a>
+      </div>
+
   </div>
 </div>
 </form>

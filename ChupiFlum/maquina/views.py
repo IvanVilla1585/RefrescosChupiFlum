@@ -67,6 +67,6 @@ class MaquinaView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(MaquinaView, self).get_context_data(**kwargs)
-        context.update({'form': MaquinaForm()})
+        context.update({'form': MaquinaForm(), 'title': 'Maquina'})
 
         return context

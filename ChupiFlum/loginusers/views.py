@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -8,6 +9,7 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.forms import AuthenticationForm
 from django.views.generic import TemplateView, RedirectView, FormView
 from .forms import LoginForm
+from django.utils.translation import ugettext_lazy as _
 
 
 class LoginView(FormView):
@@ -34,7 +36,7 @@ def authentication(request):
 @login_required()
 def menuView(request):
     template = loader.get_template('base.html')
-    return HttpResponse(template.render({}, request))
+    return HttpResponse(template.render({'title': 'Menú Principal'}, request))
 
 def homeView(request):
     template = loader.get_template('loginusers/home.html')

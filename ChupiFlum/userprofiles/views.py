@@ -42,6 +42,11 @@ class ListarUsuarios(LoginRequiredMixin, ListView):
     template_name = 'user_list.html'
     paginate_by = 5
 
+    def get_context_data(self, **kwargs):
+        context = super(ListarUsuarios, self).get_context_data(**kwargs)
+        context.update({'title': 'Usuarios'})
+        return context
+
 class ModificarUsuario(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserCreationForm
@@ -72,6 +77,6 @@ class UsuarioView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(UsuarioView, self).get_context_data(**kwargs)
-        context.update({'form': UserCreationForm()})
+        context.update({'form': UserCreationForm(), 'title': 'Usuarios'})
 
         return context

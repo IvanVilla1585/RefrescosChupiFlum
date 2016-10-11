@@ -23,21 +23,46 @@ from .models import Proveedore
 from .mixins import JSONResponseMixin
 from django.http import JsonResponse
 from loginusers.mixins import LoginRequiredMixin
+from django.contrib import messages
 
 
-class ListarProveedores(LoginRequiredMixin, ListView):
+class ListarProveedores(LoginRequiredMixin, JSONResponseMixin, ListView):
     model = Proveedore
     template_name = 'proveedore_list.html'
     paginate_by = 8
 
+    def get(self, request, *args, **kwargs):
+        self.object_list = self.get_queryset()
+        return self.render_to_json_response()
 
+    def get_data(self):
+        data = [{
+            'id': proveedor.id,
+            'value': proveedor.empresa,
+        } for proveedor in self.object_list]
+
+        return data
+
+    def get_queryset(self):
+        nom = self.request.GET.get('term', None)
+        if nom:
+            queryset = self.model.objects.filter(empresa__icontains=nom)
+        else:
+            queryset = super(ListarProveedores, self).get_queryset()
+
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(ListarProveedores, self).get_context_data(**kwargs)
+        context.update({'title': 'Proveedores'})
+
+        return context
 
 
 class EliminarProveedor(LoginRequiredMixin, DeleteView):
     model = Proveedore
     slug_field = 'nit'
     slug_url_kwarg = 'nit'
-    template_name_suffix = '_list'
     success_url = reverse_lazy('proveedores:listar')
 
 def eliminarProveedorAjax(request, nit):
@@ -61,6 +86,7 @@ class CrearProveedor(LoginRequiredMixin, CreateView):
     model = Proveedore
     form_class = ProveedoreForm
     success_url = reverse_lazy('proveedores:listar')
+    success_message = 'El proveedor fue registrado en el sistema.'
 
 
 class ActualizarProveedor(LoginRequiredMixin, UpdateView):
@@ -83,7 +109,7 @@ class ConsultarProveedor(LoginRequiredMixin, JSONResponseMixin, DetailView):
         data = {
             'proveedor':{
                 'nit': self.object.nit,
-                'nombre_empresa': self.object.nombre_empresa,
+                'nombre_empresa': self.object.empresa,
                 'direccion': self.object.direccion,
                 'telefono': self.object.telefono,
                 'fax': self.object.fax ,
@@ -103,6 +129,6 @@ class ProveedoresView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(ProveedoresView, self).get_context_data(**kwargs)
-        context.update({'form': ProveedoreForm()})
+        context.update({'form': ProveedoreForm(), 'title': 'Proveedores'})
 
         return context

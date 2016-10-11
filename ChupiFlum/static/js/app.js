@@ -11132,9 +11132,9 @@ var Menu = function () {
       this.$navparent.on('click', 'li.nav-parent', function (ev) {
         var $this = $(this);
         if (this.id == $this.data('id')) {
-          $("li[data-id='" + this.id + "']").find('.children').slideToggle("slow");
+          $("li[data-id='" + this.id + "']").slideToggle("slow");
         } else {
-          $("li[data-id='" + this.id + "']").find('.children').slideToggle("slow");
+          $("li[data-id='" + this.id + "']").slideToggle("slow");
           this.id = $this.data('id');
 
           var $article = $("li[data-id='" + this.id + "']").find('.children');
@@ -11951,9 +11951,15 @@ var _jqueryModal = require('jquery-modal');
 
 var _jqueryModal2 = _interopRequireDefault(_jqueryModal);
 
+var _autocompletar = require('../lib/autocompletar.js');
+
+var _autocompletar2 = _interopRequireDefault(_autocompletar);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var autocompletar = new _autocompletar2.default();
 
 var Proveedor = function () {
   function Proveedor() {
@@ -11971,7 +11977,7 @@ var Proveedor = function () {
     this.$input_consulta = $('#input_consulta');
     this.$modal_boton = $('#modal_boton');
     this.$nit = $('#id_nit');
-    this.$nombre_empresa = $('#id_nombre_empresa');
+    this.$nombre_empresa = $('#id_empresa');
     this.$direccion = $('#id_direccion');
     this.$telefono = $('#id_telefono');
     this.$fax = $('#id_fax');
@@ -11986,10 +11992,17 @@ var Proveedor = function () {
     this.$eliminar = $('#eliminar');
     this.$guardar = $('#guardar');
     this.$nuevo = $('#nuevo');
+    this.$id = $('#id');
     this.$formulario_provee = $('#formulario_provee');
     this.$csrfmiddlewaretoken = $('input[name=csrfmiddlewaretoken]');
     this.accion = '';
     this.nit = '';
+    this.options = {
+      field: "name",
+      input: this.$consulta_nit,
+      productos: this.$id,
+      url: "/MenuPrincipal/Proveedor/Listar/?format=json"
+    };
     this.escucharBuscar();
     this.escucharConsulta();
     this.escucharLimpiar();
@@ -11999,6 +12012,7 @@ var Proveedor = function () {
     this.escucharSoloNumeros(this.$telefono);
     this.escucharSoloNumeros(this.$fax);
     this.escucharSoloNumeros(this.$telefono_contacto);
+    autocompletar.autocompletarMateria(this.options);
   }
 
   _createClass(Proveedor, [{
@@ -12284,4 +12298,4 @@ var Proveedor = function () {
 
 exports.default = Proveedor;
 
-},{"jquery":3,"jquery-modal":1}]},{},[5]);
+},{"../lib/autocompletar.js":6,"jquery":3,"jquery-modal":1}]},{},[5]);

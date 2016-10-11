@@ -6,11 +6,11 @@ from .models import Proveedore
 class ProveedoreForm(forms.ModelForm):
     class Meta:
         model = Proveedore
-        fields = ('nit', 'nombre_empresa', 'direccion', 'telefono', 'fax', 'correo_empresa', 'nombre_contacto',
+        fields = ('nit', 'empresa', 'direccion', 'telefono', 'fax', 'correo_empresa', 'nombre_contacto',
                   'apellido_contacto', 'telefono_contacto', 'correo_contacto')
         labels = {
             'nit': _(u'*Nit'),
-            'nombre_empresa': _(u'*Nombre de la Empresa'),
+            'empresa': _(u'*Nombre de la Empresa'),
             'direccion': _(u'*Dirección'),
             'telefono': _(u'*Teléfono'),
             'fax': _(u'Fax'),
@@ -24,7 +24,7 @@ class ProveedoreForm(forms.ModelForm):
             'nit': {
                 'required': _("El campo nit es requerido"),
             },
-            'nombre_empresa': {
+            'empresa': {
                 'required': _("El campo nombre empresa es requerido"),
             },
             'direccion': {

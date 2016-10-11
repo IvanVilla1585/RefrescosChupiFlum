@@ -3,6 +3,8 @@
 {% block content %}
 <form id="formulario_provee" action="{% url 'proveedores:crear' %}" method="POST">
   <div class="row inputs">
+    <div class="col m10">
+
     {% csrf_token %}
     {{ form.management_form }}
     {% for field in form %}
@@ -13,7 +15,7 @@
           {{ field.label_tag }}
             {{ field.errors  }}
         </div>
-      {% else %}{% ifequal field.name "nombre_empresa" %}
+      {% else %}{% ifequal field.name "empresa" %}
         <div class="input-field col s5">
           {{ field }}
           {{ field.label_tag }}
@@ -83,20 +85,25 @@
         {% endifequal %}{% endifequal %}
     {% endfor %}
   </div>
-  <div class="row butons">
-    {%  if  perms.proveedores.add_proveedore  %}
-      <input type="submit" class="waves-effect waves-light btn" id="guardar" name="guardar" value="guardar">
-    {%  endif  %}
-    {%  if  perms.proveedores.can_change  %}
-      <input type="submit" class="waves-effect waves-light btn" id="modificar" name="modificar" value="modificar">
-    {%  endif  %}
-    {%  if  perms.proveedores.can_delete  %}
-      <input type="submit" class="waves-effect waves-light btn" id="eliminar" name="eliminar" value="eliminar">
-    {%  endif  %}
-    <input type="submit" class="waves-effect waves-light btn" id="buscar" name="buscar" value="buscar">
-    <a type="submit" href="proveedores:listar" class="waves-effect waves-light btn" id="listar" name="listar" value="Listar">Listar</a>
-    <input type="submit" class="waves-effect waves-light btn" id="limpiar" name="limpiar" value="limpiar">
+  <div class="col m2">
+      <div class="center">
+        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" name="guardarMP" data-position="left" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
+      </div>
+      <div class="center">
+        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="buscarMP" name="buscarMP" data-position="left" data-delay="50" data-tooltip="Buscar"><i class="material-icons">search</i>Left</button>
+      </div>
+      <div class="center">
+        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red" id="modificarMP" name="modificarMP" data-position="left" data-delay="50" data-tooltip="Modificar"><i class="material-icons">add</i>Left</button>
+      </div>
+      <div class="center">
+        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="eliminarMP" name="eliminarMP" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
+      </div>
+      <div class="center">
+        <a type="submit" href="{% url 'proveedores:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="listarP" name="listarP" ><i class="material-icons">assignment</i></a>
+      </div>
+
   </div>
+    </div>
 </form>
 
 {% endblock %}
@@ -114,8 +121,12 @@
     <div class="errors" id="errors"></div>
     <div class="row inputs input_consulta" id="input_consulta">
       <div class="input-field col s10">
-        <input type="text" placeholder="" id="consulta_nit" name="consulta_nit">
-        <label for="consulta_nit">Ingrese número del nit:</label>
+        <div class="ui-widget">
+
+          <input type="text" placeholder="" id="consulta_nit" name="consulta_nit">
+          <label for="consulta_nit">Ingrese número del nit:</label>
+        </div>
+        <input type="hidden" placeholder="" id="id" name="id">
       </div>
     </div>
   </div>
@@ -124,4 +135,10 @@
     <button id="consultar_prove" class=" modal-action modal-close waves-effect waves-green btn-flat">Consultar</button>
   </div>
 </div>
+{% if messages.succes %}
+  <script type="text/javascript">
+    Materialize.toast({{ messages.succes }}, 3000, 'rounded')
+  </script>
+{% endif %}
+
 {% endblock %}
