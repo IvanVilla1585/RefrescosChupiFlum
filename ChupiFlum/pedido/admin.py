@@ -1,6 +1,5 @@
 from django.contrib import admin
 from .models import Pedido
-from actions import export_as_excel
 
 @admin.register(Pedido)
 class PedidoAdmin(admin.ModelAdmin):
@@ -11,4 +10,3 @@ class PedidoAdmin(admin.ModelAdmin):
         'proveedor',
         'usuario',
         )
-    actions = (export_as_excel,)

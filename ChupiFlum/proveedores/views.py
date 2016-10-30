@@ -23,7 +23,7 @@ from .models import Proveedore
 from .mixins import JSONResponseMixin
 from django.http import JsonResponse
 from loginusers.mixins import LoginRequiredMixin
-from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 
 
 class ListarProveedores(LoginRequiredMixin, JSONResponseMixin, ListView):
@@ -82,11 +82,11 @@ def eliminarProveedorAjax(request, nit):
 
 
 
-class CrearProveedor(LoginRequiredMixin, CreateView):
+class CrearProveedor(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Proveedore
     form_class = ProveedoreForm
-    success_url = reverse_lazy('proveedores:listar')
-    success_message = 'El proveedor fue registrado en el sistema.'
+    success_url = reverse_lazy('proveedores:crear')
+    success_message = 'El proveedor %(empresa)s fue registrado en el sistema.'
 
 
 class ActualizarProveedor(LoginRequiredMixin, UpdateView):

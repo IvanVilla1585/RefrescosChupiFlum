@@ -1,6 +1,5 @@
 from django.contrib import admin
 from .models import ProductoTerminado
-from actions import export_as_excel
 
 @admin.register(ProductoTerminado)
 class ProductoTerminadoAdmin(admin.ModelAdmin):
@@ -10,4 +9,3 @@ class ProductoTerminadoAdmin(admin.ModelAdmin):
         'nombre',
         'categoria__nombre',
         )
-actions = (export_as_excel,)

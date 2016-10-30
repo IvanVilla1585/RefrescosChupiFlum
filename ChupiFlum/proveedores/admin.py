@@ -1,6 +1,5 @@
 from django.contrib import admin
 from .models import Proveedore
-from actions import export_as_excel
 
 @admin.register(Proveedore)
 class ProveedoreAdmin(admin.ModelAdmin):
@@ -11,4 +10,3 @@ class ProveedoreAdmin(admin.ModelAdmin):
         'empresa',
         'nit',
         )
-    actions = (export_as_excel,)

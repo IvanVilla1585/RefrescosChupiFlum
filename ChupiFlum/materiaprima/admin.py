@@ -1,6 +1,5 @@
 from django.contrib import admin
 from .models import MateriaPrima
-from actions import export_as_excel
 
 @admin.register(MateriaPrima)
 class MateriaPrimaAdmin(admin.ModelAdmin):
@@ -11,4 +10,3 @@ class MateriaPrimaAdmin(admin.ModelAdmin):
         'categoria__nombre',
         'unidad_medida__nombre',
         )
-    actions = (export_as_excel,)

@@ -4,7 +4,7 @@
 <form id="formulario_provee" action="{% url 'proveedores:crear' %}" method="POST">
   <div class="row inputs">
     <div class="col m10">
-
+    {{ messages.succes }}
     {% csrf_token %}
     {{ form.management_form }}
     {% for field in form %}

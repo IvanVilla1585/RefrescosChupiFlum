@@ -97,7 +97,6 @@ class ConsultarPedido(LoginRequiredMixin, JSONResponseMixin, DetailView):
 class ProductoTerminadoView(LoginRequiredMixin, TemplateView):
     template_name = 'productos/productoterminado_form.html'
 
-
     def get_context_data(self, **kwargs):
         context = super(ProductoTerminadoView, self).get_context_data(**kwargs)
         context.update({'form': ProductoTerminadoForm()})
