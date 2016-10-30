@@ -22,5 +22,5 @@ class KardexMateriaPrima(models.Model):
         ordering = ('id','fecha_vencimiento')
         db_table='kardex_materias_primas'
         permissions = (
-            ("form_view_kardex_materia", "Puede ver el formulario de kardex materia prima")
+            ("form_view_kardexmateriaprima", u"Formulario ejecución kardex materia prima"),
         )

@@ -11,13 +11,13 @@ class MateriaPrima(models.Model):
     unidad_medida = models.ForeignKey(UnidadMedida)
     categoria = models.ForeignKey(CategoriaMateriaPrima)
     cantidad = models.DecimalField(decimal_places=3, max_digits=16)
-    
+
     def __str__(self):
         return self.nombre
 
     class Meta:
         ordering = ('id',)
-        db_table = 'materias_primas'
+        db_table = 'materiasprimas'
         permissions = (
-            ("form_view_materiaprima", u"Puede ver el formulario de materia prima"),
+            ("form_view_materiaprima", u"Formulario materia prima"),
         )

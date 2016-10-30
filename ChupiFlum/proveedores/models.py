@@ -22,5 +22,5 @@ class Proveedore(models.Model):
         ordering = ('id',)
         db_table = 'proveedores'
         permissions = (
-            ("form_view_proveedor", "Puede ver el formulario de proveedores"),
+            ("form_view_proveedore", u"Formulario proveedor"),
         )

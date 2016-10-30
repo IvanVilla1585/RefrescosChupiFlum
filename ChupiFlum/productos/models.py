@@ -23,5 +23,5 @@ class ProductoTerminado(models.Model):
     class Meta:
         ordering = ('id',)
         permissions = (
-            ("form_view_producto", u"Módulo Productos"),
+            ("form_view_producto", u"Formulario producto terminado"),
         )

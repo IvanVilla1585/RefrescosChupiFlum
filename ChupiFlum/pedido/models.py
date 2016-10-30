@@ -22,9 +22,6 @@ class Pedido(models.Model):
     class Meta:
         ordering = ('id',)
         db_table = 'pedidos'
-        permissions = (
-            ("form_view_pedido", u"Puede ver el formulario de pedidos"),
-        )
 
 class Detalle_Pedido(models.Model):
     id_pedido = models.ForeignKey(Pedido)
@@ -35,3 +32,6 @@ class Detalle_Pedido(models.Model):
     class Meta:
         ordering = ('id',)
         db_table='detalles_pedidos'
+        permissions = (
+            ("form_view_pedido", u"Formulario pedido"),
+        )

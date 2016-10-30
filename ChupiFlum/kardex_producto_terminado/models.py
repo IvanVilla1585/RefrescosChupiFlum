@@ -20,5 +20,5 @@ class KardexProductoTerminado(models.Model):
         ordering = ('id','fecha_vencimiento')
         db_table='kardex_productos_terminados'
         permissions = (
-            ("form_view_kardex_producto", "Puede ver el formulario de kardex producto terminado")
+            ("form_view_kardexproductoterminado", u"Formulario ejecución kardex producto terminado"),
         )

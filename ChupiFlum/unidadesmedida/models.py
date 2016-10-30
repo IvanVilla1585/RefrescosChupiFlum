@@ -14,5 +14,5 @@ class UnidadMedida(models.Model):
         ordering = ('id',)
         db_table = 'unidades_de_medidas'
         permissions = (
-                ("form_view_unidadmedida", "Puede ver el formulario de unidades de medidas")
+            ("form_view_unidadmedida", u"Formulario unidades de medidas"),
         )

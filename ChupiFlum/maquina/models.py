@@ -18,5 +18,5 @@ class Maquina(models.Model):
         ordering = ('id',)
         db_table = 'maquinas'
         permissions = (
-            ("form_view_maquina", u"Puede ver el formulario de maquinas"),
+            ("form_view_maquina", u"Formulario maquina"),
         )

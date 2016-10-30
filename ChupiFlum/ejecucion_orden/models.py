@@ -18,5 +18,5 @@ class EjecucionOrden(models.Model):
         ordering = ('id',)
         db_table = 'ejecucion_ordenes'
         permissions = (
-            ("form_view_ejecucion", u"Puede ver el formulario de ejecución ordenes de producción"),
+            ("form_view_ejecucion_orden", u"Formulario ejecución orden producción"),
         )

@@ -20,7 +20,7 @@ class OrdenProduccion(models.Model):
         ordering = ('id',)
         db_table = 'ordenes_produccion'
         permissions = (
-            ("form_view_pedido", u"Puede ver el formulario de ordenes de producción"),
+            ("form_view_ordenproduccion", u"Formulario orden de producción"),
         )
 
 class Detalle_Orden(models.Model):

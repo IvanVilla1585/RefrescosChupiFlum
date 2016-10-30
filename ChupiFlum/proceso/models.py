@@ -17,5 +17,5 @@ class Proceso(models.Model):
         ordering = ('id',)
         db_table = 'procesos'
         permissions = (
-            ("form_view_materiaprima", u"Puede ver el formulario de procesos"),
+            ("form_view_proceso", u"Formulario proceso"),
         )
