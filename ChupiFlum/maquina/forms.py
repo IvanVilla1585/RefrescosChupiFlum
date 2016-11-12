@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from django import forms
+from django.forms import TimeField
 from django.utils.translation import ugettext_lazy as _
 from .models import Maquina
 
 class MaquinaForm(forms.ModelForm):
     class Meta:
         model = Maquina
-        fields = ('nombre', 'descripcion', 'capacidad', 'unidad_medida','tiempo',)
+        fields = ('nombre', 'descripcion', 'capacidad', 'unidad_medida','tiempo', 'estado',)
         labels = {
             'nombre': _(u'*Nombre'),
             'descripcion': _(u'Descripción'),
@@ -25,6 +26,6 @@ class MaquinaForm(forms.ModelForm):
                 'required': _(u"Seleccione una unidad de medida"),
             },
             'tiempo': {
-                'required': _(u"SEl campo tiempo es requerido"),
+                'required': _(u"El campo tiempo es requerido"),
             },
         }

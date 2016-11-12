@@ -3,36 +3,48 @@
   {% block content %}
     <form action="{% url 'grupos:crear' %}" method="POST">
       <div class="row inputs">
-        {% csrf_token %}
-        {{ form.management_form }}
-          {% for field in form %}
-          {% ifequal field.name "name" %}
-            <div class="row">
-              <div class="input-field col s7">
-                {{ field }}
-                {{ field.label_tag }}
-                  {{ field.errors  }}
-              </div>
-            </div>
-            {% else %}{% ifequal field.name "permissions" %}
-            <div class="row">
-              <div class="input-field col s10">
-                {{ field }}
-                {{ field.label_tag }}
-                  {{ field.errors  }}
-              </div>
-            </div>
-          {% endifequal %}{% endifequal %}
-          {% endfor %}
+        <div class="col m10">
+          {% csrf_token %}
+          {{ form.management_form }}
+            {% for field in form %}
+              {% ifequal field.name "name" %}
+                <div class="row">
+                  <div class="input-field col s7">
+                    {{ field }}
+                    {{ field.label_tag }}
+                      {{ field.errors  }}
+                  </div>
+                </div>
+                {% else %}
+                {% ifequal field.name "permissions" %}
+                <div class="row">
+                  <div class="input-field col s10">
+                    {{ field }}
+                    {{ field.label_tag }}
+                    {{ field.errors  }}
+                  </div>
+                </div>
+              {% endifequal %}{% endifequal %}
+            {% endfor %}
+        </div>
+      <div class="col m2">
+          <div class="center">
+            <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" name="guardarGru" data-position="left" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
+          </div>
+          <div class="center">
+            <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="buscarGru" name="buscarGru" data-position="left" data-delay="50" data-tooltip="Buscar"><i class="material-icons">search</i>Left</button>
+          </div>
+          <div class="center">
+            <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red tooltipped" id="modificarGru" name="modificarGru" data-position="left" data-delay="50" data-tooltip="Modificar"><i class="material-icons">add</i>Left</button>
+          </div>
+          <div class="center">
+            <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="eliminarGru" name="eliminarGru" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
+          </div>
+          <div class="center">
+            <a type="submit" href="{% url 'proveedores:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="listaGru" name="listaGru" ><i class="material-icons">assignment</i></a>
+          </div>
       </div>
-      <div class="row butons">
-        <input type="submit" class="waves-effect waves-light btn" id="guardarP" name="guardarP" value="guardar">
-        <input type="submit" class="waves-effect waves-light btn" id="buscarP" name="buscarP" value="buscar">
-        <input type="submit" class="waves-effect waves-light btn" id="modificarP" name="modificarP" value="modificar">
-        <input type="submit" class="waves-effect waves-light btn" id="eliminarP" name="eliminarP" value="eliminar">
-        <a type="submit" href="/MenuPrincipal/Productos/Listar/" class="waves-effect waves-light btn" id="listarP" name="listarP" value="Listar">Listar</a>
-        <input type="submit" class="waves-effect waves-light btn" id="limpiarP" name="limpiarP" value="limpiar">
-      </div>
+    </div>
     </form>
 
   {% endblock %}

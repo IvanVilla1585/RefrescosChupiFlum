@@ -13,13 +13,13 @@
       <figure>
         <img src="/static/images/logo.png" alt="">
       </figure>
-      <h2>Ingreso al Sistema</h2>
+      <h2>{{ tittle }}</h2>
     </div>
     <div class="row">
       <form action="" method="post">
         <div class="row inputs">
           {% csrf_token %}
-          {{ form.management_form }}
+          {{ form.errors }}
           {% for field in form %}
             {% ifequal field.name "username" %}
             <div class="row">

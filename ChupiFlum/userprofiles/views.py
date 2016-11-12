@@ -19,7 +19,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.views.generic import TemplateView
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from .forms import UserCreationForm
+from .forms import UserForm
 from django.contrib.auth.models import Group
 from proveedores.mixins import JSONResponseMixin
 from loginusers.mixins import LoginRequiredMixin
@@ -27,7 +27,7 @@ from loginusers.mixins import LoginRequiredMixin
 class CrearUsuario(LoginRequiredMixin, CreateView):
     model = User
     success_url = reverse_lazy('usuarios:usuario')
-    form_class = UserCreationForm
+    form_class = UserForm
 
     def form_valid(self, form):
         self.object = form.save()
@@ -49,7 +49,7 @@ class ListarUsuarios(LoginRequiredMixin, ListView):
 
 class ModificarUsuario(LoginRequiredMixin, UpdateView):
     model = User
-    form_class = UserCreationForm
+    form_class = UserForm
     success_url = reverse_lazy('maquinas:listar')
 
 class ConsultarUsuario(LoginRequiredMixin, JSONResponseMixin, DetailView):
@@ -77,6 +77,6 @@ class UsuarioView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(UsuarioView, self).get_context_data(**kwargs)
-        context.update({'form': UserCreationForm(), 'title': 'Usuarios'})
+        context.update({'form': UserForm()})
 
         return context

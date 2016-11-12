@@ -17,6 +17,7 @@
             <th data-field="apellido_contacto">Apellido Contacto</th>
             <th data-field="telefono_contacto">Teléfono Contacto</th>
             <th data-field="correo_contacto">Correo Contacto</th>
+            <th data-field="correo_contacto">Estado</th>
           </tr>
         </thead>
         <tbody>
@@ -32,6 +33,20 @@
             <td>{{ proveedor.apellido_contacto }}</td>
             <td>{{ proveedor.telefono_contacto }}</td>
             <td>{{ proveedor.correo_contacto }}</td>
+            <td>
+              <span class="
+              {% if proveedor.estado %}
+                green_text
+              {% else %}
+                red_text
+              {% endif %}">
+                {% if proveedor.estado %}
+                  Activo
+                {% else %}
+                  Inactivo
+                {% endif %}
+              </span>
+            </td>
           </tr>
           {% endfor %}
         </tbody>

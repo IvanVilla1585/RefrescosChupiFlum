@@ -2,53 +2,60 @@
 
 {% block content %}
 <form action="{% url 'materiaprim:crear' %}" id="formulario_materia" method="POST">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success" id="alert-messages">
+        <button id="message_close" type="button" data-dismiss="alert" aria-hidden="true" class="close">×</button>
+        <i class="material-icons sign md-icon dp48">check</i>
+        <strong>{{ message }}</strong>
+      </div>
+    {% endfor %}
+  {% endif %}
   <div class="row inputs">
     <div class="col s12 m10">
-
-    {% csrf_token %}
-    {% for field in form %}
-      {% ifequal field.name "nombre" %}
-        <div class="row">
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-        {% else %}{% ifequal field.name "descripcion" %}
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
+      {% csrf_token %}
+      <div class="row">
+        <div class="input-field col s5">
+          {{ form.nombre }}
+          {{ form.nombre.label_tag }}
+          {{ form.nombre.errors  }}
+        </div>
+        <div class="input-field col s5">
+          {{ form.descripcion }}
+          {{ form.descripcion.label_tag }}
+          {{ form.descripcion.errors  }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s5">
+          {{ form.unidad_medida }}
+          {{ form.unidad_medida.label_tag }}
+          {{ form.unidad_medida.errors  }}
+        </div>
+        <div class="input-field col s5">
+          {{ form.categoria }}
+          {{ form.categoria.label_tag }}
+          {{ form.categoria.errors  }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s5">
+          {{ form.cantidad }}
+          {{ form.cantidad.label_tag }}
+          {{ form.cantidad.errors  }}
+        </div>
+        <div class="input-field col s5">
+          <div class="switch">
+            <label>
+              Inactivo {{ form.estado }}
+              <span class="lever"></span>
+              Activo
+            </label>
           </div>
         </div>
-        {% else %}{% ifequal field.name "unidad_medida" %}
-        <div class="row">
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-        {% else %}{% ifequal field.name "categoria" %}
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-        </div>
-        {% else %}{% ifequal field.name "cantidad" %}
-        <div class="row">
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-        </div>
-      {% endifequal %}{% endifequal %}
-      {% endifequal %}{% endifequal %}
-      {% endifequal %}
-    {% endfor %}
-  </div>
-  <div class="col m2">
+      </div>
+    </div>
+    <div class="col m2">
       <div class="center">
         <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" name="guardarMP" data-position="left" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
       </div>
@@ -62,11 +69,10 @@
         <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="eliminarMP" name="eliminarMP" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
       </div>
       <div class="center">
-        <a type="submit" href="{% url 'materiaprim:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="listarP" name="listarP" ><i class="material-icons">assignment</i></a>
+        <a type="submit" href="{% url 'materiaprim:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="listarP" name="listarP" data-position="left" data-tooltip="Listar"><i class="material-icons">assignment</i>Left</a>
       </div>
-
+    </div>
   </div>
-</div>
 </form>
 
 {% endblock %}
@@ -84,8 +90,10 @@
     <div class="errors" id="errors"></div>
     <div class="row inputs input_consulta" id="input_consulta">
       <div class="input-field col s10">
-        <input type="text" placeholder="" id="consulta_mate" name="consulta_mate">
-        <label for="consulta_mate">Nombre materia prima:</label>
+        <div class="ui-widget">
+          <input type="text" placeholder="" id="consulta_mate" name="consulta_mate">
+        </div>
+        <input type="hidden" placeholder="" id="idMateria" name="idMateria">
       </div>
     </div>
   </div>

@@ -12,7 +12,7 @@ class Pedido(models.Model):
     proveedor = models.ForeignKey(Proveedore)
     usuario = models.ForeignKey(User)
     fecha = models.DateTimeField()
-    total = models.DecimalField(decimal_places=3, max_digits=16)
+    total = models.DecimalField(decimal_places=2, max_digits=16)
     id_etado = models.ForeignKey(EstadosOrdenes)
     id_materia_prima = models.ManyToManyField(MateriaPrima, through='Detalle_Pedido', through_fields=('id_pedido', 'id_materia_prima'))
 

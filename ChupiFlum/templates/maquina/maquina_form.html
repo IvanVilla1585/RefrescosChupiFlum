@@ -2,67 +2,77 @@
 
 {% block content %}
 <form action="{% url 'maquinas:crear' %}" id="formulario_maqui" method="POST">
+  {% if messages %}
+
+      {% for message in messages %}
+        <div class="alert alert-success">
+          <button type="button" data-dismiss="alert" aria-hidden="true" class="close">×</button>
+          <i class="fa fa-check sign"></i>
+          <strong>Success!</strong> {{ message }}
+        </div>
+      {% endfor %}
+  {% endif %}
   <div class="row inputs">
     {% csrf_token %}
-    {% for field in form %}
-      {% ifequal field.name "nombre" %}
-        <div class="row">
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-        {% else %}{% ifequal field.name "descripcion" %}
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
+    <div class="col s12 m10">
+      <div class="row">
+        <div class="input-field col s5">
+          {{ form.nombre }}
+          {{ form.nombre.label_tag }}
+            {{ form.nombre.errors  }}
+        </div>
+        <div class="input-field col s5">
+          {{ form.descripcion }}
+          {{ form.descripcion.label_tag }}
+            {{ form.descripcion.errors  }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s5">
+          {{ form.capacidad }}
+          {{ form.capacidad.label_tag }}
+            {{ form.capacidad.errors  }}
+        </div>
+        <div class="input-field col s5">
+          {{ form.unidad_medida }}
+          {{ form.unidad_medida.label_tag }}
+            {{ form.unidad_medida.errors  }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s5">
+          {{ form.tiempo }}
+          {{ form.tiempo.label_tag }}
+          {{ form.tiempo.errors  }}
+        </div>
+        <div class="input-field col s5">
+          <div class="switch">
+            <label>
+              Inactivo {{ form.estado }}
+              <span class="lever"></span>
+              Activo
+            </label>
           </div>
         </div>
-        {% else %}{% ifequal field.name "capacidad" %}
-        <div class="row">
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-        {% else %}{% ifequal field.name "unidad_medida" %}
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
+      </div>
+    </div>
+    <div class="col m2">
+        <div class="center">
+          <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped"  name="guardarMaquina" data-position="left" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
         </div>
-        {% else %}{% ifequal field.name "tiempo" %}
-        <div class="row">
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
+        <div class="center">
+          <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="buscarMaquina" name="buscarMaquina" data-position="left" data-delay="50" data-tooltip="Buscar"><i class="material-icons">search</i>Left</button>
         </div>
-      {% endifequal %}{% endifequal %}
-      {% endifequal %}{% endifequal %}
-      {% endifequal %}
-    {% endfor %}
-  </div>
-  <div class="col m2">
-      <div class="center">
-        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped"  name="guardarMP" data-position="left" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
-      </div>
-      <div class="center">
-        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="buscarMP" name="buscarMP" data-position="left" data-delay="50" data-tooltip="Buscar"><i class="material-icons">search</i>Left</button>
-      </div>
-      <div class="center">
-        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red" id="modificarMP" name="modificarMP" data-position="left" data-delay="50" data-tooltip="Modificar"><i class="material-icons">add</i>Left</button>
-      </div>
-      <div class="center">
-        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="eliminarMP" name="eliminarMP" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
-      </div>
-      <div class="center">
-        <a type="submit" href="{% url 'maquinas:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="listarP" name="listarP" ><i class="material-icons">assignment</i></a>
-      </div>
-
+        <div class="center">
+          <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red" id="modificarMaquina" name="modificarMaquina" data-position="left" data-delay="50" data-tooltip="Modificar"><i class="material-icons">add</i>Left</button>
+        </div>
+        <div class="center">
+          <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="eliminarMaquina" name="eliminarMaquina" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
+        </div>
+        <div class="center">
+          <a type="submit" href="{% url 'maquinas:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="listarMaquina" name="listarMaquina" ><i class="material-icons">assignment</i></a>
+        </div>
+    </div>
   </div>
 </form>
 
@@ -81,8 +91,10 @@
     <div class="errors" id="errors"></div>
     <div class="row inputs input_consulta" id="input_consulta">
       <div class="input-field col s10">
-        <input type="text" placeholder="" id="consultar_maq" name="consultar_maq">
-        <label for="consultar_maq">Nombre de la maquina:</label>
+        <div class="ui-widget">
+          <input type="text" id="consultar_maq" name="consultar_maq" placeholder="Ingrese el nombre de la maquina">
+          <input type="hidden" placeholder="" id="id_maquina" name="id_maquina">
+        </div>
       </div>
     </div>
   </div>

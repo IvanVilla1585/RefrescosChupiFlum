@@ -12,16 +12,31 @@
             <th>Unidad de Meidda</th>
             <th>Categoria</th>
             <th>Cantidad Existente</th>
+            <th>Estado</th>
           </tr>
         </thead>
         <tbody>
-          {% for producto in object_list %}
+          {% for materia in object_list %}
           <tr>
-            <td>{{ producto.nombre }}</td>
-            <td>{{ producto.descripcion }}</td>
-            <td>{{ producto.unidad_medida }}</td>
-            <td>{{ producto.categoria }}</td>
-            <td>{{ producto.cantidad }}</td>
+            <td>{{ materia.nombre }}</td>
+            <td>{{ materia.descripcion }}</td>
+            <td>{{ materia.unidad_medida }}</td>
+            <td>{{ materia.categoria }}</td>
+            <td>{{ materia.cantidad }}</td>
+            <td>
+              <span class="
+              {% if materia.estado %}
+                green_text
+              {% else %}
+                red_text
+              {% endif %}">
+                {% if materia.estado %}
+                  Activo
+                {% else %}
+                  Inactivo
+                {% endif %}
+              </span>
+            </td>
           </tr>
           {% endfor %}
         </tbody>

@@ -6,7 +6,7 @@ from .models import MateriaPrima
 class MateriaPrimaForm(forms.ModelForm):
     class Meta:
         model = MateriaPrima
-        fields = ('nombre', 'descripcion', 'unidad_medida', 'categoria', 'cantidad',)
+        fields = ('nombre', 'descripcion', 'unidad_medida', 'categoria', 'cantidad', 'estado',)
         labels = {
             'nombre': _(u'*Nombre'),
             'descripcion': _(u'Descripción Producto'),
@@ -16,15 +16,15 @@ class MateriaPrimaForm(forms.ModelForm):
         }
         error_messages = {
             'nombre': {
-                'required': _("El campo nombre es requerido"),
+                'required': _("El campo nombre es obligatorio"),
             },
             'unidad_medida': {
-                'required': _("La unidad de medida es requerida"),
+                'required': _("La unidad de medida es obligatoria"),
             },
             'categoria': {
-                'required': _("La categoria es requerida"),
+                'required': _("La categoria es obligatoria"),
             },
             'cantidad': {
-                'required': _("El campo cantidad es requerido"),
+                'required': _("El campo cantidad es obligatorio"),
             },
         }

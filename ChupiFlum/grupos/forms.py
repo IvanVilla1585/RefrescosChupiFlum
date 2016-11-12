@@ -8,12 +8,12 @@ class GroupForm(forms.ModelForm):
         model = Group
         fields = ('name', 'permissions',)
         labels = {
-            'name': _(u'*Nombre del Grupo'),
+            'name': _(u'*Nombre del Rol'),
             'permissions': _(u'*Permisos'),
         }
         error_messages = {
             'name': {
-                'required': _("El campo nombre del grupo es requerido"),
+                'required': _("El campo nombre del rol es requerido"),
             },
             'permissions': {
                 'required': _(u"Seleccione al menos un permiso"),

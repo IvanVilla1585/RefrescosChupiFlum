@@ -10,6 +10,7 @@ class EjecucionOrden(models.Model):
     id_producto = models.ForeignKey(ProductoTerminado)
     fecha = models.DateTimeField()
     cantidad = models.PositiveIntegerField()
+    estado = models.BooleanField(default=True, blank=True)
 
     def __str__(self):
         return '%s %s' % (self.id_producto.nombre, self.fecha)

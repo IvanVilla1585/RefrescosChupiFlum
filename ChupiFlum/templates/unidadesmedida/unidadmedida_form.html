@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form action="{% url 'unidades:crear' %}" id="formulario_unidades" method="POST">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success" id="alert-messages">
+        <button id="message_close" type="button" data-dismiss="alert" aria-hidden="true" class="close">×</button>
+        <i class="material-icons sign md-icon dp48">check</i>
+        <strong>{{ message }}</strong>
+      </div>
+    {% endfor %}
+  {% endif %}
+  <div class="row inputs">
+    {% csrf_token %}
+    <div class="col s12 m10">
+      <div class="row">
+        <div class="input-field col s5">
+          {{ form.nombre }}
+          {{ form.nombre.label_tag }}
+          {{ form.nombre.errors  }}
+        </div>
+        <div class="input-field col s5">
+          {{ form.descripcion }}
+          {{ form.descripcion.label_tag }}
+          {{ form.descripcion.errors  }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s5">
+          {{ form.code }}
+          {{ form.code.label_tag }}
+          {{ form.code.errors  }}
+        </div>
+        <div class="input-field col s5">
+          {{ form.equivalencia }}
+          {{ form.equivalencia.label_tag }}
+          {{ form.equivalencia.errors  }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s5">
+          <div class="switch">
+            <label>
+              Inactivo {{ form.estado }}
+              <span class="lever"></span>
+              Activo
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col m2">
+        <div class="center">
+          <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped"  name="guardarUnidad" data-position="left" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
+        </div>
+        <div class="center">
+          <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="buscarUnidad" name="buscarUnidad" data-position="left" data-delay="50" data-tooltip="Buscar"><i class="material-icons">search</i>Left</button>
+        </div>
+        <div class="center">
+          <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red tooltipped" id="modificarUnidad" name="modificarUnidad" data-position="left" data-delay="50" data-tooltip="Modificar"><i class="material-icons">add</i>Left</button>
+        </div>
+        <div class="center">
+          <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="eliminarUnidad" name="eliminarUnidad" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
+        </div>
+        <div class="center">
+          <a type="submit" href="{% url 'unidades:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="listarUnidad" name="listarUnidad" data-position="left" data-tooltip="Listar"><i class="material-icons">assignment</i>Left</a>
+        </div>
+    </div>
+  </div>
+</form>
+
+{% endblock %}
+{% block content_modal %}
+
+<div id="modal-alert-ma" class="modal">
+  <div class="modal-content">
+    <div class="logo">
+      <figure>
+        <img src="/static/images/logo.png" alt="">
+      </figure>
+    </div>
+    <h2 id="title_modal" class="title_modal"></h2>
+    <p id="text-modal" class="text-modal"></p>
+    <div class="errors" id="errors"></div>
+    <div class="row inputs input_consulta" id="input_consulta">
+      <div class="input-field col s10">
+        <div class="ui-widget">
+          <input type="text" id="consultar_unidadMe" name="consultar_unidadMe" placeholder="Ingrese la unidad de medidad" >
+          <input type="hidden" id="id_unidad">
+        </div>
+      </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="cancelar_unidad" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancelar</button>
+      <button id="consultar_unidad" class=" modal-action modal-close waves-effect waves-green btn-flat">Consultar</button>
+    </div>
+</div>
+{% endblock %}

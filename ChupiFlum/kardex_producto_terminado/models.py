@@ -10,11 +10,12 @@ class KardexProductoTerminado(models.Model):
     id_ejecucion = models.ForeignKey(EjecucionOrden)
     fecha_movimiento = models.DateTimeField()
     tipo_movimiento = models.BooleanField()
-    cantidad = models.DecimalField(decimal_places=3, max_digits=16)
-    valor_unitario = models.DecimalField(decimal_places=3, max_digits=16)
-    total = models.DecimalField(decimal_places=3, max_digits=16)
+    cantidad = models.DecimalField(decimal_places=2, max_digits=16)
+    valor_unitario = models.DecimalField(decimal_places=2, max_digits=16)
+    total = models.DecimalField(decimal_places=2, max_digits=16)
     lote = models.CharField(max_length=30)
     fecha_vencimiento = models.DateTimeField()
+    estado = models.BooleanField(default=True, blank=True)
 
     class Meta:
         ordering = ('id','fecha_vencimiento')

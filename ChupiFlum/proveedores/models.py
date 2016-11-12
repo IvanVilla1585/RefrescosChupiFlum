@@ -8,11 +8,11 @@ class Proveedore(models.Model):
     direccion = models.CharField(max_length=100)
     telefono = models.CharField(max_length=15)
     fax = models.CharField(max_length=15, blank=True, null=True)
-    correo_empresa = models.EmailField(unique=True, blank=True, null=True)
+    correo_empresa = models.EmailField(blank=True, null=True)
     nombre_contacto = models.CharField(max_length=50)
     apellido_contacto = models.CharField(max_length=50, blank=True, null=True)
     telefono_contacto = models.CharField(max_length=15)
-    correo_contacto = models.EmailField(unique=True, blank=True, null=True)
+    correo_contacto = models.EmailField(blank=True, null=True)
     estado = models.BooleanField(default=True, blank=True)
 
     def __str__(self):

@@ -1,9 +1,19 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /*
     A simple jQuery modal (http://github.com/kylefox/jquery-modal)
-    Version 0.7.0
+    Version 0.7.3
 */
-(function($) {
+
+(function (factory) {
+  // Making your jQuery plugin work better with npm tools
+  // http://blog.npmjs.org/post/112712169830/making-your-jquery-plugin-work-better-with-npm
+  if(typeof module === "object" && typeof module.exports === "object") {
+    factory(require("jquery"), window, document);
+  }
+  else {
+    factory(jQuery, window, document);
+  }
+}(function($, window, document, undefined) {
 
   var modals = [],
       getCurrent = function() {
@@ -186,6 +196,8 @@
     return modals.length > 0;
   }
 
+  $.modal.getCurrent = getCurrent;
+
   $.modal.defaults = {
     closeExisting: true,
     escapeClose: true,
@@ -226,9 +238,9 @@
     event.preventDefault();
     $(this).modal();
   });
-})(jQuery);
+}));
 
-},{}],2:[function(require,module,exports){
+},{"jquery":3}],2:[function(require,module,exports){
 /*!
  * jQuery UI Widget 1.12.1
  * http://jqueryui.com
@@ -965,7 +977,7 @@ return $.widget;
 
 },{}],3:[function(require,module,exports){
 /*!
- * jQuery JavaScript Library v2.2.3
+ * jQuery JavaScript Library v2.2.4
  * http://jquery.com/
  *
  * Includes Sizzle.js
@@ -975,7 +987,7 @@ return $.widget;
  * Released under the MIT license
  * http://jquery.org/license
  *
- * Date: 2016-04-05T19:26Z
+ * Date: 2016-05-20T17:23Z
  */
 
 (function( global, factory ) {
@@ -1031,7 +1043,7 @@ var support = {};
 
 
 var
-	version = "2.2.3",
+	version = "2.2.4",
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
@@ -5972,13 +5984,14 @@ jQuery.Event.prototype = {
 	isDefaultPrevented: returnFalse,
 	isPropagationStopped: returnFalse,
 	isImmediatePropagationStopped: returnFalse,
+	isSimulated: false,
 
 	preventDefault: function() {
 		var e = this.originalEvent;
 
 		this.isDefaultPrevented = returnTrue;
 
-		if ( e ) {
+		if ( e && !this.isSimulated ) {
 			e.preventDefault();
 		}
 	},
@@ -5987,7 +6000,7 @@ jQuery.Event.prototype = {
 
 		this.isPropagationStopped = returnTrue;
 
-		if ( e ) {
+		if ( e && !this.isSimulated ) {
 			e.stopPropagation();
 		}
 	},
@@ -5996,7 +6009,7 @@ jQuery.Event.prototype = {
 
 		this.isImmediatePropagationStopped = returnTrue;
 
-		if ( e ) {
+		if ( e && !this.isSimulated ) {
 			e.stopImmediatePropagation();
 		}
 
@@ -6926,19 +6939,6 @@ function getWidthOrHeight( elem, name, extra ) {
 		val = name === "width" ? elem.offsetWidth : elem.offsetHeight,
 		styles = getStyles( elem ),
 		isBorderBox = jQuery.css( elem, "boxSizing", false, styles ) === "border-box";
-
-	// Support: IE11 only
-	// In IE 11 fullscreen elements inside of an iframe have
-	// 100x too small dimensions (gh-1764).
-	if ( document.msFullscreenElement && window.top !== window ) {
-
-		// Support: IE11 only
-		// Running getBoundingClientRect on a disconnected node
-		// in IE throws an error.
-		if ( elem.getClientRects().length ) {
-			val = Math.round( elem.getBoundingClientRect()[ name ] * 100 );
-		}
-	}
 
 	// Some non-html elements return undefined for offsetWidth, so check for null/undefined
 	// svg - https://bugzilla.mozilla.org/show_bug.cgi?id=649285
@@ -8830,6 +8830,7 @@ jQuery.extend( jQuery.event, {
 	},
 
 	// Piggyback on a donor event to simulate a different one
+	// Used only for `focus(in | out)` events
 	simulate: function( type, elem, event ) {
 		var e = jQuery.extend(
 			new jQuery.Event(),
@@ -8837,27 +8838,10 @@ jQuery.extend( jQuery.event, {
 			{
 				type: type,
 				isSimulated: true
-
-				// Previously, `originalEvent: {}` was set here, so stopPropagation call
-				// would not be triggered on donor event, since in our own
-				// jQuery.event.stopPropagation function we had a check for existence of
-				// originalEvent.stopPropagation method, so, consequently it would be a noop.
-				//
-				// But now, this "simulate" function is used only for events
-				// for which stopPropagation() is noop, so there is no need for that anymore.
-				//
-				// For the 1.x branch though, guard for "click" and "submit"
-				// events is still used, but was moved to jQuery.event.stopPropagation function
-				// because `originalEvent` should point to the original event for the constancy
-				// with other events and for more focused logic
 			}
 		);
 
 		jQuery.event.trigger( e, null, elem );
-
-		if ( e.isDefaultPrevented() ) {
-			event.preventDefault();
-		}
 	}
 
 } );
@@ -10824,17 +10808,30 @@ var _jqueryModal = require('jquery-modal');
 
 var _jqueryModal2 = _interopRequireDefault(_jqueryModal);
 
+var _autocompletar = require('../lib/autocompletar.js');
+
+var _autocompletar2 = _interopRequireDefault(_autocompletar);
+
+var _peticionDelete = require('../lib/peticionDelete.js');
+
+var _peticionDelete2 = _interopRequireDefault(_peticionDelete);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var autocompletar = new _autocompletar2.default();
+var cambiarEstado = new _peticionDelete2.default();
 
 var ProductoTer = function () {
   function ProductoTer() {
     _classCallCheck(this, ProductoTer);
 
     this.$modal_alert = $("#modal-alert");
-    this.$buscar = $('#buscarP');
+
+    this.$buscar = $('#buscarProd');
     this.$text_modal = $("#text-modal");
+    this.$id_producto = $("#id_producto");
     this.$title_modal = $('#title_modal');
     this.$cancelar_pro = $('#cancelar_pro');
     this.$consultar_pro = $('#consultar_pro');
@@ -10850,19 +10847,26 @@ var ProductoTer = function () {
     this.$cantidad = $('#id_cantidad');
     this.$errors = $('#errors');
     this.$limpiar = $('#limpiarP');
-    this.$modificar = $('#modificarP');
-    this.$eliminar = $('#eliminarP');
-    this.$guardar = $('#guardarP');
+    this.$modificar = $('#modificarProd');
+    this.$eliminar = $('#eliminarProd');
+    this.$guardar = $('#guardarProd');
     this.$nuevo = $('#nuevo');
     this.$formulario_produ = $('#formulario_produ');
     this.accion = '';
     this.id = 0;
+    this.options = {
+      field: "name",
+      input: this.$consulta_nom,
+      idHidden: this.$id_producto,
+      url: "/MenuPrincipal/Productos/Listar/?format=json"
+    };
     this.escucharBuscar();
     this.escucharConsulta();
     this.escucharLimpiar();
     this.escucharEliminar();
     this.escucharModificar();
     this.escucharNuevo();
+    autocompletar.autocompletar(this.options);
   }
 
   _createClass(ProductoTer, [{
@@ -10922,13 +10926,15 @@ var ProductoTer = function () {
       this.$consultar_pro.on('click', function (evt) {
         evt.preventDefault();
         var url = '';
-        var nombre = _this4.$consulta_nom.val();
-        if (nombre != null && nombre != "") {
-          var params = nombre;
+        var id = _this4.$id_producto.val();
+        if (id != null && id != "") {
+          _this4.id = id;
+          var params = id;
           if (_this4.$title_modal.text() == 'Eliminar') {
-            url = '/MenuPrincipal/Productos/Eliminar/"' + params + '"/';
+            cambiarEstado.peticion('/MenuPrincipal/Productos/Eliminar/?format=json', id);
           } else {
             url = '/MenuPrincipal/Productos/Consultar/' + params + '/?format=json';
+            _this4.peticion(url);
           }
           _this4.$modal_alert.closeModal();
           _this4.peticion(url);
@@ -11061,7 +11067,7 @@ var ProductoTer = function () {
 
 exports.default = ProductoTer;
 
-},{"jquery":3,"jquery-modal":1}],5:[function(require,module,exports){
+},{"../lib/autocompletar.js":6,"../lib/peticionDelete.js":8,"jquery":3,"jquery-modal":1}],5:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); //import $ from 'jquery'
@@ -11095,9 +11101,15 @@ var _index9 = require('./pedidos/index.js');
 
 var _index10 = _interopRequireDefault(_index9);
 
+var _index11 = require('./unidades/index.js');
+
+var _index12 = _interopRequireDefault(_index11);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+require('./lib/configAjax.js');
 
 var Menu = function () {
   function Menu() {
@@ -11106,17 +11118,32 @@ var Menu = function () {
     this.$collapse = $('#collapse');
     this.$navparent = $('.nav');
     this.$modal_alert = $("#modal-alert");
+    this.$alert_messages = $("#alert-messages");
     this.$more = $("#more");
+    this.$message_close = $("#message_close");
     this.id = "0";
     //this.iniciarModal()
     //  this.closeModal()
     this.activarCollapse();
+    if (this.$message_close) {
+      this.closeMessage();
+    }
   }
 
   _createClass(Menu, [{
     key: 'iniciarModal',
     value: function iniciarModal() {
       this.$modal_alert.css('display', 'none');
+    }
+  }, {
+    key: 'closeMessage',
+    value: function closeMessage() {
+      var _this = this;
+
+      this.$message_close.on('click', function (evt) {
+        evt.preventDefault();
+        _this.$alert_messages.css('display', 'none');
+      });
     }
   }, {
     key: 'closeModal',
@@ -11153,8 +11180,9 @@ var producto = new _index4.default();
 var materiaprima = new _index6.default();
 var maquina = new _index8.default();
 var pedidos = new _index10.default();
+var unidadesMedida = new _index12.default();
 
-},{"./ProductoTer/index.js":4,"./maquinas/index.js":7,"./materiaprima/index.js":8,"./pedidos/index.js":9,"./proveedores/index.js":10,"jquery":3,"jquery-modal":1}],6:[function(require,module,exports){
+},{"./ProductoTer/index.js":4,"./lib/configAjax.js":7,"./maquinas/index.js":9,"./materiaprima/index.js":10,"./pedidos/index.js":11,"./proveedores/index.js":12,"./unidades/index.js":13,"jquery":3,"jquery-modal":1}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11179,8 +11207,8 @@ var Atocompletar = function () {
   }
 
   _createClass(Atocompletar, [{
-    key: 'autocompletarMateria',
-    value: function autocompletarMateria(configurations) {
+    key: 'autocompletar',
+    value: function autocompletar(configurations) {
       var options = {
 
         source: configurations.url,
@@ -11188,7 +11216,7 @@ var Atocompletar = function () {
         minLength: 3,
 
         select: function select(event, ui) {
-          configurations.productos.val(ui.item.id);
+          configurations.idHidden.val(ui.item.id);
         }
 
       };
@@ -11205,6 +11233,117 @@ exports.default = Atocompletar;
 },{"jquery":3,"jquery-ui":2}],7:[function(require,module,exports){
 'use strict';
 
+/**
+ * Este script de javascript permite trabajar transparentemente solicitudes que requieren
+ * protección del token CSRF por medio de AJAX JQUERY.
+ * Esto te permitirá hacer solcitudes a web Services de Django por medio de AJAX Jquery.
+ * Para utilizarlo basta con integrar el archivo DjangoAjax.js en tu directorio de JS  y hacer referencia a él en tus templates
+ * que requieren del uso de AJAX por POST o algún otro que requiera el token CSRF.
+ * Este script está basado en la documentación oficial de Django https://docs.djangoproject.com
+ */
+
+$(function () {
+    //Obtenemos la información de csfrtoken que se almacena por cookies en el cliente
+    var csrftoken = getCookie('csrftoken');
+
+    //Agregamos en la configuración de la funcion $.ajax de Jquery lo siguiente:
+    $.ajaxSetup({
+        beforeSend: function beforeSend(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                // Send the token to same-origin, relative URLs only.
+                // Send the token only if the method warrants CSRF protection
+                // Using the CSRFToken value acquired earlier
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    function sameOrigin(url) {
+        // test that a given url is a same-origin URL
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return url == origin || url.slice(0, origin.length + 1) == origin + '/' || url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/' ||
+        // or any other URL that isn't scheme relative or absolute i.e relative.
+        !/^(\/\/|http:|https:).*/.test(url);
+    }
+
+    // usando jQuery
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == name + '=') {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function csrfSafeMethod(method) {
+        // estos métodos no requieren CSRF
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method)
+        );
+    }
+});
+
+},{}],8:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = require('jquery');
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var CambiarEstado = function () {
+  function CambiarEstado() {
+    _classCallCheck(this, CambiarEstado);
+  }
+
+  _createClass(CambiarEstado, [{
+    key: 'peticion',
+    value: function peticion(url, id, nit) {
+      $.ajax({
+        url: url,
+        data: { id: id },
+        type: 'POST',
+        dataType: 'json',
+        success: function success(json) {
+          Materialize.toast(json.message, 8000);
+        },
+
+        error: function error(xhr, status) {
+          alert('Disculpe, existió un problema');
+        }
+      });
+    }
+  }]);
+
+  return CambiarEstado;
+}();
+
+exports.default = CambiarEstado;
+
+},{"jquery":3}],9:[function(require,module,exports){
+'use strict';
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -11219,16 +11358,27 @@ var _jqueryModal = require('jquery-modal');
 
 var _jqueryModal2 = _interopRequireDefault(_jqueryModal);
 
+var _autocompletar = require('../lib/autocompletar.js');
+
+var _autocompletar2 = _interopRequireDefault(_autocompletar);
+
+var _peticionDelete = require('../lib/peticionDelete.js');
+
+var _peticionDelete2 = _interopRequireDefault(_peticionDelete);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var autocompletar = new _autocompletar2.default();
+var cambiarEstado = new _peticionDelete2.default();
 
 var Maquina = function () {
   function Maquina() {
     _classCallCheck(this, Maquina);
 
     this.$modal_alert = $("#modal-alert-ma");
-    this.$buscarMa = $('#buscarMa');
+    this.$buscarMa = $('#buscarMaquina');
     this.$text_modal = $("#text-modal");
     this.$title_modal = $('#title_modal');
     this.$cancelar_materia = $('#cancelar_materia');
@@ -11242,56 +11392,29 @@ var Maquina = function () {
     this.$tiempo = $('#id_tiempo');
     this.$capacidad = $('#id_capacidad');
     this.$limpiarMa = $('#limpiarMa');
-    this.$modificarMa = $('#modificarMa');
-    this.$eliminarMa = $('#eliminarMa');
+    this.$modificarMa = $('#modificarMaquina');
+    this.$eliminarMa = $('#eliminarMaquina');
     this.$formulario_maqui = $('#formulario_maqui');
     this.$nombre = $("#id_nombre");
+    this.$id_maquina = $("#id_maquina");
+    this.$singleDropdown = $("#singleDropdown");
     this.accion = '';
     this.id = '';
     this.options = {
-      field: "name",
-      input: this.$nombre
+      field: 'name',
+      input: this.$consultar_maq,
+      idHidden: this.$id_maquina,
+      url: '/MenuPrincipal/Maquina/Listar/?format=json'
     };
     this.escucharBuscar();
     this.escucharConsulta();
     this.escucharLimpiar();
     this.escucharEliminar();
     this.escucharModificar();
-
-    //this.autocompletar()
+    autocompletar.autocompletar(this.options);
   }
 
   _createClass(Maquina, [{
-    key: 'autocompletar',
-    value: function autocompletar() {
-
-      var self = this;
-      this.$nombre.on('keypress', function (evt) {
-        var numCaracteres = self.$nombre.val().length;
-        if (numCaracteres >= 3) {
-          self.$nombre.autocomplete({
-            serviceUrl: "/MenuPrincipal/MateriaPrima/Listar/" + self.$nombre.val() + "/?format=json",
-            onSelect: function onSelect(suggestion) {
-              alert('You selected: ' + suggestion.code + ', ' + suggestion.name);
-            }
-          }); /*;autocomplete({
-              source: function( request, response ) {
-              $.ajax({
-                url: "/MenuPrincipal/MateriaPrima/Listar/" + self.$nombre.val() + "/?format=json",
-                type: "GET",
-                dataType: "json",
-                success: function(data) {
-                 response(data);
-                }
-              });
-              },
-              minLength: 3
-              })*/
-        }
-        return true;
-      });
-    }
-  }, {
     key: 'escucharSoloNumeros',
     value: function escucharSoloNumeros(elemento) {
       elemento.on('keypress', function (evt) {
@@ -11334,7 +11457,7 @@ var Maquina = function () {
         _this3.activarInputConsulta();
         _this3.$title_modal.empty().text('Consultar');
         _this3.accion = _this3.$title_modal.text();
-        _this3.$text_modal.empty().text('Ingrese el nombre del producto a consultar');
+        _this3.$text_modal.empty().text('Ingrese el nombre de la maquina a consultar');
         _this3.$modal_alert.openModal();
       });
     }
@@ -11346,20 +11469,21 @@ var Maquina = function () {
       this.$consultar_maquin.on('click', function (evt) {
         evt.preventDefault();
         var url = '';
-        var nombre = _this4.$consultar_maq.val();
-        if (nombre != null && nombre != "") {
-          var params = nombre;
+        var id = _this4.$id_maquina.val();
+        _this4.$modal_alert.closeModal();
+        if (id != null && id.trim() != "" && id != "0") {
+          var params = id;
+          _this4.id = id;
           if (_this4.$title_modal.text() == 'Eliminar') {
-            url = '/MenuPrincipal/Maquina/Eliminar/' + params + '/';
+            cambiarEstado.peticion('/MenuPrincipal/Maquina/Eliminar/?format=json', id);
           } else {
             url = '/MenuPrincipal/Maquina/Consultar/' + params + '/?format=json';
+            _this4.peticion(url);
           }
-          _this4.$modal_alert.closeModal();
-          _this4.peticion(url);
         } else {
           _this4.desactivarInputConsulta();
           _this4.$title_modal.empty().text('Alerta');
-          _this4.$text_modal.empty().text('Debe Ingresar el nombre del producto a consultar');
+          _this4.$text_modal.empty().text('Debe Ingresar el nombre de la maquina a consultar');
           _this4.$modal_alert.openModal();
         }
       });
@@ -11369,10 +11493,14 @@ var Maquina = function () {
     value: function peticion(url) {
       var _this5 = this;
 
-      $.post(url, function (data) {
+      $.get(url, function (data) {
         console.dir(data);
         if (_this5.$title_modal.text() != 'Eliminar') {
-          _this5.llenarFormulario(data);
+          if (data.status === 200) {
+            _this5.llenarFormulario(data);
+          } else if (data.status === 404) {
+            Materialize.toast(data.message, 8000);
+          }
           if (_this5.$title_modal.text() == 'Modificar') {
             _this5.$formulario_maqui.attr('action', '/MenuPrincipal/Maquina/Actualizar/' + _this5.id + '/');
           }
@@ -11401,6 +11529,7 @@ var Maquina = function () {
       this.$descripcion.val(data.maquina.descripcion);
       this.$unidad_medida.focus();
       this.$unidad_medida.val(data.maquina.unidad_medida);
+      this.$unidad_medida.material_select();
       this.$tiempo.focus();
       this.$tiempo.val(data.maquina.tiempo);
       this.$capacidad.focus();
@@ -11425,20 +11554,20 @@ var Maquina = function () {
   }, {
     key: 'desactivarFormulario',
     value: function desactivarFormulario() {
-      this.$nombre.attr('disabled', 'disabled');
-      this.$descripcion.attr('disabled', 'disabled');
-      this.$unidad_medida.attr('disabled', 'disabled');
-      this.$tiempo.attr('disabled', 'disabled');
-      this.$capacidad.attr('disabled', 'disabled');
+      this.$nombre.attr('readonly', 'readonly');
+      this.$descripcion.attr('readonly', 'readonly');
+      this.$unidad_medida.attr('readonly', 'readonly');
+      this.$tiempo.attr('readonly', 'readonly');
+      this.$capacidad.attr('readonly', 'readonly');
     }
   }, {
     key: 'activarFormulario',
     value: function activarFormulario() {
-      this.$nombre.removeAttr("disabled");
-      this.$descripcion.removeAttr("disabled");
-      this.$unidad_medida.removeAttr("disabled");
-      this.$tiempo.removeAttr("disabled");
-      this.$capacidad.removeAttr("disabled");
+      this.$nombre.removeAttr("readonly");
+      this.$descripcion.removeAttr("readonly");
+      this.$unidad_medida.removeAttr("readonly");
+      this.$tiempo.removeAttr("readonly");
+      this.$capacidad.removeAttr("readonly");
     }
   }, {
     key: 'escucharLimpiar',
@@ -11463,7 +11592,7 @@ var Maquina = function () {
         evt.preventDefault();
         _this7.activarInputConsulta();
         _this7.$title_modal.empty().text('Modificar');
-        _this7.$text_modal.empty().text('Ingrese el nombre del producto a modificar');
+        _this7.$text_modal.empty().text('Ingrese el nombre de la maquina a modificar');
         _this7.$modal_alert.openModal();
       });
     }
@@ -11487,7 +11616,7 @@ var Maquina = function () {
 
 exports.default = Maquina;
 
-},{"jquery":3,"jquery-modal":1}],8:[function(require,module,exports){
+},{"../lib/autocompletar.js":6,"../lib/peticionDelete.js":8,"jquery":3,"jquery-modal":1}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11504,9 +11633,20 @@ var _jqueryModal = require('jquery-modal');
 
 var _jqueryModal2 = _interopRequireDefault(_jqueryModal);
 
+var _autocompletar = require('../lib/autocompletar.js');
+
+var _autocompletar2 = _interopRequireDefault(_autocompletar);
+
+var _peticionDelete = require('../lib/peticionDelete.js');
+
+var _peticionDelete2 = _interopRequireDefault(_peticionDelete);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var autocompletar = new _autocompletar2.default();
+var cambiarEstado = new _peticionDelete2.default();
 
 var MateriaPrima = function () {
   function MateriaPrima() {
@@ -11534,19 +11674,21 @@ var MateriaPrima = function () {
     this.$eliminarMP = $('#eliminarMP');
     this.$nuevo = $('#nuevo');
     this.$formulario_materia = $('#formulario_materia');
-    this.$consulta_mate = $("#consulta_mate");
+    this.$idMateria = $("#idMateria");
     this.accion = '';
     this.id = 0;
+    this.options = {
+      field: 'name',
+      input: this.$consulta_mate,
+      idHidden: this.$idMateria,
+      url: '/MenuPrincipal/MateriaPrima/Listar/?format=json'
+    };
     this.escucharBuscar();
     this.escucharConsulta();
     this.escucharLimpiar();
     this.escucharEliminar();
     this.escucharModificar();
-    //this.escucharConsultaMateria()
-    this.options = {
-      field: "name",
-      input: this.$consulta_mate
-    };
+    autocompletar.autocompletar(this.options);
   }
 
   _createClass(MateriaPrima, [{
@@ -11604,13 +11746,14 @@ var MateriaPrima = function () {
       this.$consultar_materia.on('click', function (evt) {
         evt.preventDefault();
         var url = '';
-        var nombre = _this4.$consulta_mate.val();
-        if (nombre != null && nombre != "") {
-          var params = nombre;
+        var id = _this4.$idMateria.val();
+        if (id != null && id != "" && id != "0") {
+          var params = id;
           if (_this4.$title_modal.text() == 'Eliminar') {
-            url = '/MenuPrincipal/MateriaPrima/Eliminar/' + params + '/';
+            cambiarEstado.peticion('/MenuPrincipal/MateriaPrima/Eliminar/?format=json', id);
           } else {
             url = '/MenuPrincipal/MateriaPrima/Consultar/' + params + '/?format=json';
+            _this4.peticion(url);
           }
           _this4.$modal_alert.closeModal();
           _this4.peticion(url);
@@ -11654,25 +11797,29 @@ var MateriaPrima = function () {
   }, {
     key: 'llenarFormulario',
     value: function llenarFormulario(data) {
-      this.$nombre.focus();
-      this.$nombre.val(data.materia.nombre);
-      this.$descripcion.focus();
-      this.$descripcion.val(data.materia.descripcion);
-      this.$categoria.focus();
-      this.$categoria.val(data.materia.categoria);
-      this.$cantidad_entrada.focus();
-      this.$cantidad_entrada.val(data.materia.cantidad_entrada);
-      this.$unidad_medida.focus();
-      this.$unidad_medida.val(data.materia.unidad_medida);
-      this.$cantidad.focus();
-      this.$cantidad.val(data.materia.cantidad);
-      if (this.accion == 'Consultar') {
-        //this.desactivarFormulario()
-      } else {
+      if (data.status === 200) {
+        this.$nombre.focus();
+        this.$nombre.val(data.materia.nombre);
+        this.$descripcion.focus();
+        this.$descripcion.val(data.materia.descripcion);
+        this.$categoria.focus();
+        this.$categoria.val(data.materia.categoria);
+        this.$cantidad_entrada.focus();
+        this.$cantidad_entrada.val(data.materia.cantidad_entrada);
+        this.$unidad_medida.focus();
+        this.$unidad_medida.val(data.materia.unidad_medida);
+        this.$cantidad.focus();
+        this.$cantidad.val(data.materia.cantidad);
+        if (this.accion == 'Consultar') {
+          //this.desactivarFormulario()
+        } else {
           this.id = data.materia.id;
           this.activarFormulario();
           this.$nombre.attr('readonly', 'readonly');
         }
+      } else if (data.status === 404) {
+        Materialize.toast(data.message, 800);
+      }
     }
   }, {
     key: 'limpiarFormulario',
@@ -11684,25 +11831,26 @@ var MateriaPrima = function () {
       this.$unidad_medida.val("");
       this.$cantidad.val("");
     }
-
-    /*  desactivarFormulario () {
-        this.$nombre.attr('disabled', 'disabled')
-        this.$descripcion.attr('disabled', 'disabled')
-        this.$categoria.attr('disabled', 'disabled')
-        this.$cantidad_entrada.attr('disabled', 'disabled')
-        this.$unidad_medida.attr('disabled', 'disabled')
-        this.$cantidad.attr('disabled', 'disabled')
-      }
-    
-      activarFormulario () {
-        this.$nombre.removeAttr("disabled")
-        this.$descripcion.removeAttr("disabled")
-        this.$categoria.removeAttr("disabled")
-        this.$cantidad_entrada.removeAttr("disabled")
-        this.$unidad_medida.removeAttr("disabled")
-        this.$cantidad.removeAttr("disabled")
-      }*/
-
+  }, {
+    key: 'desactivarFormulario',
+    value: function desactivarFormulario() {
+      this.$nombre.attr('readonly', 'readonly');
+      this.$descripcion.attr('readonly', 'readonly');
+      this.$categoria.attr('readonly', 'readonly');
+      this.$cantidad_entrada.attr('readonly', 'readonly');
+      this.$unidad_medida.attr('readonly', 'readonly');
+      this.$cantidad.attr('readonly', 'readonly');
+    }
+  }, {
+    key: 'activarFormulario',
+    value: function activarFormulario() {
+      this.$nombre.removeAttr("readonly");
+      this.$descripcion.removeAttr("readonly");
+      this.$categoria.removeAttr("readonly");
+      this.$cantidad_entrada.removeAttr("readonly");
+      this.$unidad_medida.removeAttr("readonly");
+      this.$cantidad.removeAttr("readonly");
+    }
   }, {
     key: 'escucharLimpiar',
     value: function escucharLimpiar() {
@@ -11752,7 +11900,7 @@ var MateriaPrima = function () {
 
 exports.default = MateriaPrima;
 
-},{"jquery":3,"jquery-modal":1}],9:[function(require,module,exports){
+},{"../lib/autocompletar.js":6,"../lib/peticionDelete.js":8,"jquery":3,"jquery-modal":1}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11806,7 +11954,7 @@ var Pedidos = function () {
     this.options = {
       field: "name",
       input: this.$producto0,
-      productos: this.$productos
+      idHidden: this.$productos
     };
     this.escucharConsultaMateria(this.$producto0);
     this.escucharGuardar();
@@ -11853,7 +12001,7 @@ var Pedidos = function () {
         this.options.input = element;
       }
       this.options.url = "/MenuPrincipal/MateriaPrima/Listar/?format=json";
-      autocompletar.autocompletarMateria(this.options);
+      autocompletar.autocompletar(this.options);
     }
   }, {
     key: 'perderFoco',
@@ -11934,7 +12082,7 @@ var Pedidos = function () {
 
 exports.default = Pedidos;
 
-},{"../lib/autocompletar.js":6,"jquery":3,"jquery-modal":1}],10:[function(require,module,exports){
+},{"../lib/autocompletar.js":6,"jquery":3,"jquery-modal":1}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11955,11 +12103,16 @@ var _autocompletar = require('../lib/autocompletar.js');
 
 var _autocompletar2 = _interopRequireDefault(_autocompletar);
 
+var _peticionDelete = require('../lib/peticionDelete.js');
+
+var _peticionDelete2 = _interopRequireDefault(_peticionDelete);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var autocompletar = new _autocompletar2.default();
+var cambiarEstado = new _peticionDelete2.default();
 
 var Proveedor = function () {
   function Proveedor() {
@@ -11967,7 +12120,7 @@ var Proveedor = function () {
 
     this.$modal_alert = $("#modal-alert");
     this.$more = $("#more");
-    this.$buscar = $('#buscar');
+    this.$buscar = $('#buscarProve');
     this.$text_modal = $("#text-modal");
     this.$title_modal = $('#title_modal');
     this.$cancelar_prove = $('#cancelar_prove');
@@ -11981,6 +12134,7 @@ var Proveedor = function () {
     this.$direccion = $('#id_direccion');
     this.$telefono = $('#id_telefono');
     this.$fax = $('#id_fax');
+    this.$estado = $('#id_estado');
     this.$correo_empresa = $('#id_correo_empresa');
     this.$nombre_contacto = $('#id_nombre_contacto');
     this.$apellido_contacto = $('#id_apellido_contacto');
@@ -11988,9 +12142,9 @@ var Proveedor = function () {
     this.$correo_contacto = $('#id_correo_contacto');
     this.$errors = $('#errors');
     this.$limpiar = $('#limpiar');
-    this.$modificar = $('#modificar');
-    this.$eliminar = $('#eliminar');
-    this.$guardar = $('#guardar');
+    this.$modificar = $('#modificarProve');
+    this.$eliminar = $('#eliminarProve');
+    this.$guardar = $('#guardarProve');
     this.$nuevo = $('#nuevo');
     this.$id = $('#id');
     this.$formulario_provee = $('#formulario_provee');
@@ -12000,7 +12154,7 @@ var Proveedor = function () {
     this.options = {
       field: "name",
       input: this.$consulta_nit,
-      productos: this.$id,
+      idHidden: this.$id,
       url: "/MenuPrincipal/Proveedor/Listar/?format=json"
     };
     this.escucharBuscar();
@@ -12012,7 +12166,7 @@ var Proveedor = function () {
     this.escucharSoloNumeros(this.$telefono);
     this.escucharSoloNumeros(this.$fax);
     this.escucharSoloNumeros(this.$telefono_contacto);
-    autocompletar.autocompletarMateria(this.options);
+    autocompletar.autocompletar(this.options);
   }
 
   _createClass(Proveedor, [{
@@ -12126,16 +12280,18 @@ var Proveedor = function () {
         evt.preventDefault();
         var url = '';
         var nit = _this5.$consulta_nit.val();
-        if (nit != null && nit != "") {
-          _this5.nit = nit;
-          var params = nit;
+        var id = _this5.$id.val();
+        debugger;
+        if (id !== null && id !== "" && id !== "0") {
+          _this5.nit = id;
+          var params = id;
           if (_this5.$title_modal.text() == 'Eliminar') {
-            url = '/MenuPrincipal/Proveedor/Eliminar/' + params + '/';
+            cambiarEstado.peticion('/MenuPrincipal/Proveedor/Eliminar/?format=json', 1, nit);
           } else {
             url = '/MenuPrincipal/Proveedor/Consultar/' + params + '/?format=json';
+            _this5.peticion(url);
           }
           _this5.$modal_alert.closeModal();
-          _this5.peticion(url);
         } else {
           _this5.desactivarInputConsulta();
           _this5.$title_modal.empty().text('Alerta');
@@ -12151,9 +12307,12 @@ var Proveedor = function () {
 
       var csrfmiddlewaretoken = this.$csrfmiddlewaretoken.val();
       $.get(url, function (data) {
-        console.dir(data);
         if (_this6.$title_modal.text() != 'Eliminar') {
-          _this6.llenarFormulario(data);
+          if (data.status === 200) {
+            _this6.llenarFormulario(data);
+          } else if (data.status === 404) {
+            Materialize.toast(data.message, 8000);
+          }
           if (_this6.$title_modal.text() == 'Modificar') {
             _this6.$formulario_provee.attr('action', '/MenuPrincipal/Proveedor/Actualizar/' + _this6.nit + '/');
           }
@@ -12274,7 +12433,7 @@ var Proveedor = function () {
         evt.preventDefault();
         _this8.activarInputConsulta();
         _this8.$title_modal.empty().text('Modificar');
-        _this8.$text_modal.empty().text('Ingrese el número de nit a modificar');
+        _this8.$text_modal.empty().text('Ingrese el nombre del proveeedor a modificar');
         _this8.$modal_alert.openModal();
       });
     }
@@ -12287,7 +12446,7 @@ var Proveedor = function () {
         evt.preventDefault();
         _this9.activarInputConsulta();
         _this9.$title_modal.empty().text('Eliminar');
-        _this9.$text_modal.empty().text('Ingrese el número de nit a eliminar');
+        _this9.$text_modal.empty().text('Ingrese el nombre del proveedor a inhabilitar');
         _this9.$modal_alert.openModal();
       });
     }
@@ -12298,4 +12457,275 @@ var Proveedor = function () {
 
 exports.default = Proveedor;
 
-},{"../lib/autocompletar.js":6,"jquery":3,"jquery-modal":1}]},{},[5]);
+},{"../lib/autocompletar.js":6,"../lib/peticionDelete.js":8,"jquery":3,"jquery-modal":1}],13:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = require('jquery');
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _jqueryModal = require('jquery-modal');
+
+var _jqueryModal2 = _interopRequireDefault(_jqueryModal);
+
+var _autocompletar = require('../lib/autocompletar.js');
+
+var _autocompletar2 = _interopRequireDefault(_autocompletar);
+
+var _peticionDelete = require('../lib/peticionDelete.js');
+
+var _peticionDelete2 = _interopRequireDefault(_peticionDelete);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var autocompletar = new _autocompletar2.default();
+var cambiarEstado = new _peticionDelete2.default();
+
+var UnidadesMedida = function () {
+  function UnidadesMedida() {
+    _classCallCheck(this, UnidadesMedida);
+
+    this.$modal_alert = $("#modal-alert-ma");
+    this.$buscarUnidad = $('#buscarUnidad');
+    this.$text_modal = $("#text-modal");
+    this.$title_modal = $('#title_modal');
+    this.$consultar_unidad = $('#consultar_unidad');
+    this.$cancelar_unidad = $('#cancelar_unidad');
+    this.$consultar_unidadMe = $('#consultar_unidadMe');
+    this.$input_consulta = $('#input_consulta');
+    this.$modal_boton = $('#modal_boton');
+    this.$nombre = $('#id_nombre');
+    this.$equivalencia = $('#id_equivalencia');
+    this.$descripcion = $('#id_descripcion');
+    this.$code = $('#id_code');
+    this.$estado = $('#id_estado');
+    this.$limpiarMa = $('#limpiarMa');
+    this.$modificarUnidad = $('#modificarUnidad');
+    this.$eliminarUnidad = $('#eliminarUnidad');
+    this.$formulario_unidades = $('#formulario_unidades');
+    this.$id_unidad = $("#id_unidad");
+    this.accion = '';
+    this.id = '';
+    this.options = {
+      field: 'name',
+      input: this.$consultar_unidadMe,
+      idHidden: this.$id_unidad,
+      url: '/MenuPrincipal/UnidadMedida/Listar/?format=json'
+    };
+    this.escucharBuscar();
+    this.escucharConsulta();
+    this.escucharLimpiar();
+    this.escucharEliminar();
+    this.escucharModificar();
+    autocompletar.autocompletar(this.options);
+  }
+
+  _createClass(UnidadesMedida, [{
+    key: 'escucharSoloNumeros',
+    value: function escucharSoloNumeros(elemento) {
+      elemento.on('keypress', function (evt) {
+        var num = evt.which;
+        if (num > 47 && num < 58 || num == 8 || num == 0) {
+          return true;
+        }
+        console.log(num);
+        return false;
+      });
+    }
+  }, {
+    key: 'escucharNuevo',
+    value: function escucharNuevo() {
+      var _this = this;
+
+      this.$nuevo.on('click', function (evt) {
+        evt.preventDefault();
+        _this.limpiarFormulario();
+        _this.activarFormulario();
+      });
+    }
+  }, {
+    key: 'closeModal',
+    value: function closeModal(elemento) {
+      var _this2 = this;
+
+      elemento.on('click', function (evt) {
+        evt.preventDefault();
+        _this2.$modal_alert.closeModal();
+      });
+    }
+  }, {
+    key: 'escucharBuscar',
+    value: function escucharBuscar() {
+      var _this3 = this;
+
+      this.$buscarUnidad.on('click', function (evt) {
+        evt.preventDefault();
+        _this3.activarInputConsulta();
+        _this3.$title_modal.empty().text('Consultar');
+        _this3.accion = _this3.$title_modal.text();
+        _this3.$text_modal.empty().text('Ingrese el nombre de la unidad de medida a consultar');
+        _this3.$modal_alert.openModal();
+      });
+    }
+  }, {
+    key: 'escucharConsulta',
+    value: function escucharConsulta() {
+      var _this4 = this;
+
+      this.$consultar_unidad.on('click', function (evt) {
+        evt.preventDefault();
+        var url = '';
+        var id = _this4.$id_unidad.val();
+        _this4.$modal_alert.closeModal();
+        debugger;
+        if (id != null && id.trim() != "" && id != "0") {
+          var params = id;
+          _this4.id = id;
+          if (_this4.$title_modal.text() == 'Eliminar') {
+            cambiarEstado.peticion('/MenuPrincipal/UnidadMedida/Eliminar/?format=json', id);
+          } else {
+            url = '/MenuPrincipal/UnidadMedida/Consultar/' + params + '/?format=json';
+            _this4.peticion(url);
+          }
+        } else {
+          _this4.desactivarInputConsulta();
+          _this4.$title_modal.empty().text('Alerta');
+          _this4.$text_modal.empty().text('Debe Ingresar el nombre de la unidad de medida a consultar');
+          _this4.$modal_alert.openModal();
+        }
+      });
+    }
+  }, {
+    key: 'peticion',
+    value: function peticion(url) {
+      var _this5 = this;
+
+      $.get(url, function (data) {
+        console.dir(data);
+        if (_this5.$title_modal.text() != 'Eliminar') {
+          if (data.status === 200) {
+            _this5.llenarFormulario(data);
+          } else if (data.status === 404) {
+            Materialize.toast(data.message, 8000);
+          }
+          if (_this5.$title_modal.text() == 'Modificar') {
+            _this5.$formulario_unidades.attr('action', '/MenuPrincipal/UnidadMedida/Actualizar/' + _this5.id + '/');
+          }
+        }
+      });
+    }
+  }, {
+    key: 'activarInputConsulta',
+    value: function activarInputConsulta() {
+      this.$input_consulta.css('display', 'block');
+      this.$consultar_unidad.css('display', 'block');
+    }
+  }, {
+    key: 'desactivarInputConsulta',
+    value: function desactivarInputConsulta() {
+      this.$input_consulta.css('display', 'none');
+      this.$consultar_unidad.css('display', 'none');
+    }
+  }, {
+    key: 'llenarFormulario',
+    value: function llenarFormulario(data) {
+      debugger;
+      this.$nombre.focus();
+      this.$nombre.val(data.unidad.nombre);
+      this.$descripcion.focus();
+      this.$descripcion.val(data.unidad.descripcion);
+      this.$equivalencia.focus();
+      this.$equivalencia.val(data.unidad.equivalencia);
+      this.$code.focus();
+      this.$code.val(data.unidad.code);
+      if (this.accion == 'Consultar') {
+        this.desactivarFormulario();
+      } else {
+        this.id = data.unidad.id;
+        this.activarFormulario();
+        this.$nombre.attr('readonly', 'readonly');
+      }
+    }
+  }, {
+    key: 'limpiarFormulario',
+    value: function limpiarFormulario() {
+      this.$nombre.val("");
+      this.$descripcion.val("");
+      this.$equivalencia.val("");
+      this.$code.val("");
+      this.$descripcion.val("");
+    }
+  }, {
+    key: 'desactivarFormulario',
+    value: function desactivarFormulario() {
+      this.$nombre.attr('readonly', 'readonly');
+      this.$descripcion.attr('readonly', 'readonly');
+      this.$equivalencia.attr('readonly', 'readonly');
+      this.$code.attr('readonly', 'readonly');
+      this.$descripcion.attr('readonly', 'readonly');
+    }
+  }, {
+    key: 'activarFormulario',
+    value: function activarFormulario() {
+      this.$nombre.removeAttr("readonly");
+      this.$descripcion.removeAttr("readonly");
+      this.$equivalencia.removeAttr("readonly");
+      this.$code.removeAttr("readonly");
+      this.$descripcion.removeAttr("readonly");
+    }
+  }, {
+    key: 'escucharLimpiar',
+    value: function escucharLimpiar() {
+      var _this6 = this;
+
+      this.$limpiarMa.on('click', function (evt) {
+        evt.preventDefault();
+        _this6.$nombre.val("");
+        _this6.$descripcion.val("");
+        _this6.$unidad_medida.val("0");
+        _this6.$tiempo.val("");
+        _this6.$capacidad.val("");
+      });
+    }
+  }, {
+    key: 'escucharModificar',
+    value: function escucharModificar() {
+      var _this7 = this;
+
+      this.$modificarUnidad.on('click', function (evt) {
+        evt.preventDefault();
+        _this7.activarInputConsulta();
+        _this7.$title_modal.empty().text('Modificar');
+        _this7.$text_modal.empty().text('Ingrese el nombre de la unidad de medida a modificar');
+        _this7.$modal_alert.openModal();
+      });
+    }
+  }, {
+    key: 'escucharEliminar',
+    value: function escucharEliminar() {
+      var _this8 = this;
+
+      this.$eliminarUnidad.on('click', function (evt) {
+        evt.preventDefault();
+        _this8.activarInputConsulta();
+        _this8.$title_modal.empty().text('Eliminar');
+        _this8.$text_modal.empty().text('Ingrese el nombre de la unidad de medida a eliminar');
+        _this8.$modal_alert.openModal();
+      });
+    }
+  }]);
+
+  return UnidadesMedida;
+}();
+
+exports.default = UnidadesMedida;
+
+},{"../lib/autocompletar.js":6,"../lib/peticionDelete.js":8,"jquery":3,"jquery-modal":1}]},{},[5]);

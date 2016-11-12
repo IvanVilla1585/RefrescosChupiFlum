@@ -7,7 +7,7 @@ class ProveedoreForm(forms.ModelForm):
     class Meta:
         model = Proveedore
         fields = ('nit', 'empresa', 'direccion', 'telefono', 'fax', 'correo_empresa', 'nombre_contacto',
-                  'apellido_contacto', 'telefono_contacto', 'correo_contacto')
+                  'apellido_contacto', 'telefono_contacto', 'correo_contacto', 'estado',)
         labels = {
             'nit': _(u'*Nit'),
             'empresa': _(u'*Nombre de la Empresa'),
@@ -19,6 +19,7 @@ class ProveedoreForm(forms.ModelForm):
             'apellido_contacto': _(u'Apellidos Contacto'),
             'telefono_contacto': _(u'*Teléfono Contacto'),
             'correo_contacto': _(u'Correo Contacto'),
+            'estado': _(u'Activo'),
         }
         error_messages = {
             'nit': {
@@ -40,3 +41,27 @@ class ProveedoreForm(forms.ModelForm):
                 'required': _(u"El campo teléfono contacto es requerido"),
             },
         }
+
+    def clean_correo_empresa(self):
+        diccionario_datos = self.cleaned_data
+
+        correo_empresa = diccionario_datos.get('correo_empresa')
+
+        if correo_empresa:
+            proveedor = Proveedore.objects.filter(correo_empresa=correo_empresa)
+            if proveedor:
+               raise forms.ValidationError("No se puede asociar un correo a varios proveedores")
+
+        return correo_empresa
+
+    def clean_correo_contacto(self):
+        diccionario_datos = self.cleaned_data
+
+        correo_contacto = diccionario_datos.get('correo_contacto')
+        
+        if correo_contacto:
+            proveedor = Proveedore.objects.filter(correo_contacto=correo_contacto)
+            if proveedor:
+               raise forms.ValidationError("No se puede asociar un correo a varios contactos")
+
+        return correo_contacto

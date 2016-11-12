@@ -7,21 +7,36 @@
       <table class="responsive-table striped">
         <thead>
           <tr>
-            <th>Nombre Maquina</th>
+            <th>Nombre Máquina</th>
             <th>Descripción</th>
             <th>Capacidad</th>
-            <th>Unidad de Meidda</th>
+            <th>Unidad de Medida</th>
             <th>Tiempo</th>
+            <th>Estado</th>
           </tr>
         </thead>
         <tbody>
-          {% for producto in object_list %}
+          {% for maquina in object_list %}
           <tr>
-            <td>{{ producto.nombre }}</td>
-            <td>{{ producto.descripcion }}</td>
-            <td>{{ producto.capacidad }}</td>
-            <td>{{ producto.unidad_medida }}</td>
-            <td>{{ producto.tiempo }}</td>
+            <td>{{ maquina.nombre }}</td>
+            <td>{{ maquina.descripcion }}</td>
+            <td>{{ maquina.capacidad }}</td>
+            <td>{{ maquina.unidad_medida }}</td>
+            <td>{{ maquina.tiempo }}</td>
+            <td>
+              <span class="
+              {% if maquina.estado %}
+                green_text
+              {% else %}
+                red_text
+              {% endif %}">
+                {% if maquina.estado %}
+                  Activo
+                {% else %}
+                  Inactivo
+                {% endif %}
+              </span>
+            </td>
           </tr>
           {% endfor %}
         </tbody>

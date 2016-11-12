@@ -2,111 +2,113 @@
 
 {% block content %}
 <form id="formulario_provee" action="{% url 'proveedores:crear' %}" method="POST">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success" id="alert-messages">
+        <button id="message_close" type="button" data-dismiss="alert" aria-hidden="true" class="close">×</button>
+        <i class="material-icons sign md-icon dp48">check</i>
+        <strong>{{ message }}</strong>
+      </div>
+    {% endfor %}
+  {% endif %}
   <div class="row inputs">
     <div class="col m10">
-    {{ messages.succes }}
-    {% csrf_token %}
-    {{ form.management_form }}
-    {% for field in form %}
-      {% ifequal field.name "nit" %}
+      {% csrf_token %}
+      {{ form.management_form }}
       <div class="row">
         <div class="input-field col s5">
-          {{ field }}
-          {{ field.label_tag }}
-            {{ field.errors  }}
+          {{ form.nit }}
+          {{ form.nit.label_tag }}
+          {{ form.nit.errors  }}
         </div>
-      {% else %}{% ifequal field.name "empresa" %}
         <div class="input-field col s5">
-          {{ field }}
-          {{ field.label_tag }}
-            {{ field.errors  }}
+          {{ form.empresa }}
+          {{ form.empresa.label_tag }}
+          {{ form.empresa.errors  }}
         </div>
       </div>
-      {% else %}{% ifequal field.name "direccion" %}
       <div class="row">
         <div class="input-field col s5">
-          {{ field }}
-          {{ field.label_tag }}
-            {{ field.errors  }}
+          {{ form.direccion }}
+          {{ form.direccion.label_tag }}
+          {{ form.direccion.errors  }}
         </div>
-      {% else %}{% ifequal field.name "telefono" %}
         <div class="input-field col s5">
-          {{ field }}
-          {{ field.label_tag }}
-            {{ field.errors  }}
+          {{ form.telefono }}
+          {{ form.telefono.label_tag }}
+          {{ form.telefono.errors  }}
         </div>
       </div>
-      {% else %}{% ifequal field.name "fax" %}
       <div class="row">
         <div class="input-field col s5">
-          {{ field }}
-          {{ field.label_tag }}
-            {{ field.errors  }}
+          {{ form.fax }}
+          {{ form.fax.label_tag }}
+          {{ form.fax.errors  }}
         </div>
-      {% else %}{% ifequal field.name "correo_empresa" %}
         <div class="input-field col s5">
-          {{ field }}
-          {{ field.label_tag }}
-            {{ field.errors  }}
+          {{ form.correo_empresa }}
+          {{ form.correo_empresa.label_tag }}
+          {{ form.correo_empresa.errors  }}
         </div>
       </div>
-      {% else %}{% ifequal field.name "nombre_contacto" %}
       <div class="row">
         <div class="input-field col s5">
-          {{ field }}
-          {{ field.label_tag }}
-            {{ field.errors  }}
+          {{ form.nombre_contacto }}
+          {{ form.nombre_contacto.label_tag }}
+          {{ form.nombre_contacto.errors  }}
         </div>
-      {% else %}{% ifequal field.name "apellido_contacto" %}
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
+        <div class="input-field col s5">
+          {{ form.apellido_contacto }}
+          {{ form.apellido_contacto.label_tag }}
+          {{ form.apellido_contacto.errors  }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s5">
+          {{ form.telefono_contacto }}
+          {{ form.telefono_contacto.label_tag }}
+          {{ form.telefono_contacto.errors  }}
+        </div>
+        <div class="input-field col s5">
+          {{ form.correo_contacto }}
+          {{ form.correo_contacto.label_tag }}
+          {{ form.correo_contacto.errors  }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s5">
+          <div class="switch">
+            <label>
+              Inactivo {{ form.estado }}
+              <span class="lever"></span>
+              Activo
+            </label>
           </div>
         </div>
-      {% else %}{% ifequal field.name "telefono_contacto" %}
-        <div class="row">
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-        {% else %}{% ifequal field.name "correo_contacto" %}
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-        </div>
-        {% endifequal %}{% endifequal %}
-        {% endifequal %}{% endifequal %}
-        {% endifequal %}{% endifequal %}
-        {% endifequal %}{% endifequal %}
-        {% endifequal %}{% endifequal %}
-    {% endfor %}
-  </div>
-  <div class="col m2">
-      <div class="center">
-        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" name="guardarMP" data-position="left" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
       </div>
-      <div class="center">
-        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="buscarMP" name="buscarMP" data-position="left" data-delay="50" data-tooltip="Buscar"><i class="material-icons">search</i>Left</button>
-      </div>
-      <div class="center">
-        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red" id="modificarMP" name="modificarMP" data-position="left" data-delay="50" data-tooltip="Modificar"><i class="material-icons">add</i>Left</button>
-      </div>
-      <div class="center">
-        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="eliminarMP" name="eliminarMP" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
-      </div>
-      <div class="center">
-        <a type="submit" href="{% url 'proveedores:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="listarP" name="listarP" ><i class="material-icons">assignment</i></a>
-      </div>
-
-  </div>
     </div>
+    <div class="col m2">
+        <div class="center">
+          <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" name="guardarProve" data-position="left" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
+        </div>
+        <div class="center">
+          <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="buscarProve" name="buscarProve" data-position="left" data-delay="50" data-tooltip="Buscar"><i class="material-icons">search</i>Left</button>
+        </div>
+        <div class="center">
+          <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red tooltipped" id="modificarProve" name="modificarProve" data-position="left" data-delay="50" data-tooltip="Modificar"><i class="material-icons">add</i>Left</button>
+        </div>
+        <div class="center">
+          <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="eliminarProve" name="eliminarProve" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
+        </div>
+        <div class="center">
+          <a type="submit" href="{% url 'proveedores:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="listaProve" name="listaProve" data-tooltip="Listar" ><i class="material-icons">assignment</i>Left</a>
+        </div>
+    </div>
+  </div>
 </form>
 
 {% endblock %}
+
 {% block content_modal %}
 
 <div id="modal-alert" class="modal">
@@ -122,9 +124,7 @@
     <div class="row inputs input_consulta" id="input_consulta">
       <div class="input-field col s10">
         <div class="ui-widget">
-
           <input type="text" placeholder="" id="consulta_nit" name="consulta_nit">
-          <label for="consulta_nit">Ingrese número del nit:</label>
         </div>
         <input type="hidden" placeholder="" id="id" name="id">
       </div>
@@ -135,10 +135,4 @@
     <button id="consultar_prove" class=" modal-action modal-close waves-effect waves-green btn-flat">Consultar</button>
   </div>
 </div>
-{% if messages.succes %}
-  <script type="text/javascript">
-    Materialize.toast({{ messages.succes }}, 3000, 'rounded')
-  </script>
-{% endif %}
-
 {% endblock %}

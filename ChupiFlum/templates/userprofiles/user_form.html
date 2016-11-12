@@ -2,6 +2,7 @@
 
   {% block content %}
     <form action="{% url 'usuarios:crear' %}" method="POST">
+      <input type="hidden" name="page" value="usuarios">
       <div class="row inputs">
         <div class="col m10">
 
@@ -36,14 +37,14 @@
                     {{ field.errors  }}
                 </div>
               </div>
-              {% else %}{% ifequal field.name "is_superuser" %}
+              {% else %}{% ifequal field.name "password1" %}
               <div class="row">
                 <div class="input-field col s5">
                   {{ field }}
                   {{ field.label_tag }}
                     {{ field.errors  }}
                 </div>
-              {% else %}{% ifequal field.name "is_active" %}
+              {% else %}{% ifequal field.name "password2" %}
                 <div class="input-field col s5">
                   {{ field }}
                   {{ field.label_tag }}
@@ -58,28 +59,39 @@
                       {{ field.errors  }}
                   </div>
                 </div>
+              {% else %}{% ifequal field.name "is_active" %}
+                <div class="row">
+                  <div class="input-field col s5">
+                      <div class="switch">
+                        <label>
+                          Inactivo {{ field }}
+                          <span class="lever"></span>
+                          Activo
+                        </label>
+                      </div>
+                  </div>
+                </div>
             {% endifequal %}{% endifequal %}
             {% endifequal %}{% endifequal %}
             {% endifequal %}{% endifequal %}
-            {% endifequal %}
           {% endfor %}
       </div>
     </div>
       <div class="col m2">
           <div class="center">
-            <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" name="guardarMP" data-position="left" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
+            <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" name="guardarUsua" data-position="left" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
           </div>
           <div class="center">
-            <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="buscarMP" name="buscarMP" data-position="left" data-delay="50" data-tooltip="Buscar"><i class="material-icons">search</i>Left</button>
+            <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="buscarUsua" name="buscarUsua" data-position="left" data-delay="50" data-tooltip="Buscar"><i class="material-icons">search</i>Left</button>
           </div>
           <div class="center">
-            <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red" id="modificarMP" name="modificarMP" data-position="left" data-delay="50" data-tooltip="Modificar"><i class="material-icons">add</i>Left</button>
+            <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red tooltipped" id="modificarUsua" name="modificarUsua" data-position="left" data-delay="50" data-tooltip="Modificar"><i class="material-icons">add</i>Left</button>
           </div>
           <div class="center">
-            <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="eliminarMP" name="eliminarMP" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
+            <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="eliminarUsua" name="eliminarUsua" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
           </div>
           <div class="center">
-            <a type="submit" style="margin: 1em 0;" href="{% url 'usuarios:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="listarP" name="listarP" data-position="left" data-delay="50" data-tooltip="Listar"><i class="material-icons">assignment</i>Left</a>
+            <a type="submit" href="{% url 'proveedores:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="listaUsua" name="listaUsua" ><i class="material-icons">assignment</i></a>
           </div>
 
       </div>

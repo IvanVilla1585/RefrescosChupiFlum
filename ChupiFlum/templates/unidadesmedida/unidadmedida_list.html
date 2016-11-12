@@ -7,32 +7,28 @@
       <table class="responsive-table striped">
         <thead>
           <tr>
-            <th>Nombre Producto</th>
+            <th>Unidad de Medida</th>
             <th>Descripción</th>
-            <th>Categoria</th>
-            <th>Costo Producción</th>
-            <th>Precio Venta</th>
-            <th>Cantidad</th>
+            <th>Codigo</th>
+            <th>Equivalencia</th>
             <th>Estado</th>
           </tr>
         </thead>
         <tbody>
-          {% for producto in object_list %}
+          {% for unidad in object_list %}
           <tr>
-            <td>{{ producto.nombre }}</td>
-            <td>{{ producto.descripcion }}</td>
-            <td>{{ producto.categoria }}</td>
-            <td>{{ producto.costo_produccion }}</td>
-            <td>{{ producto.precio_venta }}</td>
-            <td>{{ producto.cantidad }}</td>
+            <td>{{ unidad.nombre }}</td>
+            <td>{{ unidad.descripcion }}</td>
+            <td>{{ unidad.code }}</td>
+            <td>{{ unidad.equivalencia }}</td>
             <td>
               <span class="
-              {% if producto.estado %}
+              {% if unidad.estado %}
                 green_text
               {% else %}
                 red_text
               {% endif %}">
-                {% if producto.estado %}
+                {% if unidad.estado %}
                   Activo
                 {% else %}
                   Inactivo

@@ -13,8 +13,8 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class LoginView(FormView):
-    form_class = LoginForm
-    template_name = 'loginusers/login.html'
+    form_class = AuthenticationForm
+    template_name = 'login.html'
     success_url = '/MenuPrincipal/'
 
     def form_valid(self, form):
@@ -36,7 +36,7 @@ def authentication(request):
 @login_required()
 def menuView(request):
     template = loader.get_template('base.html')
-    return HttpResponse(template.render({'title': 'Menú Principal'}, request))
+    return HttpResponse(template.render({}, request))
 
 def homeView(request):
     template = loader.get_template('loginusers/home.html')

@@ -2,63 +2,84 @@
 
 {% block content %}
 <form action="{% url 'productos:crear' %}" id="formulario_produ" method="POST">
-  <div class="row inputs">
-    {% csrf_token %}
-    {% for field in form %}
-      {% ifequal field.name "nombre" %}
-        <div class="row">
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-        {% else %}{% ifequal field.name "descripcion" %}
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-        </div>
-        {% else %}{% ifequal field.name "categoria" %}
-        <div class="row">
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-        {% else %}{% ifequal field.name "costo_produccion" %}
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-        </div>
-        {% else %}{% ifequal field.name "precio_venta" %}
-        <div class="row">
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-        {% else %}{% ifequal field.name "cantidad" %}
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-        </div>
-      {% endifequal %}{% endifequal %}
-      {% endifequal %}{% endifequal %}
-      {% endifequal %}{% endifequal %}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success" id="alert-messages">
+        <button id="message_close" type="button" data-dismiss="alert" aria-hidden="true" class="close">×</button>
+        <i class="material-icons sign md-icon dp48">check</i>
+        <strong>{{ message }}</strong>
+      </div>
     {% endfor %}
-  </div>
-  <div class="row butons">
-    <input type="submit" class="waves-effect waves-light btn" id="guardarP" name="guardarP" value="guardar">
-    <input type="submit" class="waves-effect waves-light btn" id="buscarP" name="buscarP" value="buscar">
-    <input type="submit" class="waves-effect waves-light btn" id="modificarP" name="modificarP" value="modificar">
-    <input type="submit" class="waves-effect waves-light btn" id="eliminarP" name="eliminarP" value="eliminar">
-    <a type="submit" href="/MenuPrincipal/Productos/Listar/" class="waves-effect waves-light btn" id="listarP" name="listarP" value="Listar">Listar</a>
-    <input type="submit" class="waves-effect waves-light btn" id="limpiarP" name="limpiarP" value="limpiar">
+  {% endif %}
+  {% csrf_token %}
+  <input type="hidden" name="page" value="productos">
+  <div class="row inputs">
+    <div class="col m10">
+      <div class="row">
+        <div class="input-field col s5">
+          {{ form.nombre }}
+          {{ form.nombre.label_tag }}
+          {{ form.nombre.errors  }}
+        </div>
+        <div class="input-field col s5">
+          {{ form.descripcion }}
+          {{ form.descripcion.label_tag }}
+          {{ form.descripcion.errors  }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s5">
+          {{ form.categoria }}
+          {{ form.categoria.label_tag }}
+          {{ form.categoria.errors  }}
+        </div>
+        <div class="input-field col s5">
+          {{ form.costo_produccion }}
+          {{ form.costo_produccion.label_tag }}
+          {{ form.costo_produccion.errors  }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s5">
+          {{ form.precio_venta }}
+          {{ form.precio_venta.label_tag }}
+          {{ form.precio_venta.errors  }}
+        </div>
+        <div class="input-field col s5">
+          {{ form.cantidad }}
+          {{ form.cantidad.label_tag }}
+          {{ form.cantidad.errors  }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s5">
+          <div class="switch">
+            <label>
+              Inactivo {{ form.estado }}
+              <span class="lever"></span>
+              Activo
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col m2">
+      <div class="center">
+        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" name="guardarProd" data-position="left" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
+      </div>
+      <div class="center">
+        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="buscarProd" name="buscarProd" data-position="left" data-delay="50" data-tooltip="Buscar"><i class="material-icons">search</i>Left</button>
+      </div>
+      <div class="center">
+        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red tooltipped" id="modificarProd" name="modificarProd" data-position="left" data-delay="50" data-tooltip="Modificar"><i class="material-icons">add</i>Left</button>
+      </div>
+      <div class="center">
+        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="eliminarProd" name="eliminarProd" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
+      </div>
+      <div class="center">
+        <a type="submit" href="/MenuPrincipal/Productos/Listar/" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="listarProd" name="listarProd" data-position="left" data-tooltip="Listar" ><i class="material-icons">assignment</i>Left</a>
+      </div>
+    </div>
   </div>
 </form>
 
@@ -77,11 +98,15 @@
     <div class="errors" id="errors"></div>
     <div class="row inputs input_consulta" id="input_consulta">
       <div class="input-field col s10">
-        <input type="text" placeholder="" id="consulta_nom" name="consulta_nom">
-        <label for="consulta_nom">Nombre producto:</label>
+        <div class="ui-widget">
+          <input type="text" placeholder="" id="consulta_nom" name="consulta_nom">
+        </div>
+        <input type="hidden" placeholder="" id="id_producto" name="id_producto">
       </div>
     </div>
-  </div>
+      <div class="input-field col s10">
+      </div>
+    </div>
   <div class="modal-footer">
     <button id="cancelar_pro" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancelar</button>
     <button id="consultar_pro" class=" modal-action modal-close waves-effect waves-green btn-flat">Consultar</button>

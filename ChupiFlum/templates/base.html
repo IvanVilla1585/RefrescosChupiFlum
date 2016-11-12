@@ -26,7 +26,7 @@
             <ul class="children">
                 <li><a href="{% url 'usuarios:usuario' %}"><i class="fa fa-caret-right"></i> Registro Usuarios</a></li>
               {%  if  perms.grupos  %}
-                <li><a href="{% url 'grupos:grupo' %}"><i class="fa fa-caret-right"></i> Registro Grupos</a></li>
+                <li><a href="{% url 'grupos:grupo' %}"><i class="fa fa-caret-right"></i> Registro Roles</a></li>
               {%  endif  %}
             </ul>
           </li>
@@ -42,14 +42,17 @@
           <li class="nav-parent" data-id="3" ><a href="#" id="collapse"><i class="fa fa-edit"></i> <span>Producción</span></a>
             <ul class="children">
               {%  if  perms.maquina.form_view_maquina  %}
-                <li><a href="{% url 'maquinas:maquinaForm' %}"><i class="fa fa-caret-right"></i> Registro Maquinas</a></li>
+                <li><a href="{% url 'maquinas:maquinaForm' %}"><i class="fa fa-caret-right"></i> Registro Máquinas</a></li>
+              {%  endif  %}
+              {%  if  perms.maquina.form_view_maquina  %}
+                <li><a href="{% url 'unidades:unidadForm' %}"><i class="fa fa-caret-right"></i> Registro Unidades de Medida</a></li>
               {%  endif  %}
             </ul>
           </li>
           <li class="nav-parent" data-id="4" ><a href="#" id="collapse"><i class="fa fa-edit"></i> <span>Inventarios</span></a>
             <ul class="children">
               {%  if  perms.productos.form_view_producto  %}
-                <li><a href=""><i class="fa fa-caret-right"></i> Registro Productos</a></li>
+                <li><a href="{% url 'productos:producto' %}"><i class="fa fa-caret-right"></i> Registro Productos</a></li>
               {%  endif  %}
               {%  if  perms.materiaprima.form_view_materiaprima  %}
                 <li><a href="{% url 'materiaprim:materiaPrimaForm' %}"><i class="fa fa-caret-right"></i> Registro Materia Prima</a></li>
@@ -62,9 +65,19 @@
       </div>
       <div class="col s12 m8 l10" > <!-- Note that "m8 l9" was added -->
         <div class="row">
-          <div class="pageheader" >
-            <h3><i class="fa fa-home"></i>{{title}}</h3>
-            <span class="usernaame">Ivan</span>
+          <div class="pageheader row" >
+            <div class="col s12 m9">
+              <h4><i class="fa fa-home"></i>{{tittle}}</h4>
+            </div>
+            <div class="col s12 m3">
+              <h5 class="usernaame">
+                {% if user.first_name %}
+                  {{ user.first_name }}. ' ' {{ user.last_name }}
+                {% else %}
+                  {{ user.username }}
+                {% endif %}
+              </h5>
+            </div>
           </div>
           <div class="container_info">
             {% block content %}

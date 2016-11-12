@@ -4,7 +4,8 @@ class JSONResponseMixin(object):
 
     def render_to_json_response(self):
         format = self.request.GET.get('format', None)
-        if format == 'json':
+        formatPost = self.request.POST.get('format', None)
+        if format == 'json' or formatPost == 'json':
             return self.json_to_response()
 
         context = self.get_context_data()
