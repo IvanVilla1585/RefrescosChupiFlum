@@ -28,6 +28,15 @@ from .mixins import JSONResponseMixin
 from django.http import JsonResponse
 from loginusers.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER
+from django.conf import settings
+from io import BytesIO
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 
 
 class ListarProveedores(LoginRequiredMixin, JSONResponseMixin, ListView):
@@ -91,8 +100,9 @@ class ActualizarEstadoView(JSONResponseMixin, View):
     id = self.request.POST.get('id', None)
     nit = self.request.POST.get('nit', None)
     proveedor = None
+    import ipdb; ipdb.set_trace()
     try:
-        proveedor = Proveedore.objects.get(id=id, nit=nit)
+        proveedor = Proveedore.objects.get(id=id)
     except Proveedore.DoesNotExist as e:
         self.object = proveedor
     if proveedor is not None:
@@ -104,7 +114,7 @@ class ActualizarEstadoView(JSONResponseMixin, View):
   def get_data(self):
       if self.object is not None:
           data = {
-              'message': 'Se inhabilito el usuario',
+              'message': 'Se inhabilito el proveedor',
           }
       else:
           data = {
@@ -199,3 +209,70 @@ class ProveedoresView(LoginRequiredMixin, TemplateView):
         context.update({'form': ProveedoreForm()})
 
         return context
+
+
+class ReporteProveedoresPDF(View):
+    model = Proveedore
+
+    def cabecera(self,pdf):
+        #Utilizamos el archivo logo_django.png que está guardado en la carpeta media/imagenes
+        archivo_imagen = settings.MEDIA_ROOT+'/logo.jpg'
+        #Definimos el tamaño de la imagen a cargar y las coordenadas correspondientes
+        pdf.drawImage(archivo_imagen, 40, 750, 120, 90,preserveAspectRatio=True)
+        #Establecemos el tamaño de letra en 16 y el tipo de letra Helvetica
+        pdf.setFont("Helvetica", 16)
+        #Dibujamos una cadena en la ubicación X,Y especificada
+        pdf.drawString(230, 790, u"REFRESCOS CHUPIFLUM")
+        pdf.setFont("Helvetica", 14)
+        pdf.drawString(200, 770, u"REPORTE DE PROVEEDORES")
+
+    def tabla(self,pdf,y):
+        #Creamos una tupla de encabezados para neustra tabla
+        encabezados = ('NIT', 'EMPRESA', 'DIRECCIÓN', 'TELEFONO', 'CORREO EMPRESA', 'CONTACTO', 'CORREO CONTACTO',)
+        #Creamos una lista de tuplas que van a contener a las personas
+        cm = 40
+        detalles = [(
+            proveedor.nit,
+            proveedor.empresa,
+            proveedor.direccion,
+            proveedor.telefono,
+            proveedor.correo_empresa,
+            '%s %s' % (proveedor.nombre_contacto, proveedor.apellido_contacto),
+            proveedor.correo_empresa
+        ) for proveedor in self.model.objects.all()]
+        #Establecemos el tamaño de cada una de las columnas de la tabla
+        detalle_orden = Table([encabezados] + detalles, colWidths=[2 * cm, 2 * cm, 3 * cm, 2 * cm])
+        #Aplicamos estilos a las celdas de la tabla
+        detalle_orden.setStyle(TableStyle(
+            [
+                #La primera fila(encabezados) va a estar centrada
+                ('ALIGN',(0,0),(3,0),'CENTER'),
+                #Los bordes de todas las celdas serán de color negro y con un grosor de 1
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                #El tamaño de las letras de cada una de las celdas será de 10
+                ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ]
+        ))
+        #Establecemos el tamaño de la hoja que ocupará la tabla
+        detalle_orden.wrapOn(pdf, 950, 600)
+        #Definimos la coordenada donde se dibujará la tabla
+        detalle_orden.drawOn(pdf, 10,y)
+
+    def get(self, request, *args, **kwargs):
+        #Indicamos el tipo de contenido a devolver, en este caso un pdf
+        response = HttpResponse(content_type='application/pdf')
+        #La clase io.BytesIO permite tratar un array de bytes como un fichero binario, se utiliza como almacenamiento temporal
+        buffer = BytesIO()
+        #Canvas nos permite hacer el reporte con coordenadas X y Y
+        pdf = canvas.Canvas(buffer)
+        #Llamo al método cabecera donde están definidos los datos que aparecen en la cabecera del reporte.
+        self.cabecera(pdf)
+        y = 600
+        self.tabla(pdf, y)
+        #Con show page hacemos un corte de página para pasar a la siguiente
+        pdf.showPage()
+        pdf.save()
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
+        return response

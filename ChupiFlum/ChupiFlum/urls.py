@@ -15,10 +15,12 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from pedido.views import MateriaPrimaAutocomplete
 
 urlpatterns = [
     url(r'^grappelli/', include('grappelli.urls')),
     url(r'^admin/', admin.site.urls),
+    url(r'^materiaprima-autocomplete/$', MateriaPrimaAutocomplete.as_view(), name='materiaprima-autocomplete'),
     url(r'^', include('loginusers.urls', namespace="loginusers")),
     url(r'^MenuPrincipal/', include('proveedores.urls', namespace="proveedores")),
     url(r'^MenuPrincipal/', include('userprofiles.urls', namespace="usuarios")),

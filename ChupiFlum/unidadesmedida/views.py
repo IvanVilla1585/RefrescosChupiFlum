@@ -66,6 +66,8 @@ class CrearUnidadMedida(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 class ModificarUnidadMedida(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = UnidadMedida
     form_class = UnidadMedidaForm
+    slug = 'id'
+    slug_url_kwarg = 'id'
     success_url = reverse_lazy('unidades:unidadForm')
     success_message = "La unidad de meidida %(nombre)s fue actualizada."
 

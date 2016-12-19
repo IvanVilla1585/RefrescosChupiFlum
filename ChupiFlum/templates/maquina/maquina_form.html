@@ -61,16 +61,16 @@
           <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped"  name="guardarMaquina" data-position="left" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
         </div>
         <div class="center">
-          <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="buscarMaquina" name="buscarMaquina" data-position="left" data-delay="50" data-tooltip="Buscar"><i class="material-icons">search</i>Left</button>
+          <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="buscarMaquina" name="buscarMaquina" data-position="left" data-delay="50" data-tooltip="Buscar"><i class="material-icons">search</i>Left</button>
         </div>
         <div class="center">
-          <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red" id="modificarMaquina" name="modificarMaquina" data-position="left" data-delay="50" data-tooltip="Modificar"><i class="material-icons">add</i>Left</button>
+          <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red tooltipped" id="modificarMaquina" name="modificarMaquina" data-position="left" data-delay="50" data-tooltip="Modificar"><i class="material-icons">add</i>Left</button>
         </div>
         <div class="center">
-          <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="eliminarMaquina" name="eliminarMaquina" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
+          <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="eliminarMaquina" name="eliminarMaquina" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
         </div>
         <div class="center">
-          <a type="submit" href="{% url 'maquinas:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="listarMaquina" name="listarMaquina" ><i class="material-icons">assignment</i></a>
+          <a type="submit" href="{% url 'maquinas:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="listarMaquina" name="listarMaquina" data-position="left" data-delay="50" data-tooltip="Listar" ><i class="material-icons">assignment</i>Left</a>
         </div>
     </div>
   </div>
@@ -103,4 +103,16 @@
     <button id="consultar_maquin" class=" modal-action modal-close waves-effect waves-green btn-flat">Consultar</button>
   </div>
 </div>
+{% endblock %}
+
+{% block js %}
+  <script src="{% static 'js/jquery.forminline.js' %}"></script>
+  <script type="text/javascript">
+    $('.formset_row').formset({
+      addText: 'agregar producto',
+      addCssClass: 'btn waves-effect waves-light',
+      deleteText: 'eliminar',
+      prefix: 'detalle_pedido_set'
+    });
+  </script>
 {% endblock %}

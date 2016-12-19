@@ -7,7 +7,7 @@ from django.contrib.auth.forms import UserCreationForm
 class UserForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'username', 'password1', 'password2', 'groups', 'is_active',]
+        fields = ('first_name', 'last_name', 'email', 'username', 'password1', 'password2', 'groups', 'is_active',)
         labels = {
             'first_name': _(u'Nombre'),
             'last_name': _(u'Apellido'),

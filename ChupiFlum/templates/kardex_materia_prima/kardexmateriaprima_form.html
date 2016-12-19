@@ -2,81 +2,86 @@
 
 {% block content %}
 <form action="{% url 'kardexmateria:crear' %}" id="formulario_materia" method="POST">
+<strong>{{ messages.errors }}</strong>
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert .alert-errors" id="alert-messages">
+        <button id="message_close" type="button" data-dismiss="alert" aria-hidden="true" class="close">×</button>
+        <i class="material-icons sign md-icon dp48">check</i>
+        <strong>{{ message }}</strong>
+      </div>
+    {% endfor %}
+  {% elif messages %}
+    {% for message in messages %}
+      <div class="alert alert-success" id="alert-messages">
+        <button id="message_close" type="button" data-dismiss="alert" aria-hidden="true" class="close">×</button>
+        <i class="material-icons sign md-icon dp48">check</i>
+        <strong>{{ message }}</strong>
+      </div>
+    {% endfor %}
+  {% endif %}
   <div class="row inputs">
     <div class="col s12 m10">
 
-    {% csrf_token %}
-    {% for field in form %}
-      {% ifequal field.name "pedido" %}
-        <div class="row">
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-        {% else %}{% ifequal field.name "fecha_movimiento" %}
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
+      {% csrf_token %}
+      <div class="row">
+        <div class="input-field col s12 m5">
+          {{ form.pedido }}
+          {{ form.pedido.label_tag }}
+          {{ form.pedido.errors  }}
         </div>
-        {% else %}{% ifequal field.name "tipo_movimiento" %}
-        <div class="row">
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-        {% else %}{% ifequal field.name "materiaprima" %}
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
+        <div class="input-field col s12 m5">
+          {{ form.fecha_movimiento }}
+          {{ form.fecha_movimiento.label_tag }}
+          {{ form.fecha_movimiento.errors  }}
         </div>
-        {% else %}{% ifequal field.name "cantidad" %}
-        <div class="row">
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-          {% else %}{% ifequal field.name "valor_unitario" %}
-            <div class="input-field col s5">
-              {{ field }}
-              {{ field.label_tag }}
-                {{ field.errors  }}
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m5">
+          <div class="row">
+            <div class="col s12 m6">
+              {{ form.entrada }}
+              {{ form.entrada.label_tag }}
+              {{ form.entrada.errors  }}
             </div>
-        </div>
-        {% else %}{% ifequal field.name "total" %}
-        <div class="row">
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-          {% else %}{% ifequal field.name "lote" %}
-            <div class="input-field col s5">
-              {{ field }}
-              {{ field.label_tag }}
-                {{ field.errors  }}
+            <div class="col s12 m6">
+              {{ form.salida }}
+              {{ form.salida.label_tag }}
+              {{ form.salida.errors  }}
             </div>
-        </div>
-        {% else %}{% ifequal field.name "fecha_vencimiento" %}
-        <div class="row">
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
           </div>
+
         </div>
-      {% endifequal %}{% endifequal %}
-      {% endifequal %}{% endifequal %}
-      {% endifequal %}{% endifequal %}
-      {% endifequal %}{% endifequal %}
-      {% endifequal %}
-    {% endfor %}
+        <div class="input-field col s12 m5">
+          {{ form.materiaprima }}
+          {{ form.materiaprima.label_tag }}
+          {{ form.materiaprima.errors  }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m5">
+          {{ form.cantidad }}
+          {{ form.cantidad.label_tag }}
+          {{ form.cantidad.errors  }}
+        </div>
+        <div class="input-field col s12 m5">
+          {{ form.total }}
+          {{ form.total.label_tag }}
+          {{ form.total.errors  }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m5">
+          {{ form.lote }}
+          {{ form.lote.label_tag }}
+          {{ form.lote.errors  }}
+        </div>
+        <div class="input-field col s12 m5">
+          {{ form.fecha_vencimiento }}
+          {{ form.fecha_vencimiento.label_tag }}
+          {{ form.fecha_vencimiento.errors  }}
+        </div>
+      </div>
   </div>
   <div class="col m2">
       <div class="center">

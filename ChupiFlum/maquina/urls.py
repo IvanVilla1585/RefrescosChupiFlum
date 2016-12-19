@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^Maquina/Actualizar/(?P<pk>[0-9]+)/$', views.ModificarMaquina.as_view(), name = 'modificar'),
     url(r'^Maquina/Eliminar/$', views.ActualizarEstadoView.as_view(), name='eliminar'),
     url(r'^Maquina/Listar/$', views.ListarMaquinas.as_view(), name = 'listar'),
+    url(r'^Maquina/ReporteMaquinasPDF/$', views.ReporteMaquinasPDF.as_view(), name = 'reporte_pdf'),
 ]

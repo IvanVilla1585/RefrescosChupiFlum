@@ -6,6 +6,7 @@
   <title>Login</title>
   <link rel="stylesheet" href="{% static 'css/style.css' %}" >
   <link rel="stylesheet" href="{% static 'css/materialize.css' %}">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
   <section class="container_login">
@@ -19,34 +20,27 @@
       <form action="" method="post">
         <div class="row inputs">
           {% csrf_token %}
-          {{ form.errors }}
-          {% for field in form %}
-            {% ifequal field.name "username" %}
+          
             <div class="row">
               <div class="input-field col s6 offset-s2">
-                {{ field }}
-                {{ field.label_tag }}
-                {{ field.errors  }}
+                {{ form.username }}
+                {{ form.username.label_tag }}
+                {{ form.username.errors  }}
               </div>
             </div>
-            {% else %}{% ifequal field.name "password" %}
             <div class="row">
               <div class="input-field col s7 offset-s2">
-                {{ field }}
-                {{ field.label_tag }}
-                {{ field.errors  }}
+                {{ form.password }}
+                {{ form.password.label_tag }}
+                {{ form.password.errors  }}
               </div>
             </div>
-            {% endifequal %}{% endifequal %}
-          {% endfor %}
           <div class="row">
             <input type="submit" value="Ingresar" class="waves-effect waves-light btn-large"/>
           </div>
           </div>
       </form>
-      </div>
     </div>
-
   </section>
   <script type="text/javascript" src="{% static 'js/materialize.js' %}"></script>
 </body>

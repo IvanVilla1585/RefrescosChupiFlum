@@ -10825,6 +10825,8 @@ var cambiarEstado = new _peticionDelete2.default();
 
 var ProductoTer = function () {
   function ProductoTer() {
+    var _this = this;
+
     _classCallCheck(this, ProductoTer);
 
     this.$modal_alert = $("#modal-alert");
@@ -10844,13 +10846,26 @@ var ProductoTer = function () {
     this.$categoria = $('#id_categoria');
     this.$precio_venta = $('#id_precio_venta');
     this.$costo_produccion = $('#id_costo_produccion');
+    this.$id_detalles_formulas0 = $('#id_detalles_formulas_set-0-id_materia_prima');
+    this.$id_detalles_formulas1 = $('#id_detalles_formulas_set-1-id_materia_prima');
+    this.$id_detalles_formulas2 = $('#id_detalles_formulas_set-2-id_materia_prima');
+    this.$id_detalles_formulas3 = $('#id_detalles_formulas_set-3-id_materia_prima');
+    this.$id_cantidad_formulas0 = $('#id_detalles_formulas_set-0-cantidad');
+    this.$id_cantidad_formulas1 = $('#id_detalles_formulas_set-1-cantidad');
+    this.$id_cantidad_formulas2 = $('#id_detalles_formulas_set-2-cantidad');
+    this.$id_cantidad_formulas3 = $('#id_detalles_formulas_set-3-cantidad');
+    this.$stock = $('#id_stock');
+    this.$cantidad_productos = $('#id_cantidad_productos');
     this.$cantidad = $('#id_cantidad');
     this.$errors = $('#errors');
+    this.$table_formula = $('#table_formula');
+    this.$presentacion = $('#id_presentacion');
     this.$limpiar = $('#limpiarP');
     this.$modificar = $('#modificarProd');
     this.$eliminar = $('#eliminarProd');
     this.$guardar = $('#guardarProd');
     this.$nuevo = $('#nuevo');
+    this.$body_productos = $('#body_productos');
     this.$formulario_produ = $('#formulario_produ');
     this.accion = '';
     this.id = 0;
@@ -10866,10 +10881,116 @@ var ProductoTer = function () {
     this.escucharEliminar();
     this.escucharModificar();
     this.escucharNuevo();
+    this.pedidos = "[";
     autocompletar.autocompletar(this.options);
+    this.carcularCosto(this.$id_cantidad_formulas0, this.$id_detalles_formulas0);
+    this.carcularCosto(this.$id_cantidad_formulas1, this.$id_detalles_formulas1);
+    this.carcularCosto(this.$id_cantidad_formulas2, this.$id_detalles_formulas2);
+    this.carcularCosto(this.$id_cantidad_formulas3, this.$id_detalles_formulas3);
+    if (this.$costo_produccion) this.$costo_produccion.attr('readonly', 'readonly');
+    if (this.$body_productos) {
+      this.$body_productos.children('tr').map(function (index, data) {
+        debugger;
+        var text = data.id;
+        var id = text.replace('formula_', '');
+        if (id.length === 1) {
+          var _id = text.replace('formula_', '');
+          if (index === _this.$body_productos.children('tr').length - 1) {
+            _this.pedidos = _this.pedidos + _id + "]";
+          } else {
+            _this.pedidos = _this.pedidos + _id + ",";
+          }
+        }
+      });
+      this.pedidos = this.pedidos.substring(0, this.pedidos.length - 1);
+      this.pedidos = this.pedidos + "]";
+      this.peticionFormulas();
+    }
   }
 
   _createClass(ProductoTer, [{
+    key: 'peticionFormulas',
+    value: function peticionFormulas() {
+      var _this2 = this;
+
+      $.get('/MenuPrincipal/Productos/ConsultarFormula/?format=json&pedidos=' + this.pedidos, function (data) {
+        console.log(data);
+        var array = [];
+        var anterior = "";
+        data.map(function (formula, index) {
+          if (anterior === "") {
+            array.push(formula);
+            anterior = formula;
+          } else if (anterior.id === formula.id) {
+            array.push(formula);
+            anterior = formula;
+          } else {
+            if (index === data.length - 1) {
+              $("#sub_table_" + anterior.id).append(_this2.template(array, anterior));
+              array = [];
+              array.push(data);
+              $("#sub_table_" + data.id).append(_this2.template(array, data));
+            } else {
+              $("#sub_table_" + anterior.id).append(_this2.template(array, anterior));
+              anterior = formula;
+              array = [];
+              array.push(formula);
+            }
+          }
+        });
+        $("#sub_table_" + anterior.id).append(_this2.template(array, anterior));
+        _this2.activarCollapse($(".collapsible"));
+      });
+    }
+  }, {
+    key: 'activarCollapse',
+    value: function activarCollapse(element) {
+      element.on('click', 'li.sub-collapsible', function (ev) {
+        var $this = $(this);
+        var body = $this.find('div.collapsible-body');
+        body.slideToggle("slow");
+      });
+    }
+  }, {
+    key: 'template',
+    value: function template(files, object) {
+      var _this3 = this;
+
+      return '\n\n<ul id="collapsible" class="collapsible" data-collapsible="accordion">\n  <li class="sub-collapsible">\n    <div class="collapsible-header"><i class="material-icons">filter_drama</i><h5 style="font-size: 1.3rem;">Formulaci\xF3n ' + object.materia + '</h5></div>\n    <div class="collapsible-body">\n        <table class="responsive-table striped table_formula" id="table_formula">\n          <thead>\n            <tr style="border-bottom: 1px solid #d0d0d0; border-top: 1px solid #d0d0d0;">\n              <th>\n                Nombre Materia Prima\n              </th>\n              <th>\n                cantidad\n              </th>\n            </tr>\n          </thead>\n          <tbod>\n            ' + files.map(function (data, index) {
+        return _this3.templateFile(data);
+      }) + '\n          </tbod>\n        </table>\n    </div>\n  </li>\n\n      </ul>';
+    }
+  }, {
+    key: 'templateFile',
+    value: function templateFile(formula) {
+      return '\n      <tr style="border-bottom: 1px solid #d0d0d0; border-top: 1px solid #d0d0d0;">\n        <td>\n          ' + formula.producto + '\n        </td>\n        <td>\n          ' + formula.cantidad + ' ' + formula.code + '\n        </td>\n      </tr>\n    ';
+    }
+  }, {
+    key: 'carcularCosto',
+    value: function carcularCosto(element, materia) {
+      var _this4 = this;
+
+      var self = this;
+      element.on('blur', function (evt) {
+        if (materia.val() != "0" && element.val() != "") {
+          $.get('/MenuPrincipal/Pedidos/ConsultarValor/' + materia.val() + '/?format=json', function (data) {
+            if (data.status === 200) {
+              if (_this4.$costo_produccion.val() === '') {
+                _this4.$costo_produccion.focus();
+                _this4.$costo_produccion.val((parseFloat(data.pedido.valor) * parseFloat(element.val())).toFixed(2));
+              } else {
+                _this4.$costo_produccion.val((parseFloat(_this4.$costo_produccion.val()) + parseFloat(data.pedido.valor) * parseFloat(element.val())).toFixed(2));
+              }
+            } else {
+              Materialize.toast('La materia prima no se encuentra registrada', 8000);
+            }
+          });
+        } else {
+          Materialize.toast('Recuerde ingresar la materia prima y la cantidad', 8000);
+        }
+      });
+    }
+  }, {
     key: 'escucharSoloNumeros',
     value: function escucharSoloNumeros(elemento) {
       elemento.on('keypress', function (evt) {
@@ -10884,79 +11005,79 @@ var ProductoTer = function () {
   }, {
     key: 'escucharNuevo',
     value: function escucharNuevo() {
-      var _this = this;
+      var _this5 = this;
 
       this.$nuevo.on('click', function (evt) {
         evt.preventDefault();
-        _this.limpiarFormulario();
-        _this.activarFormulario();
+        _this5.limpiarFormulario();
+        _this5.activarFormulario();
       });
-      this.escucharSoloNumeros(this.$precio_venta);
-      this.escucharSoloNumeros(this.$cantidad);
+      //this.escucharSoloNumeros(this.$precio_venta)
+      //this.escucharSoloNumeros(this.$cantidad)
     }
   }, {
     key: 'closeModal',
     value: function closeModal(elemento) {
-      var _this2 = this;
+      var _this6 = this;
 
       elemento.on('click', function (evt) {
         evt.preventDefault();
-        _this2.$modal_alert.closeModal();
+        _this6.$modal_alert.closeModal();
       });
     }
   }, {
     key: 'escucharBuscar',
     value: function escucharBuscar() {
-      var _this3 = this;
+      var _this7 = this;
 
       this.$buscar.on('click', function (evt) {
         evt.preventDefault();
-        _this3.activarInputConsulta();
-        _this3.$title_modal.empty().text('Consultar');
-        _this3.accion = _this3.$title_modal.text();
-        _this3.$text_modal.empty().text('Ingrese el nombre del producto a consultar');
-        _this3.$modal_alert.openModal();
+        _this7.activarInputConsulta();
+        _this7.$title_modal.empty().text('Consultar');
+        _this7.accion = _this7.$title_modal.text();
+        _this7.$text_modal.empty().text('Ingrese el nombre del producto a consultar');
+        _this7.$modal_alert.openModal();
       });
     }
   }, {
     key: 'escucharConsulta',
     value: function escucharConsulta() {
-      var _this4 = this;
+      var _this8 = this;
 
       this.$consultar_pro.on('click', function (evt) {
         evt.preventDefault();
         var url = '';
-        var id = _this4.$id_producto.val();
+        var id = _this8.$id_producto.val();
         if (id != null && id != "") {
-          _this4.id = id;
+          _this8.id = id;
           var params = id;
-          if (_this4.$title_modal.text() == 'Eliminar') {
+          if (_this8.$title_modal.text() == 'Inactivar') {
             cambiarEstado.peticion('/MenuPrincipal/Productos/Eliminar/?format=json', id);
           } else {
             url = '/MenuPrincipal/Productos/Consultar/' + params + '/?format=json';
-            _this4.peticion(url);
+            _this8.peticion(url);
           }
-          _this4.$modal_alert.closeModal();
-          _this4.peticion(url);
+          _this8.$modal_alert.closeModal();
+          _this8.peticion(url);
         } else {
-          _this4.desactivarInputConsulta();
-          _this4.$title_modal.empty().text('Alerta');
-          _this4.$text_modal.empty().text('Debe Ingresar el nombre del producto a consultar');
-          _this4.$modal_alert.css('display', 'block');
+          _this8.desactivarInputConsulta();
+          _this8.$title_modal.empty().text('Alerta');
+          _this8.$text_modal.empty().text('Debe Ingresar el nombre del producto a consultar');
+          _this8.$modal_alert.css('display', 'block');
         }
       });
     }
   }, {
     key: 'peticion',
     value: function peticion(url) {
-      var _this5 = this;
+      var _this9 = this;
 
       $.get(url, function (data) {
         console.dir(data);
-        if (_this5.$title_modal.text() != 'Eliminar') {
-          _this5.llenarFormulario(data);
-          if (_this5.$title_modal.text() == 'Modificar') {
-            _this5.$formulario_produ.attr('action', '/MenuPrincipal/Productos/Actualizar/' + _this5.id + '/');
+        if (_this9.$title_modal.text() != 'Eliminar') {
+          _this9.llenarFormulario(data);
+          if (_this9.$title_modal.text() == 'Modificar') {
+            _this9.$formulario_produ.attr('action', '/MenuPrincipal/Productos/Actualizar/' + _this9.id + '/');
           }
         }
       });
@@ -10978,25 +11099,51 @@ var ProductoTer = function () {
   }, {
     key: 'llenarFormulario',
     value: function llenarFormulario(data) {
+      var _this10 = this;
+
+      console.log(data);
       this.$nombre.focus();
       this.$nombre.val(data.producto.nombre);
       this.$descripcion.focus();
       this.$descripcion.val(data.producto.descripcion);
       this.$categoria.focus();
-      this.$categoria.val("'" + data.producto.categoria + "'");
+      this.$categoria.val(data.producto.categoria);
+      this.$categoria.material_select();
       this.$costo_produccion.focus();
       this.$costo_produccion.val(data.producto.costo_produccion);
       this.$precio_venta.focus();
       this.$precio_venta.val(data.producto.precio_venta);
       this.$cantidad.focus();
       this.$cantidad.val(data.producto.cantidad);
-      if (this.accion == 'Consultar') {
-        this.desactivarFormulario();
-      } else {
-        this.id = data.producto.id;
-        this.activarFormulario();
-        this.$nombre.attr('readonly', 'readonly');
-      }
+      this.$stock.focus();
+      this.$stock.val(data.producto.stock);
+      this.$presentacion.val(data.producto.presentacion);
+      this.$presentacion.material_select();
+      this.$cantidad_productos.focus();
+      this.$cantidad_productos.val(data.producto.cantidad_productos);
+      this.id = data.producto.id;
+      this.activarFormulario();
+      this.$nombre.attr('readonly', 'readonly');
+      data.producto.formula.map(function (materia, index) {
+        if (index == 0) {
+          _this10.$id_detalles_formulas0.val(materia.id);
+          _this10.$id_detalles_formulas0.material_select();
+          _this10.$id_cantidad_formulas0.val(materia.cantidad);
+          console.log(materia.cantidad);
+        } else if (index == 1) {
+          _this10.$id_detalles_formulas1.val(materia.id);
+          _this10.$id_detalles_formulas1.material_select();
+          _this10.$id_cantidad_formulas1.val(materia.cantidad);
+        } else if (index == 2) {
+          _this10.$id_detalles_formulas2.val(materia.id);
+          _this10.$id_detalles_formulas2.material_select();
+          _this10.$id_cantidad_formulas2.val(materia.cantidad);
+        } else if (index == 4) {
+          _this10.$id_detalles_formulas3.val(materia.id);
+          _this10.$id_detalles_formulas3.material_select();
+          _this10.$id_cantidad_formulas3.val(materia.cantidad);
+        }
+      });
     }
   }, {
     key: 'limpiarFormulario',
@@ -11021,43 +11168,43 @@ var ProductoTer = function () {
   }, {
     key: 'escucharLimpiar',
     value: function escucharLimpiar() {
-      var _this6 = this;
+      var _this11 = this;
 
       this.$limpiar.on('click', function (evt) {
         evt.preventDefault();
-        _this6.$nombre.val("");
-        _this6.$descripcion.val("");
-        _this6.$categoria.val("");
-        _this6.$costo_produccion.val("");
-        _this6.$precio_venta.val("");
-        _this6.$cantidad.val("");
-        _this6.activarFormulario();
+        _this11.$nombre.val("");
+        _this11.$descripcion.val("");
+        _this11.$categoria.val("");
+        _this11.$costo_produccion.val("");
+        _this11.$precio_venta.val("");
+        _this11.$cantidad.val("");
+        _this11.activarFormulario();
       });
     }
   }, {
     key: 'escucharModificar',
     value: function escucharModificar() {
-      var _this7 = this;
+      var _this12 = this;
 
       this.$modificar.on('click', function (evt) {
         evt.preventDefault();
-        _this7.activarInputConsulta();
-        _this7.$title_modal.empty().text('Modificar');
-        _this7.$text_modal.empty().text('Ingrese el nombre del producto a modificar');
-        _this7.$modal_alert.openModal();
+        _this12.activarInputConsulta();
+        _this12.$title_modal.empty().text('Modificar');
+        _this12.$text_modal.empty().text('Ingrese el nombre del producto a modificar');
+        _this12.$modal_alert.openModal();
       });
     }
   }, {
     key: 'escucharEliminar',
     value: function escucharEliminar() {
-      var _this8 = this;
+      var _this13 = this;
 
       this.$eliminar.on('click', function (evt) {
         evt.preventDefault();
-        _this8.activarInputConsulta();
-        _this8.$title_modal.empty().text('Eliminar');
-        _this8.$text_modal.empty().text('Ingrese el nombre del producto a eliminar');
-        _this8.$modal_alert.openModal();
+        _this13.activarInputConsulta();
+        _this13.$title_modal.empty().text('Inactivar');
+        _this13.$text_modal.empty().text('Ingrese el nombre del producto a inactivar');
+        _this13.$modal_alert.openModal();
       });
     }
   }]);
@@ -11104,6 +11251,10 @@ var _index10 = _interopRequireDefault(_index9);
 var _index11 = require('./unidades/index.js');
 
 var _index12 = _interopRequireDefault(_index11);
+
+var _index13 = require('./users/index.js');
+
+var _index14 = _interopRequireDefault(_index13);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11181,8 +11332,9 @@ var materiaprima = new _index6.default();
 var maquina = new _index8.default();
 var pedidos = new _index10.default();
 var unidadesMedida = new _index12.default();
+var usuario = new _index14.default();
 
-},{"./ProductoTer/index.js":4,"./lib/configAjax.js":7,"./maquinas/index.js":9,"./materiaprima/index.js":10,"./pedidos/index.js":11,"./proveedores/index.js":12,"./unidades/index.js":13,"jquery":3,"jquery-modal":1}],6:[function(require,module,exports){
+},{"./ProductoTer/index.js":4,"./lib/configAjax.js":7,"./maquinas/index.js":9,"./materiaprima/index.js":10,"./pedidos/index.js":11,"./proveedores/index.js":12,"./unidades/index.js":13,"./users/index.js":14,"jquery":3,"jquery-modal":1}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -11535,7 +11687,7 @@ var Maquina = function () {
       this.$capacidad.focus();
       this.$capacidad.val(data.maquina.capacidad);
       if (this.accion == 'Consultar') {
-        this.desactivarFormulario();
+        //this.desactivarFormulario()
       } else {
         this.id = data.maquina.id;
         this.activarFormulario();
@@ -11656,7 +11808,7 @@ var MateriaPrima = function () {
     this.$buscarMP = $('#buscarMP');
     this.$text_modal = $("#text-modal");
     this.$title_modal = $('#title_modal');
-    this.$cancelar_materia = $('#cancelar_materia');
+    this.$cancelar_mate = $('#cancelar_mate');
     this.$consultar_materia = $('#consultar_materia');
     this.$consulta_mate = $('#consulta_mate');
     this.$cancelar_modal = $('#cancelar_modal');
@@ -11748,6 +11900,7 @@ var MateriaPrima = function () {
         var url = '';
         var id = _this4.$idMateria.val();
         if (id != null && id != "" && id != "0") {
+          _this4.id = id;
           var params = id;
           if (_this4.$title_modal.text() == 'Eliminar') {
             cambiarEstado.peticion('/MenuPrincipal/MateriaPrima/Eliminar/?format=json', id);
@@ -11804,10 +11957,12 @@ var MateriaPrima = function () {
         this.$descripcion.val(data.materia.descripcion);
         this.$categoria.focus();
         this.$categoria.val(data.materia.categoria);
+        this.$categoria.material_select();
         this.$cantidad_entrada.focus();
         this.$cantidad_entrada.val(data.materia.cantidad_entrada);
         this.$unidad_medida.focus();
         this.$unidad_medida.val(data.materia.unidad_medida);
+        this.$unidad_medida.material_select();
         this.$cantidad.focus();
         this.$cantidad.val(data.materia.cantidad);
         if (this.accion == 'Consultar') {
@@ -11936,8 +12091,16 @@ var Pedidos = function () {
     this.$modal_alert = $("#modal-alert");
     this.$text_modal = $("#text-modal");
     this.$title_modal = $('#title_modal');
+    this.$id_descripcion = $("#id_descripcion");
+    this.$id_fecha = $("#id_fecha");
+    this.$id_proveedor = $("#id_proveedor");
+    this.$id_total = $("#id_total");
     this.$input_consulta = $('#input_consulta');
     this.$consultar_materia = $('#consultar_materia');
+    this.$cancelar_ped = $('#cancelar_ped');
+    this.$consultar_pedido = $('#consultar_ped');
+    this.$consulta_ped = $('#consulta_ped');
+    this.$formulario_pedido = $('#formulario_pedido');
     this.$errors = $('#errors');
     this.agregarFila();
     this.cantProducto = 0;
@@ -11949,22 +12112,111 @@ var Pedidos = function () {
     this.$valores = $("#valores");
     this.$id_total = $("#id_total");
     this.$guardarP = $("#guardarP");
+    this.$materiaAto = $("#id_detalle_pedido_set-0-materia_prima");
+    this.$id_pedido_hidden = $("#id_pedido_hidden");
+    this.$buscarPedido = $("#buscarPedido");
+    this.$modificarPedido = $("#modificarPedido");
+    this.$eliminarPedido = $("#eliminarPedido");
+    this.$id_detalles_formulas0 = $('#id_detalle_pedido_set-0-id_materia_prima');
+    this.$id_detalles_formulas1 = $('#id_detalle_pedido_set-1-id_materia_prima');
+    this.$id_detalles_formulas2 = $('#id_detalle_pedido_set-2-id_materia_prima');
+    this.$id_detalles_formulas3 = $('#id_detalle_pedido_set-3-id_materia_prima');
+    this.$id_cantidad_formulas0 = $('#id_detalle_pedido_set-0-cantidad');
+    this.$id_cantidad_formulas1 = $('#id_detalle_pedido_set-1-cantidad');
+    this.$id_cantidad_formulas2 = $('#id_detalle_pedido_set-2-cantidad');
+    this.$id_cantidad_formulas3 = $('#id_detalle_pedido_set-3-cantidad');
+    this.$id_valor_formulas0 = $('#id_detalle_pedido_set-0-valor_unitario');
+    this.$id_valor_formulas1 = $('#id_detalle_pedido_set-1-valor_unitario');
+    this.$id_valor_formulas2 = $('#id_detalle_pedido_set-2-valor_unitario');
+    this.$id_valor_formulas3 = $('#id_detalle_pedido_set-3-valor_unitario');
     this.diccionarioProductos = '[';
     this.total = 0;
+    this.id = 0;
     this.options = {
       field: "name",
-      input: this.$producto0,
-      idHidden: this.$productos
+      input: this.$consulta_ped,
+      idHidden: this.$id_pedido_hidden
     };
-    this.escucharConsultaMateria(this.$producto0);
-    this.escucharGuardar();
+    debugger;
+    this.optionsAtocomplete = {
+      field: "name",
+      input: this.$materiaAto,
+      idHidden: this.$idMateriaAto,
+      url: '/MenuPrincipal/Pedidos/Listar/?format=json'
+    };
+    this.escucharConsultaMateria(this.$consulta_ped);
+    //this.escucharGuardar()
     this.perderFoco(this.$producto0, 'producto');
     this.perderFoco(this.$cantidad0, 'cantidad');
     this.perderFoco(this.$valor0, 'valor');
     this.$id_total.attr('readonly');
+    this.escucharBuscar();
+    this.escucharConsulta();
+    this.escucharModificar();
+    if (this.$id_fecha) {
+      var fecha = new Date();
+      this.$id_fecha.val(fecha.getDate() + '/' + (fecha.getMonth() + 1) + '/' + (fecha.getYear() - 100) + ' 12:00');
+      this.$id_fecha.attr('readonly', 'readonly');
+    }
   }
 
   _createClass(Pedidos, [{
+    key: 'escucharBuscar',
+    value: function escucharBuscar() {
+      var _this = this;
+
+      this.$buscarPedido.on('click', function (evt) {
+        evt.preventDefault();
+        _this.activarInputConsulta();
+        _this.$title_modal.empty().text('Consultar');
+        _this.accion = _this.$title_modal.text();
+        _this.$text_modal.empty().text('Ingrese el nombre del producto a consultar');
+        _this.$modal_alert.openModal();
+      });
+    }
+  }, {
+    key: 'escucharConsulta',
+    value: function escucharConsulta() {
+      var _this2 = this;
+
+      this.$consultar_pedido.on('click', function (evt) {
+        evt.preventDefault();
+        var url = '';
+        var id = _this2.$id_pedido_hidden.val();
+        if (id != null && id != "" && id != "0") {
+          _this2.id = id;
+          var params = id;
+          if (_this2.$title_modal.text() == 'Inactivar') {
+            cambiarEstado.peticion('/MenuPrincipal/Pedidos/Eliminar/?format=json', id);
+          } else {
+            url = '/MenuPrincipal/Pedidos/Consultar/' + params + '/?format=json';
+            _this2.peticion(url);
+          }
+          _this2.$modal_alert.closeModal();
+        } else {
+          _this2.$modal_alert.closeModal();
+          _this2.desactivarInputConsulta();
+          _this2.$title_modal.empty().text('Alerta');
+          _this2.$text_modal.empty().text('Debe Ingresar el nombre del producto a consultar');
+        }
+      });
+    }
+  }, {
+    key: 'peticion',
+    value: function peticion(url) {
+      var _this3 = this;
+
+      $.get(url, function (data) {
+        console.dir(data);
+        if (_this3.$title_modal.text() != 'Inactivar') {
+          _this3.llenarFormulario(data);
+          if (_this3.$title_modal.text() == 'Modificar') {
+            _this3.$formulario_pedido.attr('action', '/MenuPrincipal/Pedidos/Modificar/' + _this3.id + '/');
+          }
+        }
+      });
+    }
+  }, {
     key: 'escucharGuardar',
     value: function escucharGuardar() {
       var self = this;
@@ -11983,14 +12235,14 @@ var Pedidos = function () {
     key: 'activarInputConsulta',
     value: function activarInputConsulta() {
       this.$input_consulta.css('display', 'block');
-      this.$consultar_materia.css('display', 'block');
+      this.$consultar_pedido.css('display', 'block');
       this.$errors.empty();
     }
   }, {
     key: 'desactivarInputConsulta',
     value: function desactivarInputConsulta() {
       this.$input_consulta.css('display', 'none');
-      this.$consultar_materia.css('display', 'none');
+      this.$consultar_pedido.css('display', 'none');
       this.$errors.empty();
     }
   }, {
@@ -12000,7 +12252,7 @@ var Pedidos = function () {
       if (tipo === 'agregar') {
         this.options.input = element;
       }
-      this.options.url = "/MenuPrincipal/MateriaPrima/Listar/?format=json";
+      this.options.url = "/MenuPrincipal/Pedidos/Listar/?format=json";
       autocompletar.autocompletar(this.options);
     }
   }, {
@@ -12030,6 +12282,32 @@ var Pedidos = function () {
           this.$valores.val(element.val());
         }
       }
+    }
+  }, {
+    key: 'escucharModificar',
+    value: function escucharModificar() {
+      var _this4 = this;
+
+      this.$modificarPedido.on('click', function (evt) {
+        evt.preventDefault();
+        _this4.activarInputConsulta();
+        _this4.$title_modal.empty().text('Modificar');
+        _this4.$text_modal.empty().text('Ingrese el nombre del proveedor del pedido');
+        _this4.$modal_alert.openModal();
+      });
+    }
+  }, {
+    key: 'escucharEliminar',
+    value: function escucharEliminar() {
+      var _this5 = this;
+
+      this.$eliminar.on('click', function (evt) {
+        evt.preventDefault();
+        _this5.activarInputConsulta();
+        _this5.$title_modal.empty().text('Inactivar');
+        _this5.$text_modal.empty().text('Ingrese el nombre del producto a inactivar');
+        _this5.$modal_alert.openModal();
+      });
     }
   }, {
     key: 'agregarFila',
@@ -12069,6 +12347,45 @@ var Pedidos = function () {
         this.$id_total.val(this.total);
         this.$id_total.blur();
       }
+    }
+  }, {
+    key: 'llenarFormulario',
+    value: function llenarFormulario(data) {
+      var _this6 = this;
+
+      this.$id_descripcion.focus();
+      this.$id_descripcion.val(data.pedido.descripcion);
+      this.$id_fecha.focus();
+      this.$id_fecha.val(data.pedido.fecha);
+      this.$id_proveedor.focus();
+      this.$id_proveedor.val(data.pedido.proveedor);
+      this.$id_proveedor.material_select();
+      this.$id_total.focus();
+      this.$id_total.val(data.pedido.total);
+      this.id = data.pedido.id;
+      data.pedido.productos.map(function (producto, index) {
+        if (index == 0) {
+          _this6.$id_detalles_formulas0.val(producto.id);
+          _this6.$id_detalles_formulas0.material_select();
+          _this6.$id_cantidad_formulas0.val(producto.cantidad);
+          _this6.$id_valor_formulas0.val(producto.valor);
+        } else if (index == 1) {
+          _this6.$id_detalles_formulas1.val(producto.id);
+          _this6.$id_detalles_formulas1.material_select();
+          _this6.$id_cantidad_formulas1.val(producto.cantidad);
+          _this6.$id_valor_formulas1.val(producto.valor);
+        } else if (index == 2) {
+          _this6.$id_detalles_formulas2.val(producto.id);
+          _this6.$id_detalles_formulas2.material_select();
+          _this6.$id_cantidad_formulas2.val(producto.cantidad);
+          _this6.$id_valor_formulas2.val(producto.valor);
+        } else if (index == 4) {
+          _this6.$id_detalles_formulas3.val(producto.id);
+          _this6.$id_detalles_formulas3.material_select();
+          _this6.$id_cantidad_formulas3.val(producto.cantidad);
+          _this6.$id_valor_formulas3.val(producto.valor);
+        }
+      });
     }
   }, {
     key: 'fila',
@@ -12267,7 +12584,7 @@ var Proveedor = function () {
         _this4.activarInputConsulta();
         _this4.$title_modal.empty().text('Consultar');
         _this4.accion = _this4.$title_modal.text();
-        _this4.$text_modal.empty().text('Ingrese el nit del proveedor a consultar');
+        _this4.$text_modal.empty().text('Ingrese el nombre del proveedor a consultar');
         _this4.$modal_alert.openModal();
       });
     }
@@ -12281,11 +12598,10 @@ var Proveedor = function () {
         var url = '';
         var nit = _this5.$consulta_nit.val();
         var id = _this5.$id.val();
-        debugger;
         if (id !== null && id !== "" && id !== "0") {
           _this5.nit = id;
           var params = id;
-          if (_this5.$title_modal.text() == 'Eliminar') {
+          if (_this5.$title_modal.text() == 'Inhabilitar') {
             cambiarEstado.peticion('/MenuPrincipal/Proveedor/Eliminar/?format=json', 1, nit);
           } else {
             url = '/MenuPrincipal/Proveedor/Consultar/' + params + '/?format=json';
@@ -12295,7 +12611,7 @@ var Proveedor = function () {
         } else {
           _this5.desactivarInputConsulta();
           _this5.$title_modal.empty().text('Alerta');
-          _this5.$text_modal.empty().text('Debe Ingresar el nit del proveedor a consultar');
+          _this5.$text_modal.empty().text('Debe Ingresar el nombre del proveedor a consultar');
           _this5.$modal_alert.css('display', 'block');
         }
       });
@@ -12307,7 +12623,7 @@ var Proveedor = function () {
 
       var csrfmiddlewaretoken = this.$csrfmiddlewaretoken.val();
       $.get(url, function (data) {
-        if (_this6.$title_modal.text() != 'Eliminar') {
+        if (_this6.$title_modal.text() != 'Inhabilitar') {
           if (data.status === 200) {
             _this6.llenarFormulario(data);
           } else if (data.status === 404) {
@@ -12445,7 +12761,7 @@ var Proveedor = function () {
       this.$eliminar.on('click', function (evt) {
         evt.preventDefault();
         _this9.activarInputConsulta();
-        _this9.$title_modal.empty().text('Eliminar');
+        _this9.$title_modal.empty().text('Inhabilitar');
         _this9.$text_modal.empty().text('Ingrese el nombre del proveedor a inhabilitar');
         _this9.$modal_alert.openModal();
       });
@@ -12728,4 +13044,290 @@ var UnidadesMedida = function () {
 
 exports.default = UnidadesMedida;
 
-},{"../lib/autocompletar.js":6,"../lib/peticionDelete.js":8,"jquery":3,"jquery-modal":1}]},{},[5]);
+},{"../lib/autocompletar.js":6,"../lib/peticionDelete.js":8,"jquery":3,"jquery-modal":1}],14:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _jquery = require('jquery');
+
+var _jquery2 = _interopRequireDefault(_jquery);
+
+var _autocompletar = require('../lib/autocompletar.js');
+
+var _autocompletar2 = _interopRequireDefault(_autocompletar);
+
+var _peticionDelete = require('../lib/peticionDelete.js');
+
+var _peticionDelete2 = _interopRequireDefault(_peticionDelete);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var autocompletar = new _autocompletar2.default();
+var cambiarEstado = new _peticionDelete2.default();
+
+var Usuario = function () {
+  function Usuario() {
+    _classCallCheck(this, Usuario);
+
+    this.$modal_alert = $("#modal-alert");
+    this.$buscarUsua = $('#buscarUsua');
+    this.$text_modal = $("#text-modal");
+    this.$title_modal = $('#title_modal');
+    this.$cancelar_usuario = $('#cancelar_usuario');
+    this.$consultar_usu = $('#consultar_usu');
+    this.$cancelar_modal = $('#cancelar_modal');
+    this.$consulta_usuario = $('#consulta_usuario');
+    this.$modal_boton = $('#modal_boton');
+    this.$first_name = $('#id_first_name');
+    this.$last_name = $('#id_last_name');
+    this.$email = $('#id_email');
+    this.$username = $('#id_username');
+    this.$password1 = $('#id_password1');
+    this.$password2 = $('#id_password2');
+    this.$groups = $('#id_groups');
+    this.$is_active = $('#id_is_active');
+    this.$errors = $('#errors');
+    this.$input_consulta = $('#input_consulta');
+    this.$limpiarMP = $('#limpiarMP');
+    this.$modificarUsua = $('#modificarUsua');
+    this.$eliminarUsua = $('#eliminarUsua');
+    this.$nuevo = $('#nuevo');
+    this.$formulario_materia = $('#formulario_usuario');
+    this.$id_usuario = $("#id_usuario");
+    this.accion = '';
+    this.id = 0;
+    this.options = {
+      field: 'name',
+      input: this.$consulta_usuario,
+      idHidden: this.$id_usuario,
+      url: '/MenuPrincipal/Usuarios/Listar/?format=json'
+    };
+    this.escucharBuscar();
+    this.escucharConsulta();
+    this.escucharLimpiar();
+    this.escucharEliminar();
+    this.escucharModificar();
+    autocompletar.autocompletar(this.options);
+  }
+
+  _createClass(Usuario, [{
+    key: 'escucharSoloNumeros',
+    value: function escucharSoloNumeros(elemento) {
+      elemento.on('keypress', function (evt) {
+        var num = evt.which;
+        if (num > 47 && num < 58 || num == 8 || num == 0) {
+          return true;
+        }
+        console.log(num);
+        return false;
+      });
+    }
+  }, {
+    key: 'escucharNuevo',
+    value: function escucharNuevo() {
+      var _this = this;
+
+      this.$nuevo.on('click', function (evt) {
+        evt.preventDefault();
+        _this.limpiarFormulario();
+        _this.activarFormulario();
+      });
+    }
+  }, {
+    key: 'closeModal',
+    value: function closeModal(elemento) {
+      var _this2 = this;
+
+      elemento.on('click', function (evt) {
+        evt.preventDefault();
+        _this2.$modal_alert.closeModal();
+      });
+    }
+  }, {
+    key: 'escucharBuscar',
+    value: function escucharBuscar() {
+      var _this3 = this;
+
+      this.$buscarUsua.on('click', function (evt) {
+        evt.preventDefault();
+        _this3.activarInputConsulta();
+        _this3.$title_modal.empty().text('Consultar');
+        _this3.accion = _this3.$title_modal.text();
+        _this3.$text_modal.empty().text('Ingrese el nombre de usuario a consultar');
+        _this3.$modal_alert.openModal();
+      });
+    }
+  }, {
+    key: 'escucharConsulta',
+    value: function escucharConsulta() {
+      var _this4 = this;
+
+      this.$consultar_usu.on('click', function (evt) {
+        evt.preventDefault();
+        var url = '';
+        var id = _this4.$id_usuario.val();
+        if (id != null && id != "" && id != "0") {
+          _this4.id = id;
+          var params = id;
+          if (_this4.$title_modal.text() == 'Eliminar') {
+            cambiarEstado.peticion('/MenuPrincipal/Usuarios/Eliminar/?format=json', id);
+          } else {
+            url = '/MenuPrincipal/Usuarios/Consultar/' + params + '/?format=json';
+            _this4.peticion(url);
+          }
+          _this4.$modal_alert.closeModal();
+          _this4.peticion(url);
+        } else {
+          _this4.$modal_alert.closeModal();
+          _this4.desactivarInputConsulta();
+          _this4.$title_modal.empty().text('Alerta');
+          _this4.$text_modal.empty().text('Debe Ingresar el nombre de usuario a consultar');
+        }
+      });
+    }
+  }, {
+    key: 'peticion',
+    value: function peticion(url) {
+      var _this5 = this;
+
+      $.get(url, function (data) {
+        console.dir(data);
+        if (_this5.$title_modal.text() != 'Eliminar') {
+          _this5.llenarFormulario(data);
+          if (_this5.$title_modal.text() == 'Modificar') {
+            _this5.$formulario_usuario.attr('action', '/MenuPrincipal/Usuarios/Modificar/' + _this5.id + '/');
+          }
+        }
+      });
+    }
+  }, {
+    key: 'activarInputConsulta',
+    value: function activarInputConsulta() {
+      this.$input_consulta.css('display', 'block');
+      this.$consultar_usu.css('display', 'block');
+      this.$errors.empty();
+    }
+  }, {
+    key: 'desactivarInputConsulta',
+    value: function desactivarInputConsulta() {
+      this.$input_consulta.css('display', 'none');
+      this.$consultar_usu.css('display', 'none');
+      this.$errors.empty();
+    }
+  }, {
+    key: 'llenarFormulario',
+    value: function llenarFormulario(data) {
+      if (data.status === 200) {
+        this.$first_name.focus();
+        this.$first_name.val(data.usuario.first_name);
+        this.$last_name.focus();
+        this.$last_name.val(data.usuario.last_name);
+        this.$email.focus();
+        this.$email.val(data.usuario.email);
+        this.$username.focus();
+        this.$username.val(data.usuario.username);
+        this.$password1.focus();
+        this.$password1.val(data.usuario.password);
+        this.$password2.focus();
+        this.$password2.val(data.usuario.password);
+        this.$groups.focus();
+        this.$groups.val(data.usuario.groups);
+        this.$is_active.focus();
+        this.$is_active.val(data.usuario.is_active);
+        if (this.accion == 'Consultar') {
+          //this.desactivarFormulario()
+        } else {
+          this.id = data.usuario.id;
+          this.activarFormulario();
+          this.$nombre.attr('readonly', 'readonly');
+        }
+      } else if (data.status === 404) {
+        Materialize.toast(data.message, 800);
+      }
+    }
+  }, {
+    key: 'limpiarFormulario',
+    value: function limpiarFormulario() {
+      this.$first_name.val("");
+      this.$last_name.val("");
+      this.$email.val("");
+      this.$username.val("");
+      this.$password1.val("");
+      this.$password2.val("");
+      this.$groups.val("0");
+      this.$is_active.val("");
+    }
+  }, {
+    key: 'desactivarFormulario',
+    value: function desactivarFormulario() {
+      this.$first_name.attr('readonly', 'readonly');
+      this.$last_name.attr('readonly', 'readonly');
+      this.$email.attr('readonly', 'readonly');
+      this.$username.attr('readonly', 'readonly');
+      this.$password1.attr('readonly', 'readonly');
+      this.$password2.attr('readonly', 'readonly');
+      this.$groups.attr('readonly', 'readonly');
+      this.$is_active.attr('readonly', 'readonly');
+    }
+  }, {
+    key: 'activarFormulario',
+    value: function activarFormulario() {
+      this.$first_name.removeAttr("readonly");
+      this.$last_name.removeAttr("readonly");
+      this.$email.removeAttr("readonly");
+      this.$username.removeAttr("readonly");
+      this.$password1.removeAttr("readonly");
+      this.$password2.removeAttr("readonly");
+      this.$groups.removeAttr("readonly");
+      this.$is_active.removeAttr("readonly");
+    }
+  }, {
+    key: 'escucharLimpiar',
+    value: function escucharLimpiar() {
+      /*this.$limpiarMP.on('click', (evt) => {
+        evt.preventDefault()
+        this.limpiarFormulario()
+        this.activarFormulario()
+      })*/
+    }
+  }, {
+    key: 'escucharModificar',
+    value: function escucharModificar() {
+      var _this6 = this;
+
+      this.$modificarUsua.on('click', function (evt) {
+        evt.preventDefault();
+        _this6.activarInputConsulta();
+        _this6.$title_modal.empty().text('Modificar');
+        _this6.$text_modal.empty().text('Ingrese el nombre de usuario a modificar');
+        _this6.$modal_alert.openModal();
+      });
+    }
+  }, {
+    key: 'escucharEliminar',
+    value: function escucharEliminar() {
+      var _this7 = this;
+
+      this.$eliminarUsua.on('click', function (evt) {
+        evt.preventDefault();
+        _this7.activarInputConsulta();
+        _this7.$title_modal.empty().text('Eliminar');
+        _this7.$text_modal.empty().text('Ingrese el nombre de usuario a eliminar');
+        _this7.$modal_alert.openModal();
+      });
+    }
+  }]);
+
+  return Usuario;
+}();
+
+exports.default = Usuario;
+
+},{"../lib/autocompletar.js":6,"../lib/peticionDelete.js":8,"jquery":3}]},{},[5]);

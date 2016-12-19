@@ -13,8 +13,8 @@ from django.utils.translation import ugettext_lazy as _
 
 
 class LoginView(FormView):
-    form_class = AuthenticationForm
-    template_name = 'login.html'
+    form_class = LoginForm
+    template_name = 'loginusers/login.html'
     success_url = '/MenuPrincipal/'
 
     def form_valid(self, form):

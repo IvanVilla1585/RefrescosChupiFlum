@@ -5305,8 +5305,6 @@ a.waves-effect .waves-ripple {
   min-height: 3rem;
   line-height: 3rem;
   padding: 0 1rem;
-  background-color: #fff;
-  border-bottom: 1px solid #ddd;
 }
 
 .collapsible-header i {
@@ -5321,7 +5319,6 @@ a.waves-effect .waves-ripple {
 
 .collapsible-body {
   display: none;
-  border-bottom: 1px solid #ddd;
   box-sizing: border-box;
 }
 
@@ -5363,7 +5360,6 @@ a.waves-effect .waves-ripple {
 .side-nav .collapsible-body,
 .side-nav.fixed .collapsible-body {
   border: 0;
-  background-color: #fff;
 }
 
 .side-nav .collapsible-body li a,

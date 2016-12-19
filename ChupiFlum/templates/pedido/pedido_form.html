@@ -1,105 +1,95 @@
 {% extends "base.html" %}
-
+{% load staticfiles %}
 {% block content %}
   <form action="{% url 'pedidos:crear' %}" id="formulario_pedido" method="POST">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-success" id="alert-messages">
+        <button id="message_close" type="button" data-dismiss="alert" aria-hidden="true" class="close">×</button>
+        <i class="material-icons sign md-icon dp48">check</i>
+        <strong>{{ message }}</strong>
+      </div>
+    {% endfor %}
+  {% endif %}
   <div class="row inputs">
     <div class="col s12 m10">
-    {% csrf_token %}
-    {% for field in form %}
-      {% ifequal field.name "descripcion" %}
-        <div class="row">
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-        {% else %}{% ifequal field.name "fecha" %}
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
+      {% csrf_token %}
+      <div class="row">
+        <div class="input-field col s5">
+          {{ form.descripcion }}
+          {{ form.descripcion.label_tag }}
+          {{ form.descripcion.errors  }}
         </div>
-        {% else %}{% ifequal field.name "proveedor" %}
-        <div class="row">
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
-        {% else %}{% ifequal field.name "usuario" %}
-          <div class="input-field col s5">
-            {{ field }}
-            {{ field.label_tag }}
-              {{ field.errors  }}
-          </div>
+        <div class="input-field col s5">
+          {{ form.fecha }}
+          {{ form.fecha.label_tag }}
+          {{ form.fecha.errors  }}
         </div>
-        {% endifequal %}{% endifequal %}
-        {% endifequal %}{% endifequal %}
-        {% ifequal field.name "total" %}
-        <div class="row">
-          <div class="col s12 m10">
-            <table>
-              <thead>
-                <tr>
-                  <th>
-                    Producto
-                  </th>
-                  <th>
-                    Cantidad
-                  </th>
-                  <th>
-                    Valor Unitario
-                  </th>
-                </tr>
-              </thead>
-              <tbody id='table_productos'>
-                <input type="hidden" name="productos" id="productos">
-                <input type="hidden" name="cantidades" id="cantidades">
-                <input type="hidden" name="valores" id="valores">
-                <tr>
+      </div>
+      <div class="row">
+        <div class="input-field col s5">
+          {{ form.proveedor }}
+          {{ form.proveedor.label_tag }}
+          {{ form.proveedor.errors  }}
+        </div>
+        <div class="input-field col s5">
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
+          <table >
+            {{ detalle_form.management_form }}
+            {% for form in detalle_form.forms %}
+              {% if forloop.first %}
+                <thead>
+                  <tr>
+                      {% for field in form.visible_fields %}
+                          <th>{{ field.label|capfirst }}</th>
+                      {% endfor %}
+                  </tr>
+                </thead>
+              {% endif %}
+              <tr class="formset_row">
+                {% for field in form.visible_fields %}
                   <td>
-                    <div class="ui-widget">
-                      <input type='text' id='producto0' name='producto0'>
-                    </div>
+                    {# Include the hidden fields in the form #}
+                    {% if forloop.first %}
+                        {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
+                    {% endif %}
+                    {{ field }}
+                    {{ field.errors.a }}
                   </td>
-                  <td><input type='text' id='cantidad0' name='cantidad0'></td>
-                  <td><input type='text' id='valor0' name='valor0'></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        {% endifequal %}
-        {% ifequal field.name "total" %}
-        <div class="row">
-          <div class="input-field col s5">
-              <button type='button' name='button' id='agregarProducto' class='btn waves-effect waves-light'>Agregar Producto</button>
-          </div>
-          <div class="input-field col s5">
-              {{ field }}
-              {{ field.label_tag }}
-                {{ field.errors  }}
-            </div>
-          </div>
-      {% endifequal %}
-    {% endfor %}
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s5 offset-s7">
+          {{ form.total }}
+          {{ form.total.label_tag }}
+          {{ form.total.errors  }}
+        </div>
+      </div>
   </div>
-</div>
 <div class="col m2">
     <div class="center">
-      <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="guardarP" name="guardarMP" data-position="left" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
+      <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="guardarPedido" name="guardarPedido" data-position="left" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
     </div>
     <div class="center">
-      <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="buscarMP" name="buscarMP" data-position="left" data-delay="50" data-tooltip="Buscar"><i class="material-icons">search</i>Left</button>
+      <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="buscarPedido" name="buscarPedido" data-position="left" data-delay="50" data-tooltip="Buscar"><i class="material-icons">search</i>Left</button>
     </div>
     <div class="center">
-      <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red" id="modificarMP" name="modificarMP" data-position="left" data-delay="50" data-tooltip="Modificar"><i class="material-icons">add</i>Left</button>
+      <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red tooltipped" id="modificarPedido" name="modificarPedido" data-position="left" data-delay="50" data-tooltip="Modificar"><i class="material-icons">add</i>Left</button>
     </div>
     <div class="center">
-      <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="eliminarMP" name="eliminarMP" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
+      <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="eliminarPedido" name="eliminarPedido" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
     </div>
     <div class="center">
-      <a type="submit" style="margin: 1em 0;" href="{% url 'pedidos:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="listarP" name="listarP" data-position="left" data-delay="50" data-tooltip="Listar"><i class="material-icons">assignment</i>Left</a>
+      <a type="submit" style="margin: 1em 0;" href="{% url 'pedidos:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="listarPedido" name="listarPedido" data-position="left" data-delay="50" data-tooltip="Listar"><i class="material-icons">assignment</i>Left</a>
     </div>
 
 </div>
@@ -121,14 +111,27 @@
     <div class="errors" id="errors"></div>
     <div class="row inputs input_consulta" id="input_consulta">
       <div class="input-field col s10">
-        <input type="text" placeholder="" id="consulta_nom" name="consulta_nom">
-        <label for="consulta_nom">*Nombre producto:</label>
+        <input type="text" placeholder="" id="consulta_ped" name="consulta_ped">
+        <label for="consulta_ped">*Ingrese el pedido:</label>
+        <input type="hidden" id="id_pedido_hidden" name="id_pedido_hidden">
       </div>
     </div>
   </div>
   <div class="modal-footer">
-    <button id="cancelar_pro" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancelar</button>
-    <button id="consultar_pro" class=" modal-action modal-close waves-effect waves-green btn-flat">Consultar</button>
+    <button id="cancelar_ped" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancelar</button>
+    <button id="consultar_ped" class=" modal-action modal-close waves-effect waves-green btn-flat">Consultar</button>
   </div>
 </div>
+{% endblock %}
+
+{% block js %}
+  <script src="{% static 'js/jquery.forminline.js' %}"></script>
+  <script type="text/javascript">
+    $('.formset_row').formset({
+      addText: 'agregar producto',
+      addCssClass: 'btn waves-effect waves-light',
+      deleteText: 'eliminar',
+      prefix: 'detalle_pedido_set'
+    });
+  </script>
 {% endblock %}

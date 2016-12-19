@@ -5,7 +5,7 @@ from django.db import models
 from unidadesmedida.models import UnidadMedida
 
 class Maquina(models.Model):
-    nombre = models.CharField(max_length=100)
+    nombre = models.CharField(max_length=100, unique=True)
     descripcion = models.CharField(max_length=100, blank=True, null=True)
     capacidad = models.DecimalField(decimal_places=2, max_digits=16)
     unidad_medida = models.ForeignKey(UnidadMedida)

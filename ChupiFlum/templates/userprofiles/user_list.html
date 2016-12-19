@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<arrticle class="container_tabla_provee">
+  <div class="row">
+    <div class="col s12">
+      <table class="responsive-table striped">
+        <thead>
+          <tr>
+            <th>Nombres</th>
+            <th>Apellidos</th>
+            <th>Correo Electronico</th>
+            <th>Grupo</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in object_list %}
+          <tr>
+            <td>{{ user.first_name }}</td>
+            <td>{{ user.last_name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.groups.name }}</td>
+            <td>
+              <span class="
+              {% if user.is_active %}
+                green_text
+              {% else %}
+                red_text
+              {% endif %}">
+                {% if user.is_active %}
+                  Activo
+                {% else %}
+                  Inactivo
+                {% endif %}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</arrticle>
+{% endblock %}

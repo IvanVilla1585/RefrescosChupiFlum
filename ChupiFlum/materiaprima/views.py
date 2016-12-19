@@ -1,6 +1,11 @@
+# -*- coding: utf-8 -*-
 from django.shortcuts import render
 import json
 from django.core import serializers
+from reportlab.lib.pagesizes import letter, A4
+
+#Workbook nos permite crear libros en excel
+from openpyxl import Workbook
 from django.http import (
     HttpResponse,
     HttpResponseRedirect,
@@ -27,12 +32,20 @@ from .models import MateriaPrima
 from proveedores.mixins import JSONResponseMixin
 from .forms import MateriaPrimaForm
 from loginusers.mixins import LoginRequiredMixin
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_CENTER
+from django.conf import settings
+from io import BytesIO
+from reportlab.pdfgen import canvas
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 
 
 class ListarMateriaPrima(LoginRequiredMixin, JSONResponseMixin, ListView):
     model = MateriaPrima
     template_name = 'materiaprima_list.html'
-    paginate_by = 5
 
     def get(self, request, *args, **kwargs):
         self.object_list = self.get_queryset()
@@ -52,7 +65,6 @@ class ListarMateriaPrima(LoginRequiredMixin, JSONResponseMixin, ListView):
             queryset = self.model.objects.filter(nombre__icontains=nom)
         else:
             queryset = super(ListarMateriaPrima, self).get_queryset()
-
         return queryset
 
 class CrearMateriaPrima(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -60,6 +72,15 @@ class CrearMateriaPrima(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     success_url = reverse_lazy('materiaprim:materiaPrimaForm')
     form_class = MateriaPrimaForm
     success_message = 'La materia prima %(nombre)s se registro en el sistema'
+
+    def form_valid(self, form):
+
+        self.object = form.save(commit=False)
+        self.object.cantidad = self.object.cantidad * self.object.unidad_medida.equivalencia
+        self.object.stock = self.object.stock * self.object.unidad_medida.equivalencia
+        self.object.save()
+
+        return HttpResponseRedirect(self.get_success_url())
 
 class ModificarMateriaPrima(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = MateriaPrima
@@ -72,6 +93,7 @@ class ModificarMateriaPrima(LoginRequiredMixin, SuccessMessageMixin, UpdateView)
 class ActualizarEstadoView(JSONResponseMixin, View):
     object = None
     relacion = None
+
     def post(self, request):
         id = self.request.POST.get('id', None)
         materia = None
@@ -112,8 +134,8 @@ class ConsultarMateriaPrima(LoginRequiredMixin, JSONResponseMixin, DetailView):
                     'id': self.object.id,
                     'nombre': self.object.nombre,
                     'descripcion': self.object.descripcion,
-                    'unidad_medida': self.object.unidad_medida.nombre,
-                    'categoria': self.object.categoria.nombre,
+                    'unidad_medida': self.object.unidad_medida.id,
+                    'categoria': self.object.categoria.id,
                     'cantidad': self.object.cantidad,
                     'estado': self.object.estado
                 }
@@ -158,3 +180,166 @@ class MateriaPrimaView(LoginRequiredMixin, TemplateView):
         context.update({'form': MateriaPrimaForm()})
 
         return context
+
+
+class ReporteMateriaPrimaExcel(TemplateView):
+    model = MateriaPrima
+
+    def get(self, request, *args, **kwargs):
+
+        materias = self.model.objects.all()
+
+        wb = Workbook()
+
+        ws = wb.active
+
+        ws['B1'] = 'REPORTE DE MATERIA PRIMA'
+
+        ws.merge_cells('B1:G1')
+
+        ws['B3'] = 'NOMBRE'
+        ws['C3'] = 'DESCRIPCIÓN'
+        ws['D3'] = 'UNIDAD DE MEDIDA'
+        ws['E3'] = 'CATEGORIA'
+        ws['F3'] = 'CANTIDAD'
+        ws['G3'] = 'ESTADO'
+        cont=6
+
+        for materia in materias:
+            ws.cell(row=cont,column=2).value = materia.nombre
+            ws.cell(row=cont,column=3).value = materia.descripcion
+            ws.cell(row=cont,column=4).value = materia.unidad_medida.nombre
+            ws.cell(row=cont,column=5).value = materia.categoria.nombre
+            ws.cell(row=cont,column=6).value = materia.cantidad
+            if materia.estado:
+                ws.cell(row=cont,column=7).value = materia.estado = 'Activo'
+            else:
+                ws.cell(row=cont,column=8).value = materia.estado = 'Inactivo'
+            cont = cont + 1
+
+        nombre_archivo ="ReporteMateriaPrimaExcel.xlsx"
+
+        response = HttpResponse(content_type="application/ms-excel")
+        contenido = "attachment; filename={0}".format(nombre_archivo)
+        response["Content-Disposition"] = contenido
+        wb.save(response)
+        return response
+
+
+class MyPrint:
+    def __init__(self, buffer, pagesize):
+        self.buffer = buffer
+        if pagesize == 'A4':
+            self.pagesize = A4
+        elif pagesize == 'Letter':
+            self.pagesize = letter
+        self.width, self.height = self.pagesize
+
+    def print_materia(self):
+            buffer = self.buffer
+            doc = SimpleDocTemplate(buffer,
+                                    rightMargin=72,
+                                    leftMargin=72,
+                                    topMargin=72,
+                                    bottomMargin=72,
+                                    pagesize=self.pagesize)
+
+            # Our container for 'Flowable' objects
+            elements = []
+
+            # A large collection of style sheets pre-made for us
+            styles = getSampleStyleSheet()
+            styles.add(ParagraphStyle(name='centered', alignment=TA_CENTER))
+
+            # Draw things on the PDF. Here's where the PDF generation happens.
+            # See the ReportLab documentation for the full list of functionality.
+            materias = MateriaPrima.objects.all()
+            elements.append(Paragraph('Reporte Materia Prima', styles['Heading1']))
+            for i, materia in enumerate(materias):
+                elements.append(Paragraph(materia.nombre, styles['Normal']))
+                elements.append(Paragraph(materia.descripcion, styles['Normal']))
+
+            doc.build(elements)
+
+            # Get the value of the BytesIO buffer and write it to the response.
+            pdf = buffer.getvalue()
+            buffer.close()
+            return pdf
+
+
+def print_materia(request):
+    # Create the HttpResponse object with the appropriate PDF headers.
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="materiaprima.pdf"'
+
+    buffer = BytesIO()
+
+    report = MyPrint(buffer, 'Letter')
+    pdf = report.print_materia()
+
+    response.write(pdf)
+    return response
+
+class ReporteMateriaPDF(View):
+    model = MateriaPrima
+
+    def cabecera(self,pdf):
+        #Utilizamos el archivo logo_django.png que está guardado en la carpeta media/imagenes
+        archivo_imagen = settings.MEDIA_ROOT+'/logo.jpg'
+        #Definimos el tamaño de la imagen a cargar y las coordenadas correspondientes
+        pdf.drawImage(archivo_imagen, 40, 750, 120, 90,preserveAspectRatio=True)
+        #Establecemos el tamaño de letra en 16 y el tipo de letra Helvetica
+        pdf.setFont("Helvetica", 16)
+        #Dibujamos una cadena en la ubicación X,Y especificada
+        pdf.drawString(230, 790, u"REFRESCOS CHUPIFLUM")
+        pdf.setFont("Helvetica", 14)
+        pdf.drawString(225, 770, u"REPORTE DE MATERIA PRIMA")
+
+    def tabla(self,pdf,y):
+        #Creamos una tupla de encabezados para neustra tabla
+        encabezados = ('NOMBRE', 'DESCRIPCIÓN', 'CATEGORIA', 'CANTIDAD', 'UNIDAD MEDIDA', )
+        #Creamos una lista de tuplas que van a contener a las personas
+        cm = 40
+        detalles = [(
+            materia.nombre,
+            materia.descripcion,
+            materia.categoria.nombre,
+            materia.cantidad,
+            materia.unidad_medida.nombre
+        ) for materia in self.model.objects.all()]
+        #Establecemos el tamaño de cada una de las columnas de la tabla
+        detalle_orden = Table([encabezados] + detalles, colWidths=[2.5 * cm, 4 * cm, 2 * cm, 2.5 * cm])
+        #Aplicamos estilos a las celdas de la tabla
+        detalle_orden.setStyle(TableStyle(
+            [
+                #La primera fila(encabezados) va a estar centrada
+                ('ALIGN',(0,0),(3,0),'CENTER'),
+                #Los bordes de todas las celdas serán de color negro y con un grosor de 1
+                ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                #El tamaño de las letras de cada una de las celdas será de 10
+                ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ]
+        ))
+        #Establecemos el tamaño de la hoja que ocupará la tabla
+        detalle_orden.wrapOn(pdf, 900, 600)
+        #Definimos la coordenada donde se dibujará la tabla
+        detalle_orden.drawOn(pdf, 30,y)
+
+    def get(self, request, *args, **kwargs):
+        #Indicamos el tipo de contenido a devolver, en este caso un pdf
+        response = HttpResponse(content_type='application/pdf')
+        #La clase io.BytesIO permite tratar un array de bytes como un fichero binario, se utiliza como almacenamiento temporal
+        buffer = BytesIO()
+        #Canvas nos permite hacer el reporte con coordenadas X y Y
+        pdf = canvas.Canvas(buffer)
+        #Llamo al método cabecera donde están definidos los datos que aparecen en la cabecera del reporte.
+        self.cabecera(pdf)
+        y = 600
+        self.tabla(pdf, y)
+        #Con show page hacemos un corte de página para pasar a la siguiente
+        pdf.showPage()
+        pdf.save()
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
+        return response

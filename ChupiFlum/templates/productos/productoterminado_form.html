@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load staticfiles %}
 {% block content %}
 <form action="{% url 'productos:crear' %}" id="formulario_produ" method="POST">
   {% if messages %}
@@ -13,46 +13,91 @@
   {% endif %}
   {% csrf_token %}
   <input type="hidden" name="page" value="productos">
+
   <div class="row inputs">
     <div class="col m10">
       <div class="row">
-        <div class="input-field col s5">
+        <div class="input-field col s12 m6">
           {{ form.nombre }}
           {{ form.nombre.label_tag }}
           {{ form.nombre.errors  }}
         </div>
-        <div class="input-field col s5">
+        <div class="input-field col s12 m6">
           {{ form.descripcion }}
           {{ form.descripcion.label_tag }}
           {{ form.descripcion.errors  }}
         </div>
       </div>
       <div class="row">
-        <div class="input-field col s5">
+        <div class="input-field col s12 m6">
           {{ form.categoria }}
           {{ form.categoria.label_tag }}
           {{ form.categoria.errors  }}
         </div>
-        <div class="input-field col s5">
+        <div class="input-field col s12 m6">
           {{ form.costo_produccion }}
           {{ form.costo_produccion.label_tag }}
           {{ form.costo_produccion.errors  }}
         </div>
       </div>
       <div class="row">
-        <div class="input-field col s5">
+        <div class="input-field col s12 m6">
           {{ form.precio_venta }}
           {{ form.precio_venta.label_tag }}
           {{ form.precio_venta.errors  }}
         </div>
-        <div class="input-field col s5">
+        <div class="input-field col s12 m6">
           {{ form.cantidad }}
           {{ form.cantidad.label_tag }}
           {{ form.cantidad.errors  }}
         </div>
       </div>
       <div class="row">
-        <div class="input-field col s5">
+        <div class="input-field col s12 m6">
+          {{ form.cantidad_productos }}
+          {{ form.cantidad_productos.label_tag }}
+          {{ form.cantidad_productos.errors  }}
+        </div>
+        <div class="input-field col s12 m6">
+          {{ form.presentacion }}
+          {{ form.presentacion.label_tag }}
+          {{ form.presentacion.errors  }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col s12">
+          <table >
+            {{ detalle_formula.management_form }}
+            {% for form in detalle_formula.forms %}
+              {% if forloop.first %}
+                <thead>
+                  <tr>
+                      {% for field in form.visible_fields %}
+                          <th>{{ field.label|capfirst }}</th>
+                      {% endfor %}
+                  </tr>
+                </thead>
+              {% endif %}
+              <tr class="formset_row">
+                {% for field in form.visible_fields %}
+                  <td>
+                    {# Include the hidden fields in the form #}
+                    {% if forloop.first %}
+                        {% for hidden in form.hidden_fields %}
+                            {{ hidden }}
+                        {% endfor %}
+                    {% endif %}
+                    {{ field }}
+                    {{ field.errors.a }}
+                  </td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </table>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m6">
           <div class="switch">
             <label>
               Inactivo {{ form.estado }}
@@ -60,6 +105,11 @@
               Activo
             </label>
           </div>
+        </div>
+        <div class="input-field col s12 m6">
+          {{ form.stock }}
+          {{ form.stock.label_tag }}
+          {{ form.stock.errors  }}
         </div>
       </div>
     </div>
@@ -112,4 +162,16 @@
     <button id="consultar_pro" class=" modal-action modal-close waves-effect waves-green btn-flat">Consultar</button>
   </div>
 </div>
+{% endblock %}
+
+{% block js %}
+  <script src="{% static 'js/jquery.forminline.js' %}"></script>
+  <script type="text/javascript">
+    $('.formset_row').formset({
+      addText: 'agregar materia',
+      addCssClass: 'btn waves-effect waves-light',
+      deleteText: 'eliminar',
+      prefix: 'detalles_formulas_set'
+    });
+  </script>
 {% endblock %}

@@ -6,13 +6,14 @@ from .models import MateriaPrima
 class MateriaPrimaForm(forms.ModelForm):
     class Meta:
         model = MateriaPrima
-        fields = ('nombre', 'descripcion', 'unidad_medida', 'categoria', 'cantidad', 'estado',)
+        fields = ('nombre', 'descripcion', 'unidad_medida', 'categoria', 'cantidad', 'stock', 'estado',)
         labels = {
             'nombre': _(u'*Nombre'),
             'descripcion': _(u'Descripción Producto'),
             'unidad_medida': _(u'*Unidad de Medida'),
             'categoria': _(u'*Categoria'),
-            'cantidad': _(u'*Cantidad'),
+            'cantidad': _(u'Cantidad'),
+            'stock': _(u'*Stock'),
         }
         error_messages = {
             'nombre': {
@@ -24,7 +25,17 @@ class MateriaPrimaForm(forms.ModelForm):
             'categoria': {
                 'required': _("La categoria es obligatoria"),
             },
-            'cantidad': {
-                'required': _("El campo cantidad es obligatorio"),
+            'stock': {
+                'required': _("El campo stock es obligatorio"),
             },
         }
+
+    def clean_nombre(self):
+        diccionario_datos = self.cleaned_data
+
+        nombre = diccionario_datos.get('nombre')
+
+        if len(nombre) < 3:
+            raise forms.ValidationError('El nombre del producto debe contener al menos 3 caracteres')
+
+        return nombre

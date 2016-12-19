@@ -42,26 +42,62 @@ class ProveedoreForm(forms.ModelForm):
             },
         }
 
-    def clean_correo_empresa(self):
+    def clean_nit(self):
         diccionario_datos = self.cleaned_data
 
-        correo_empresa = diccionario_datos.get('correo_empresa')
+        nit = diccionario_datos.get('nit')
 
-        if correo_empresa:
-            proveedor = Proveedore.objects.filter(correo_empresa=correo_empresa)
-            if proveedor:
-               raise forms.ValidationError("No se puede asociar un correo a varios proveedores")
+        if len(nit) < 6:
+            raise forms.ValidationError('El nit debe contener al menos 6 caracteres')
 
-        return correo_empresa
+        return nit
 
-    def clean_correo_contacto(self):
+    def clean_empresa(self):
         diccionario_datos = self.cleaned_data
 
-        correo_contacto = diccionario_datos.get('correo_contacto')
-        
-        if correo_contacto:
-            proveedor = Proveedore.objects.filter(correo_contacto=correo_contacto)
-            if proveedor:
-               raise forms.ValidationError("No se puede asociar un correo a varios contactos")
+        empresa = diccionario_datos.get('empresa')
 
-        return correo_contacto
+        if len(empresa) < 3:
+            raise forms.ValidationError('El nombre de la empresa debe contener al menos 3 caracteres')
+
+        return empresa
+
+    def clean_nombre_contacto(self):
+        diccionario_datos = self.cleaned_data
+
+        nombre_contacto = diccionario_datos.get('nombre_contacto')
+
+        if len(nombre_contacto) < 3:
+            raise forms.ValidationError('El nombre del contacto debe contener al menos 3 caracteres')
+
+        return nombre_contacto
+
+    def clean_telefono(self):
+        diccionario_datos = self.cleaned_data
+
+        telefono = diccionario_datos.get('telefono')
+
+        if len(telefono) < 7:
+            raise forms.ValidationError(u'El teléfono debe contener al menos 7 caracteres')
+
+        return telefono
+
+    def clean_telefono_contacto(self):
+        diccionario_datos = self.cleaned_data
+
+        telefono_contacto = diccionario_datos.get('telefono_contacto')
+
+        if len(telefono_contacto) < 7:
+            raise forms.ValidationError(u'El teléfono debe contener al menos 7 caracteres')
+
+        return telefono_contacto
+
+    def clean_direccion(self):
+        diccionario_datos = self.cleaned_data
+
+        direccion = diccionario_datos.get('direccion')
+
+        if len(direccion) < 7:
+            raise forms.ValidationError(u'La dirección debe contener al menos 7 caracteres')
+
+        return direccion

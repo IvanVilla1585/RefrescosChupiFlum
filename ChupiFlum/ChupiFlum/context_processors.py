@@ -24,6 +24,7 @@ tittlesMenu = {
     '/MenuPrincipal/UnidadMedida/Guardar/': u'Producción - Unidades de Medida',
     '/MenuPrincipal/Grupos/': u'Permisos - Roles',
     '/MenuPrincipal/Grupos/Guardar/': u'Permisos - Roles',
+    '/MenuPrincipal/Pedidos/': u'Compras - Pedidos',
     '/MenuPrincipal/Pedidos/Guardar': u'Compras - Pedidos',
     '/MenuPrincipal/Proveedor/Consultar/': u'Compras - Registrar Proveedor'
 }

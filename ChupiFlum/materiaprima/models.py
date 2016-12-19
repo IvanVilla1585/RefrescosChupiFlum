@@ -6,11 +6,12 @@ from unidadesmedida.models import UnidadMedida
 from categoriasmateriaprima.models import CategoriaMateriaPrima
 
 class MateriaPrima(models.Model):
-    nombre = models.CharField(max_length=100)
+    nombre = models.CharField(max_length=100, unique=True)
     descripcion = models.CharField(max_length=150, blank=True, null=True)
     unidad_medida = models.ForeignKey(UnidadMedida)
     categoria = models.ForeignKey(CategoriaMateriaPrima)
-    cantidad = models.DecimalField(decimal_places=2, max_digits=16)
+    cantidad = models.DecimalField(decimal_places=2, max_digits=16, default=True, blank=True)
+    stock = models.DecimalField(decimal_places=2, max_digits=16)
     estado = models.BooleanField(default=True, blank=True)
 
     def __str__(self):

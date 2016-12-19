@@ -45,6 +45,13 @@
           {{ form.cantidad.errors  }}
         </div>
         <div class="input-field col s5">
+          {{ form.stock }}
+          {{ form.stock.label_tag }}
+          {{ form.stock.errors  }}
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s5">
           <div class="switch">
             <label>
               Inactivo {{ form.estado }}
@@ -60,16 +67,16 @@
         <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" name="guardarMP" data-position="left" data-delay="50" data-tooltip="Guardar"><i class="material-icons">save</i>Left</button>
       </div>
       <div class="center">
-        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="buscarMP" name="buscarMP" data-position="left" data-delay="50" data-tooltip="Buscar"><i class="material-icons">search</i>Left</button>
+        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="buscarMP" name="buscarMP" data-position="left" data-delay="50" data-tooltip="Buscar"><i class="material-icons">search</i>Left</button>
       </div>
       <div class="center">
-        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red" id="modificarMP" name="modificarMP" data-position="left" data-delay="50" data-tooltip="Modificar"><i class="material-icons">add</i>Left</button>
+        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red tooltipped" id="modificarMP" name="modificarMP" data-position="left" data-delay="50" data-tooltip="Modificar"><i class="material-icons">add</i>Left</button>
       </div>
       <div class="center">
-        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="eliminarMP" name="eliminarMP" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
+        <button type="submit" style="margin: 1em 0;" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="eliminarMP" name="eliminarMP" data-position="left" data-delay="50" data-tooltip="Eliminar"><i class="material-icons">cancel</i>Left</button>
       </div>
       <div class="center">
-        <a type="submit" href="{% url 'materiaprim:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48" id="listarP" name="listarP" data-position="left" data-tooltip="Listar"><i class="material-icons">assignment</i>Left</a>
+        <a type="submit" href="{% url 'materiaprim:listar' %}" class="btn-floating btn-large waves-effect waves-light red md-icon dp48 tooltipped" id="listarP" name="listarP" data-position="left" data-tooltip="Listar"><i class="material-icons">assignment</i>Left</a>
       </div>
     </div>
   </div>
@@ -98,7 +105,7 @@
     </div>
   </div>
   <div class="modal-footer">
-    <button id="cancelar_materia" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancelar</button>
+    <button id="cancelar_mater" class=" modal-action modal-close waves-effect waves-green btn-flat">Cancelar</button>
     <button id="consultar_materia" class=" modal-action modal-close waves-effect waves-green btn-flat">Consultar</button>
   </div>
 </div>

@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^Proveedor/Consultar/(?P<id>[1-9]+)/$', views.ConsultarProveedor.as_view(), name='consultar'),
     url(r'^Proveedor/Eliminar/$', views.ActualizarEstadoView.as_view(), name='eliminar'),
     url(r'^Proveedor/Listar/$', views.ListarProveedores.as_view(), name='listar'),
+    url(r'^Proveedor/ReporteProveedoresPDF/$', views.ReporteProveedoresPDF.as_view(), name='reporte_pdf'),
 ]

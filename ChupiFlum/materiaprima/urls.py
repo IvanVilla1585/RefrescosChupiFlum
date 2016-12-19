@@ -9,4 +9,6 @@ urlpatterns = [
     url(r'^MateriaPrima/Modificar/(?P<id>[0-9]+)/$', views.ModificarMateriaPrima.as_view(), name = 'modificar'),
     url(r'^MateriaPrima/Eliminar/$', views.ActualizarEstadoView.as_view(), name = 'eliminar'),
     url(r'^MateriaPrima/Listar/$', views.ListarMateriaPrima.as_view(), name = 'listar'),
+    url(r'^MateriaPrima/ReporteMateriaPrimaExcel/$', views.ReporteMateriaPrimaExcel.as_view(), name = 'reporte_excel'),
+    url(r'^MateriaPrima/ReporteMateriaPrimaPDF/$', views.ReporteMateriaPDF.as_view(), name = 'reporte_pdf'),
 ]

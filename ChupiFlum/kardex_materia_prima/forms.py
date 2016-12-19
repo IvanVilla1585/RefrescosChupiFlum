@@ -6,14 +6,14 @@ from .models import KardexMateriaPrima
 class KardexMateriaPrimaForm(forms.ModelForm):
     class Meta:
         model = KardexMateriaPrima
-        fields = ('pedido', 'fecha_movimiento', 'tipo_movimiento', 'materiaprima','cantidad', 'valor_unitario', 'total', 'lote', 'fecha_vencimiento',)
+        fields = ('pedido', 'fecha_movimiento', 'materiaprima', 'entrada', 'salida', 'cantidad', 'total', 'lote', 'fecha_vencimiento',)
         labels = {
             'pedido': _(u'*Número de Pedido'),
             'fecha_movimiento': _(u'*Fecha'),
-            'tipo_movimiento': _(u'*Tipo Movimiento'),
             'materiaprima': _(u'*Materia Prima'),
             'cantidad': _(u'*Cantidad'),
-            'valor_unitario': _(u'*Valor Unitario'),
+            'entrada': _(u'*Entrada'),
+            'salida': _(u'*Salida'),
             'total': _(u'*Total'),
             'lote': _(u'*Lote'),
             'fecha_vencimiento': _(u'*Fecha Vencimiento'),
@@ -25,17 +25,11 @@ class KardexMateriaPrimaForm(forms.ModelForm):
             'fecha_movimiento': {
                 'required': _("El campo fecha es requerido"),
             },
-            'tipo_movimiento': {
-                'required': _("El campo tipo movimiento es requerido"),
-            },
             'materiaprima': {
                 'required': _("El campo materia prima es requerido"),
             },
             'cantidad': {
                 'required': _("El campo cantidad es requerido"),
-            },
-            'valor_unitario': {
-                'required': _("El campo valor unitario es requerido"),
             },
             'total': {
                 'required': _("El campo total es requerido"),

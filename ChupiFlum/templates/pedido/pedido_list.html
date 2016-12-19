@@ -3,6 +3,15 @@
 {% block content %}
 <arrticle class="container_tabla_provee">
   <div class="row">
+    <div class="row">
+      <div class="button">
+        <a class='dropdown-button btn' href='#' data-activates='dropdown1'>Reportes</a>
+        <!-- Dropdown Structure -->
+        <ul id='dropdown1' class='dropdown-content'>
+          <li><a href="{% url 'pedidos:reporte_pdf' %}" target="_blank">Formato PDF</a></li>
+        </ul>
+      </div>
+    </div>
     <div class="col s12">
       <table class="responsive-table striped">
         <thead>
@@ -12,6 +21,7 @@
             <th>Proveedor</th>
             <th>Usuario</th>
             <th>Total</th>
+            <th>Estado</th>
           </tr>
         </thead>
         <tbody>
@@ -22,6 +32,7 @@
             <td>{{ pedido.proveedor.empresa }}</td>
             <td>{{ pedido.usuario.username }}</td>
             <td>{{ pedido.total }}</td>
+            <td>{{ pedido.id_estado.nombre }}</td>
 
           </tr>
           {% endfor %}
