@@ -4,8 +4,6 @@ import json
 from django.core import serializers
 from reportlab.lib.pagesizes import letter, A4
 
-#Workbook nos permite crear libros en excel
-from openpyxl import Workbook
 from django.http import (
     HttpResponse,
     HttpResponseRedirect,
@@ -35,7 +33,6 @@ from django.contrib.messages.views import SuccessMessageMixin
 from estado_orden.models import EstadosOrdenes
 from materiaprima.models import MateriaPrima
 from proveedores.models import Proveedore
-from dal import autocomplete
 from proveedores.mixins import JSONResponseMixin
 from loginusers.mixins import LoginRequiredMixin
 from decimal import Decimal
@@ -255,7 +252,7 @@ class ConsultarValorMateria(LoginRequiredMixin, JSONResponseMixin, DetailView):
         return data
 
 
-class MateriaPrimaAutocomplete(autocomplete.Select2QuerySetView):
+class MateriaPrimaAutocomplete():
 
     def get_queryset(self):
 

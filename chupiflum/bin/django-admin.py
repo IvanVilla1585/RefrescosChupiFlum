@@ -1,4 +1,4 @@
-#!/home/ivan-dev/Escritorio/Developments/Refrescos/chupiflum/bin/python2
+#!/home/ivan/Developments/Refrescos/chupiflum/bin/python2
 from django.core import management
 
 if __name__ == "__main__":

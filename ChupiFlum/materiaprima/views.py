@@ -4,8 +4,6 @@ import json
 from django.core import serializers
 from reportlab.lib.pagesizes import letter, A4
 
-#Workbook nos permite crear libros en excel
-from openpyxl import Workbook
 from django.http import (
     HttpResponse,
     HttpResponseRedirect,
