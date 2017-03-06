@@ -104,15 +104,3 @@
   </div>
 </div>
 {% endblock %}
-
-{% block js %}
-  <script src="{% static 'js/jquery.forminline.js' %}"></script>
-  <script type="text/javascript">
-    $('.formset_row').formset({
-      addText: 'agregar producto',
-      addCssClass: 'btn waves-effect waves-light',
-      deleteText: 'eliminar',
-      prefix: 'detalle_pedido_set'
-    });
-  </script>
-{% endblock %}
