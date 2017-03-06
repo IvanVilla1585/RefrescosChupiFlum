@@ -1,43 +1,29 @@
 # -*- coding: utf-8 -*-
-from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
-from django.contrib.auth import authenticate, login
-from django.template import loader
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.forms import AuthenticationForm
-from django.views.generic import TemplateView, RedirectView, FormView
-from .forms import LoginForm
+from django.contrib.auth import authenticate
 from django.utils.translation import ugettext_lazy as _
+from rest_framework import viewsets
+from rest_framework.response import Response
+from rest_framework import status
+from userprofiles.serializers import UserSerializer
+from django.contrib.auth.models import Permission
+from rest_framework.permissions import AllowAny
 
 
-class LoginView(FormView):
-    form_class = LoginForm
-    template_name = 'loginusers/login.html'
-    success_url = '/MenuPrincipal/'
+class LoginUserApi(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
 
-    def form_valid(self, form):
-        login(self.request, form.user_cache)
-        return super(LoginView, self).form_valid(form)
-
-def authentication(request):
-    if request.method == 'POST':
+    def create(self, request):
         username = request.POST.get('username', None)
         password = request.POST.get('password', None)
-
-        user = authenticate(username=username, password=password)
-        login(request, user)
-        return redirect('/MenuPrincipal')
-    else:
-        template = loader.get_template('login.html')
-    return HttpResponse(template.render({}, request))
-
-@login_required()
-def menuView(request):
-    template = loader.get_template('base.html')
-    return HttpResponse(template.render({}, request))
-
-def homeView(request):
-    template = loader.get_template('loginusers/home.html')
-    return HttpResponse(template.render({}, request))
+        if username is None or username == '' or password is None or password == '':
+            return Response({'message': 'Ingrese los campos obligatorios'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            user = authenticate(username=username, password=password)
+            if user is None:
+                return Response({'message': 'El usuario no existe'}, status=status.HTTP_200_OK)
+            else:
+                serializer = UserSerializer(user)
+                return Response(serializer.data, status=status.HTTP_200_OK)
