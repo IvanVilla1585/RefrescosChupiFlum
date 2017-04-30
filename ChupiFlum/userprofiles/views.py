@@ -46,6 +46,7 @@ class CrearUsuario(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def form_valid(self, form):
         self.object = form.save()
+        print self.object
         grup = form.cleaned_data['groups']
         grupo = Group.objects.get(id=grup)
         self.object.groups.add(grupo.id)
