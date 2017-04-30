@@ -1,4 +1,4 @@
-#!/home/ivan/Developments/Refrescos/chupiflum/bin/python2
+#!/home/ivan/api-chupiflum/chupiflum/bin/python
 #
 # The Python Imaging Library
 # $Id$

@@ -1,4 +1,4 @@
-#!/home/ivan/Developments/Refrescos/chupiflum/bin/python
+#!/home/ivan/api-chupiflum/chupiflum/bin/python
 
 import sys
 import getopt
