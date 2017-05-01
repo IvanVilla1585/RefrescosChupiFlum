@@ -9,7 +9,6 @@ class Maquina(models.Model):
     descripcion = models.CharField(max_length=100, blank=True, null=True)
     capacidad = models.DecimalField(decimal_places=2, max_digits=16)
     unidad_medida = models.ForeignKey(UnidadMedida)
-    tiempo = models.TimeField()
     estado = models.BooleanField(default=True, blank=True)
 
     def __str__(self):
