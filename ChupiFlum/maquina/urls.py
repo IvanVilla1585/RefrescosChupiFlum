@@ -1,13 +1,10 @@
-from django.contrib.auth import views as auth_views
-from django.conf.urls import url
-from . import views
+from django.conf.urls import url, include
+from rest_framework import routers
+from .views import MaquinaViewSet
+
+router = routers.DefaultRouter()
+router.register(r'maquinas', MaquinaViewSet, base_name='maquina')
 
 urlpatterns = [
-    url(r'^Maquina/$', views.MaquinaView.as_view(), name = 'maquinaForm'),
-    url(r'^Maquina/Guardar$', views.CrearMaquina.as_view(), name = 'crear'),
-    url(r'^Maquina/Consultar/(?P<pk>[0-9]+)/$', views.ConsultarMaquina.as_view(), name = 'consultar'),
-    url(r'^Maquina/Actualizar/(?P<pk>[0-9]+)/$', views.ModificarMaquina.as_view(), name = 'modificar'),
-    url(r'^Maquina/Eliminar/$', views.ActualizarEstadoView.as_view(), name='eliminar'),
-    url(r'^Maquina/Listar/$', views.ListarMaquinas.as_view(), name = 'listar'),
-    url(r'^Maquina/ReporteMaquinasPDF/$', views.ReporteMaquinasPDF.as_view(), name = 'reporte_pdf'),
+    url(r'^', include(router.urls)),
 ]
