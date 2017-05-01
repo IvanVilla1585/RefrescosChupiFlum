@@ -35,4 +35,5 @@ urlpatterns = [
     url(r'^api/', include('grupos.urls', namespace='api_grupos')),
     url(r'^api/', include('unidadesmedida.urls', namespace='api_unidades')),
     url(r'^api/', include('maquina.urls', namespace='api_maquinas')),
+    url(r'^api/', include('proceso.urls', namespace='api_procesos')),
 ]
