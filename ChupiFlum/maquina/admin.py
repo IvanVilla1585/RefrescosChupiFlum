@@ -3,7 +3,7 @@ from .models import Maquina
 
 @admin.register(Maquina)
 class UnidadesMedidaAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'descripcion', 'capacidad', 'unidad_medida','tiempo',)
+    list_display = ('nombre', 'descripcion', 'capacidad', 'unidad_medida',)
     list_filter = ('nombre',)
     search_fields = (
         'nombre',
