@@ -1,3 +1,16 @@
+from django.conf.urls import url, include
+from rest_framework import routers
+from materiaprima.views import MateriaPrimaViewSet
+
+router = routers.DefaultRouter()
+router.register(r'materiaprima', MateriaPrimaViewSet, base_name='materiaprima')
+
+urlpatterns = [
+    url(r'^', include(router.urls)),
+]
+
+
+"""
 from django.contrib.auth import views as auth_views
 from django.conf.urls import url
 from . import views
@@ -12,3 +25,4 @@ urlpatterns = [
     url(r'^MateriaPrima/ReporteMateriaPrimaExcel/$', views.ReporteMateriaPrimaExcel.as_view(), name = 'reporte_excel'),
     url(r'^MateriaPrima/ReporteMateriaPrimaPDF/$', views.ReporteMateriaPDF.as_view(), name = 'reporte_pdf'),
 ]
+"""
