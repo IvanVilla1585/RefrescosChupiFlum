@@ -8,7 +8,7 @@ from unidadesmedida.models import UnidadMedida
 class MateriaPrimaSerializer(serializers.ModelSerializer):
     categoria = CategoriaMateriaPrimaSerializer(read_only=True)
     categoria_id = serializers.PrimaryKeyRelatedField(write_only=True, queryset=CategoriaMateriaPrima.objects.all(), source='categoria')
-    unidad_medida = CategoriaMateriaPrimaSerializer(read_only=True)
+    unidad_medida = UnidadMedidaSerializer(read_only=True)
     unidad_medida_id = serializers.PrimaryKeyRelatedField(write_only=True, queryset=UnidadMedida.objects.all(), source='unidad_medida')
     class Meta:
         model = MateriaPrima
