@@ -12,14 +12,13 @@ class ProductoTerminado(models.Model):
     descripcion = models.CharField(max_length=200, blank=True, null=True)
     categoria = models.ForeignKey(Categoria)
     presentacion = models.ForeignKey(Presentacion)
-    costo_produccion = models.DecimalField(decimal_places=2, max_digits=16)
-    precio_venta = models.DecimalField(decimal_places=2, max_digits=16)
-    cantidad = models.PositiveIntegerField(default=True, blank=True)
-    cantidad_productos = models.PositiveIntegerField()
+    costo_produccion = models.DecimalField(decimal_places=2, max_digits=16, blank=True, default=0.0)
+    precio_venta = models.DecimalField(decimal_places=2, max_digits=16, blank=True, default=0.0)
+    cantidad = models.PositiveIntegerField()
     stock = models.PositiveIntegerField()
-    id_proceso = models.ManyToManyField(Proceso, db_table='procesos_productos')
+    proceso = models.ManyToManyField(Proceso, through='Procesos_Formulas', through_fields=('producto', 'proceso'))
     estado = models.BooleanField(default=True, blank=True)
-    id_materia_prima = models.ManyToManyField(MateriaPrima, through='Detalles_Formulas', through_fields=('id_producto', 'id_materia_prima'))
+    materia_prima = models.ManyToManyField(MateriaPrima, through='Detalles_Formulas', through_fields=('producto', 'materia_prima'))
 
 
     def __str__(self):
@@ -32,8 +31,8 @@ class ProductoTerminado(models.Model):
         )
 
 class Detalles_Formulas(models.Model):
-    id_producto = models.ForeignKey(ProductoTerminado)
-    id_materia_prima = models.ForeignKey(MateriaPrima)
+    producto = models.ForeignKey(ProductoTerminado)
+    materia_prima = models.ForeignKey(MateriaPrima)
     cantidad = models.DecimalField(decimal_places=2, max_digits=16)
 
     def __str__(self):
@@ -42,3 +41,15 @@ class Detalles_Formulas(models.Model):
     class Meta:
         ordering = ('id',)
         db_table='detalles_formulas'
+
+class Procesos_Formulas(models.Model):
+    producto = models.ForeignKey(ProductoTerminado)
+    proceso = models.ForeignKey(Proceso)
+
+    def __str__(self):
+        return self.id_producto.nombre
+
+    class Meta:
+        ordering = ('id',)
+        db_table='procesos_formulas'
+
