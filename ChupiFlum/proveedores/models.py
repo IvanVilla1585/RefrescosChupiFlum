@@ -7,7 +7,7 @@ class Proveedore(models.Model):
     empresa = models.CharField(max_length=120)
     direccion = models.CharField(max_length=100)
     telefono = models.CharField(max_length=15)
-    fax = models.CharField(max_length=15, blank=True, null=True)
+    fax = models.CharField(max_length=15, blank=True, null=True, unique=True)
     correo_empresa = models.EmailField(blank=True, null=True)
     nombre_contacto = models.CharField(max_length=50)
     apellido_contacto = models.CharField(max_length=50, blank=True, null=True)
