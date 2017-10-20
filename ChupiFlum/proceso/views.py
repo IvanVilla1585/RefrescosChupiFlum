@@ -22,10 +22,13 @@ class ProcesoViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         search = self.request.GET.get('search', None)
+        typelist = self.request.GET.get('typelist', None)
         if search:
             queryset = self.model.objects.filter(Q(nombre__icontains=search) | Q(maquina__name__icontains=search) )
-        else:
+        elif typelist:
             queryset = super(ProcesoViewSet, self).get_queryset()
+        else:
+            queryset = self.model.objects.filter(estado=True)
 
         return queryset
 
@@ -60,3 +63,15 @@ class ProcesoViewSet(viewsets.ModelViewSet):
             return Response({'message': 'El id es obligatorio'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         serializer = self.get_serializer(process)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def list(self, request, *args, **kwargs):
+        typelist = self.request.GET.get('typelist', None)
+        queryset = self.filter_queryset(self.get_queryset())
+        print typelist
+        page = self.paginate_queryset(queryset)
+        if typelist is not None and page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
