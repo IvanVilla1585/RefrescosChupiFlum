@@ -1,4 +1,4 @@
-from django.shortcuts import render
+"""from django.shortcuts import render
 from django.template import loader
 from django.http import (
     HttpResponse,
@@ -134,4 +134,78 @@ class UsuarioView(LoginRequiredMixin, TemplateView):
         context = super(UsuarioView, self).get_context_data(**kwargs)
         context.update({'form': UserForm()})
 
-        return context
+        return context"""
+
+# -*- coding: utf-8 -*-
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth.models import User
+from django.template import(
+ loader,
+ Context
+)
+from ChupiFlum import settings
+from django.core.mail import(
+    send_mail,
+    BadHeaderError
+)
+from .serializer import UserSerializer
+from rest_framework import permissions, routers, serializers, viewsets
+from oauth2_provider.ext.rest_framework import (TokenHasReadWriteScope, TokenHasScope, IsAuthenticatedOrTokenHasScope)
+from django.core.mail import EmailMultiAlternatives
+from rest_framework.decorators import detail_route, list_route
+import base64
+import jwt
+
+class UserViewSet(viewsets.ModelViewSet):
+    permission_classes = [permissions.IsAuthenticated, TokenHasReadWriteScope]
+    model = User
+    queryset = model.objects.all()
+    serializer_class = UserSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.password = 'AbcD123456'
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        self.sendEmail(serializer.data)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def partial_update(self, request, *args, **kwargs):
+        kwargs['partial'] = True
+        return self.update(request, *args, **kwargs)
+
+    def decode_token(self, request, token=None):
+        token = self.request.GET.get('token', None)
+        data = None
+        if token:
+            idDecode = self.decode_id(token)
+        else:
+            return Response({"status": 500, "message": "Token invalido"})
+        return Response(idDecode, status=status.HTTP_200_OK)
+
+    def sendEmail(self, serializer):
+        idCrip = self.encoded_id(serializer["id"])
+        name = '%s %s' % (serializer["first_name"], serializer["last_name"])
+        url = 'http://localhost:4200/usuario/registro-password/%s' % (idCrip)
+        ctx = {'name': name, 'url': url}
+        self.html_message = loader.get_template('userprofiles/email_templatel.html').render(Context(ctx))
+        mail = EmailMultiAlternatives(
+          subject="Registro Refrescos Chupi Flum",
+          body="Chupi Flum",
+          from_email=settings.EMAIL_HOST_USER,
+          to=[serializer["email"]],
+          headers={}
+        )
+        mail.attach_alternative(
+            self.html_message, "text/html"
+        )
+
+        mail.send()
+
+    def encoded_id(self, id):
+        return jwt.encode({'id': id}, 'secret', algorithm='HS256')
+
+    def decode_id(self, id):
+        return jwt.decode(id, 'secret', algorithms=['HS256'])
