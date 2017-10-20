@@ -1,4 +1,4 @@
-from django.contrib.auth import views as auth_views
+"""from django.contrib.auth import views as auth_views
 from django.conf.urls import url
 
 from . import views
@@ -11,4 +11,15 @@ urlpatterns = [
     url(r'^Productos/Eliminar/$', views.ActualizarEstadoView.as_view(), name='eliminar'),
     url(r'^Productos/Listar/$', views.ListarProductos.as_view(), name='listar'),
     url(r'^Productos/ConsultarFormula/$', views.ConsultarFormula.as_view(), name='consultarFormula'),
+]"""
+
+from django.conf.urls import url, include
+from rest_framework import routers
+from .views import ProveedoresViewSet
+
+router = routers.DefaultRouter()
+router.register(r'productoterminado', ProveedoresViewSet, base_name='productos')
+
+urlpatterns = [
+    url(r'^', include(router.urls)),
 ]

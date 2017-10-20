@@ -10,7 +10,7 @@ class MateriaPrima(models.Model):
     descripcion = models.CharField(max_length=150, blank=True, null=True)
     unidad_medida = models.ForeignKey(UnidadMedida)
     categoria = models.ForeignKey(CategoriaMateriaPrima)
-    cantidad = models.DecimalField(decimal_places=2, max_digits=16, default=True, blank=True)
+    cantidad = models.DecimalField(decimal_places=2, max_digits=16, default=0, null=True, blank=True)
     stock = models.DecimalField(decimal_places=2, max_digits=16)
     estado = models.BooleanField(default=True, blank=True)
 

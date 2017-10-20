@@ -3,8 +3,8 @@ from rest_framework import routers
 from .views import GroupViewSet
 
 
-router = routers.DefaultRouter(trailing_slash=False)
-router.register(r'groups', GroupViewSet, 'group')
+router = routers.DefaultRouter()
+router.register(r'grupos', GroupViewSet, 'group')
 
 urlpatterns = [
     url(r'^', include(router.urls)),
