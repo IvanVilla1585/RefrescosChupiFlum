@@ -5,27 +5,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Bienvenida</title>
+  <style>
+    header{
+      padding: 16px;
+    }
+    header .header_tittle h2{
+      margin: 0;
+      width: 100%;
+      text-align: center;
+    }
+    header .header_logo figure{
+      margin: 0;
+      width: 80px;
+      height: 80px;
+    }
+    header .header_logo{
+      text-align: left;
+    }
+    header .header_logo figure img{
+      width: 100%;
+    }
+    section {
+      padding: 16px;
+    }
+  </style>
 </head>
 <body>
   <header>
-    <div class="header_tittle">
-      <h2>Bienvenido a Sistema de Productos e Inventarios "Refrescos ChupiFlum"</h2>
-    </div>
     <div class="header_logo">
       <figure>
-        <img src="" alt="">
+        <img src="http://localhost:8000/static/images/logo.png" alt="">
       </figure>
+    </div>
+    <div class="header_tittle">
+      <h2>Sistema Productos e Inventarios <strong>"Refrescos Chupi Flum"</strong></h2>
     </div>
   </header>
   <section>
+    <div class="title">
+    </div>
     <div class="content">
-      <p>Hola {{ nombre }} , te damos la bienvenia a la fabrica de refrescos Chupi Flum</p>
+      <p>Hola {{ name }} , te damos la bienvenia a la fabrica de refrescos Chupi Flum</p>
       <p>
         Para poder ingresar a la aplicación Sistema de Productos e Inventarios "Refrescos ChupiFlum",
         debes completar el proceso de inscripción, ingresando el nombre de usuario y la contraseña en el
-        siguiente link
+        siguiente link <a href="{{ url }}">{{ url }}</a>
       </p>
-      <p><a href="{{ url }}">{{ dire }}</a></p>
     </div>
   </section>
 </body>
