@@ -60,7 +60,7 @@ class DetalleFormulaForm(forms.ModelForm):
     class Meta:
         model = Detalles_Formulas
 
-        fields = ('id_materia_prima', 'cantidad',)
+        fields = ('id_producto', 'id_materia_prima', 'cantidad',)
         labels = {
             'id_materia_prima': _(u'*Materia Prima'),
             'cantidad': _(u'*Cantidad'),
